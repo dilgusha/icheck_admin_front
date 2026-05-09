@@ -1,0 +1,6 @@
+{
+  "name": "iCheck Admin Panel",
+  "description": "High-end healthcare administration platform for iCheck, built with Nuxt 3 and Naive UI.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}

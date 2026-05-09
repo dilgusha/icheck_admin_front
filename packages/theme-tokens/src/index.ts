@@ -1,0 +1,17 @@
+export const themeColorTokens = {
+  brand: '#f18c47',
+  brandHover: '#e07d3a',
+  accent: '#2663bf',
+  accentHover: '#1d4f9c',
+  textStrong: '#2c384a',
+  textPrimary: '#111827',
+  textSecondary: '#4b5563',
+  textMuted: '#9ca3af',
+  surfacePage: '#ffffff',
+  surfaceMuted: '#f8fafc',
+  surfaceAccent: '#ebf1f933',
+  surfaceWarm: '#fcf8f9',
+  surfacePanel: '#ffffff',
+  borderSubtle: '#e5e7eb',
+  borderSoft: '#f3f4f6',
+} as const

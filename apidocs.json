@@ -1,0 +1,102 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "iCheck Admin API",
+    "description": "iCheck layihəsi üçün mərkəzi idarəetmə endpointləri",
+    "termsOfService": "https://icheckapi.200soft.com",
+    "version": "v1"
+  },
+  "host": "api.icheck.az",
+  "basePath": "/",
+  "schemes": ["https"],
+  "consumes": ["application/json"],
+  "produces": ["application/json"],
+  "securityDefinitions": {
+    "Bearer": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
+    }
+  },
+  "paths": {
+    "/auth/login/": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Sistemə giriş",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "username": { "type": "string" },
+                "password": { "type": "string" }
+              }
+            }
+          }
+        ],
+        "responses": { "200": { "description": "Uğurlu giriş" } }
+      }
+    },
+    "/auth/logout/": {
+      "post": {
+        "tags": ["Auth"],
+        "security": [{ "Bearer": [] }],
+        "responses": { "204": { "description": "Sistemdən çıxıldı" } }
+      }
+    },
+    "/auth/refresh/": {
+      "post": {
+        "tags": ["Auth"],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": { "refresh": { "type": "string" } }
+            }
+          }
+        ],
+        "responses": { "200": { "description": "Token yeniləndi" } }
+      }
+    },
+    "/me/": {
+      "get": {
+        "tags": ["User Detail"],
+        "security": [{ "Bearer": [] }],
+        "summary": "Cari istifadəçi məlumatları",
+        "responses": { "200": { "description": "Uğurlu" } }
+      },
+      "patch": {
+        "tags": ["User Detail"],
+        "security": [{ "Bearer": [] }],
+        "summary": "Profil məlumatlarını yenilə",
+        "responses": { "200": { "description": "Yeniləndi" } }
+      }
+    },
+    "/api/v1/users/password-change/": {
+      "post": {
+        "tags": ["User Password"],
+        "security": [{ "Bearer": [] }],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "old_password": { "type": "string" },
+                "new_password": { "type": "string" },
+                "new_password_confirm": { "type": "string" }
+              }
+            }
+          }
+        ],
+        "responses": { "200": { "description": "Şifrə dəyişdi" } }
+      }
+    }
+  }
+}

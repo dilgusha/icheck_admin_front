@@ -1,0 +1,142 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap');
+
+:root {
+  --font-sans: 'Roboto', system-ui, sans-serif;
+
+  --color-brand-50: #fff3ec;
+  --color-brand-100: #ffe1cf;
+  --color-brand-400: #f4a068;
+  --color-brand-500: #f18c47;
+  --color-brand-600: #e07d3a;
+
+  --color-accent-50: #ebf1f9;
+  --color-accent-100: #d7e4f4;
+  --color-accent-500: #2663bf;
+  --color-accent-600: #1d4f9c;
+
+  --color-success-50: #ecfdf3;
+  --color-success-600: #027a48;
+
+  --color-surface-page: #ffffff;
+  --color-surface-muted: #f8fafc;
+  --color-surface-accent: #ebf1f933;
+  --color-surface-warm: #fcf8f9;
+  --color-surface-panel: #ffffff;
+
+  --color-text-strong: #2c384a;
+  --color-text-primary: #111827;
+  --color-text-secondary: #4b5563;
+  --color-text-muted: #9ca3af;
+  --color-text-inverse: #ffffff;
+
+  --color-border-subtle: #e5e7eb;
+  --color-border-soft: #f3f4f6;
+
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+
+  --shadow-soft: 0 4px 24px rgb(0 0 0 / 0.06);
+  --shadow-card: 0 12px 30px rgb(38 99 191 / 0.08);
+  --ring-focus: 0 0 0 3px rgb(38 99 191 / 0.18);
+
+  --color-primary: var(--color-brand-500);
+  --color-secondary: var(--color-accent-500);
+}
+
+html {
+  font-family: var(--font-sans);
+  background: var(--color-surface-page);
+  color: var(--color-text-primary);
+}
+
+body {
+  background: var(--color-surface-page);
+  color: var(--color-text-primary);
+}
+
+::selection {
+  background: var(--color-accent-100);
+  color: var(--color-accent-600);
+}
+
+.bg-accent {
+  background-color: var(--color-accent-500);
+}
+
+.bg-brand {
+  background-color: var(--color-brand-500);
+}
+
+.bg-brand-soft {
+  background-color: var(--color-brand-50);
+}
+
+.bg-brand-tint {
+  background-color: rgb(241 140 71 / 0.15);
+}
+
+.bg-surface-accent {
+  background-color: var(--color-surface-accent);
+}
+
+.bg-surface-muted {
+  background-color: var(--color-surface-muted);
+}
+
+.bg-surface-warm {
+  background-color: var(--color-surface-warm);
+}
+
+.bg-panel {
+  background-color: var(--color-surface-panel);
+}
+
+.text-brand {
+  color: var(--color-brand-500);
+}
+
+.text-accent {
+  color: var(--color-accent-500);
+}
+
+.text-strong {
+  color: var(--color-text-strong);
+}
+
+.text-secondary {
+  color: var(--color-text-secondary);
+}
+
+.text-muted {
+  color: var(--color-text-muted);
+}
+
+.border-subtle {
+  border-color: var(--color-border-subtle);
+}
+
+.border-soft {
+  border-color: var(--color-border-soft);
+}
+
+.border-accent {
+  border-color: var(--color-accent-500);
+}
+
+.border-brand {
+  border-color: var(--color-brand-500);
+}
+
+.shadow-soft {
+  box-shadow: var(--shadow-soft);
+}
+
+.shadow-card {
+  box-shadow: var(--shadow-card);
+}
+
+.ring-focus {
+  box-shadow: var(--ring-focus);
+}

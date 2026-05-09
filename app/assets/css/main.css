@@ -1,0 +1,6 @@
+@import "tailwindcss";
+
+@theme {
+  --radius-xl: 12px;
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+}

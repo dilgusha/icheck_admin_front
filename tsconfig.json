@@ -1,0 +1,15 @@
+{
+  "extends": "./.nuxt/tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "ignoreDeprecations": "6.0",
+    "paths": {
+      "~/*": ["app/*"],
+      "@/*": ["app/*"],
+      "~~/*": ["./*"],
+      "@@/*": ["./*"],
+      "@icheck/api-contracts": ["packages/api-contracts/src/index.ts"],
+      "@icheck/api-contracts/*": ["packages/api-contracts/src/*"]
+    }
+  }
+}
