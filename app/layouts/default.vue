@@ -8,9 +8,7 @@
       <!-- Sidebar Header -->
       <div class="p-3 flex flex-col gap-1 border-b border-white/5 bg-[#0f172a]">
         <div class="flex items-center justify-center gap-3">
-          <div
-            class="w-14 h-10"
-          >
+          <div class="w-14 h-10">
             <NuxtImg
               src="/iCheck-logo.webp"
               alt="Logo"
@@ -18,7 +16,7 @@
             />
           </div>
           <!-- <div v-if="!isCollapsed" class="flex flex-col"> -->
-            <!-- <span
+          <!-- <span
               class="text-[10px] text-indigo-400 font-bold uppercase tracking-widest mt-1">Admin Panel</span> -->
           <!-- </div> -->
         </div>
@@ -31,13 +29,20 @@
           >
             <UserRound :size="18" />
           </div>
-          <div class="flex flex-col">
+          <div class="flex flex-col min-w-0">
             <p
               class="text-[10px] text-white/40 uppercase font-bold tracking-wider"
             >
               Current User
             </p>
-            <p class="text-sm font-semibold">root_admin</p>
+
+            <p class="text-sm font-semibold truncate max-w-40">
+              {{ currentUser?.data?.fullname || "Admin" }}
+            </p>
+
+            <p class="text-[11px] text-white/40 truncate max-w-40 capitalize">
+              {{ currentUser?.data?.role || "user" }}
+            </p>
           </div>
         </div>
       </div>
@@ -46,39 +51,39 @@
       <div
         class="flex-1 overflow-y-auto py-6 px-4 space-y-1.5 custom-scrollbar"
       >
-       <NuxtLink
-        v-for="item in menuItems"
-        :key="item.path"
-        :to="item.path"
-        class="flex items-center rounded-xl transition-all duration-200 group relative py-3"
-        :class="[
-          // Sidebar bağlıdırsa mərkəzə yığırıq, açıqdırsa sola və boşluq veririk
-          isCollapsed ? 'justify-center px-0' : 'justify-start px-4 gap-3.5',
-          
-          route.path === item.path
-            ? 'bg-[#4F46E5] text-white shadow-xl shadow-indigo-500/30'
-            : 'text-slate-400 hover:bg-white/5 hover:text-white',
-        ]"
-      >
-        <component 
-          :is="item.icon" 
-          :size="isCollapsed ? 22 : 20" 
-          :stroke-width="2.5" 
-          class="transition-all duration-200"
-        />
+        <NuxtLink
+          v-for="item in menuItems"
+          :key="item.path"
+          :to="item.path"
+          class="flex items-center rounded-xl transition-all duration-200 group relative py-3"
+          :class="[
+            // Sidebar bağlıdırsa mərkəzə yığırıq, açıqdırsa sola və boşluq veririk
+            isCollapsed ? 'justify-center px-0' : 'justify-start px-4 gap-3.5',
 
-        <span
-          v-if="!isCollapsed"
-          class="text-[14px] font-semibold tracking-wide whitespace-nowrap"
+            route.path === item.path
+              ? 'bg-[#4F46E5] text-white shadow-xl shadow-indigo-500/30'
+              : 'text-slate-400 hover:bg-white/5 hover:text-white',
+          ]"
         >
-          {{ item.label }}
-        </span>
+          <component
+            :is="item.icon"
+            :size="isCollapsed ? 22 : 20"
+            :stroke-width="2.5"
+            class="transition-all duration-200"
+          />
 
-        <div
-          v-if="route.path === item.path && !isCollapsed"
-          class="absolute right-3 w-1.5 h-1.5 bg-white rounded-full"
-        ></div>
-      </NuxtLink>
+          <span
+            v-if="!isCollapsed"
+            class="text-[14px] font-semibold tracking-wide whitespace-nowrap"
+          >
+            {{ item.label }}
+          </span>
+
+          <div
+            v-if="route.path === item.path && !isCollapsed"
+            class="absolute right-3 w-1.5 h-1.5 bg-white rounded-full"
+          ></div>
+        </NuxtLink>
       </div>
 
       <!-- Sidebar Footer -->
@@ -88,9 +93,9 @@
           class="w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-slate-400 hover:bg-red-500/10 hover:text-red-400 transition-all duration-200"
         >
           <LogOut :size="20" :stroke-width="2.5" />
-          <span v-if="!isCollapsed" class="text-sm font-bold tracking-wide"
-            >Logout Session</span
-          >
+          <span v-if="!isCollapsed" class="text-sm font-bold tracking-wide">
+            Logout Session
+          </span>
         </button>
       </div>
     </aside>
@@ -126,7 +131,24 @@
             </div>
           </div>
         </div>
-
+        <div
+          class="flex items-center gap-1.5 bg-slate-100 p-1 rounded-xl border border-slate-200"
+        >
+          <button
+            v-for="lang in ['az', 'en', 'ru']"
+            :key="lang"
+            @click="setLanguage(lang)"
+            class="px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase transition-all duration-200"
+            :class="{
+              'bg-white text-indigo-600 shadow-sm ring-1 ring-slate-200/50':
+                currentLang === lang,
+              'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50':
+                currentLang !== lang,
+            }"
+          >
+            {{ lang }}
+          </button>
+        </div>
         <div class="flex items-center gap-4">
           <div
             class="hidden md:flex items-center gap-2 px-4 py-2 bg-indigo-50 rounded-xl border border-indigo-100/50"
@@ -158,19 +180,23 @@
             </button>
           </div>
 
-          <div
-            class="flex items-center gap-3 pl-2 border-l border-slate-200 h-8"
+          <NuxtLink
+            to="/profile"
+            class="w-10 h-10 rounded-xl bg-slate-200 border border-slate-300 overflow-hidden group cursor-pointer ring-2 ring-transparent hover:ring-indigo-500/20 transition-all"
           >
-            <div
-              class="w-10 h-10 rounded-xl bg-slate-200 border border-slate-300 overflow-hidden group cursor-pointer ring-2 ring-transparent hover:ring-indigo-500/20 transition-all"
-            >
-              <img
-                src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix"
-                alt="avatar"
-                class="w-full h-full object-cover"
-              />
-            </div>
-          </div>
+            <img
+              v-if="currentUser?.data?.avatar_url"
+              :src="currentUser.data.avatar_url"
+              alt="avatar"
+              class="w-full h-full object-cover"
+            />
+            <img
+              v-else
+              src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix"
+              alt="avatar"
+              class="w-full h-full object-cover"
+            />
+          </NuxtLink>
         </div>
       </header>
 
@@ -213,9 +239,40 @@ import {
   ChevronRight,
   Search,
 } from "lucide-vue-next";
+const { t } = useI18n();
 
 const route = useRoute();
 const isCollapsed = ref(false);
+const { setLocale } = useI18n();
+
+const langCookie = useCookie<"az" | "en" | "ru">("lang", {
+  default: () => "az",
+});
+
+const currentLang = computed(() => langCookie.value);
+
+const { data: currentUser, refresh: refreshCurrentUser } = await useFetch<any>(
+  "/api/auth/me",
+  {
+    key: "current-user",
+  }
+);
+
+const setLanguage = async (lang: "az" | "en" | "ru") => {
+  langCookie.value = lang;
+
+  await setLocale(lang);
+
+  await refreshNuxtData();
+};
+
+const handleLogout = async () => {
+  await $fetch("/api/auth/logout", {
+    method: "POST",
+  }).catch(() => null);
+
+  await navigateTo("/login");
+};
 
 const currentTitle = computed(() => {
   const path = route.path.split("/")[1] || "Dashboard";
@@ -223,32 +280,34 @@ const currentTitle = computed(() => {
 });
 
 const menuItems = [
+  { label: "Profile", path: "/profile", icon: UserRound },
+
   { label: "Regions", path: "/regions", icon: MapPin },
   { label: "Clinics", path: "/clinics", icon: Hospital },
-  { label: "Doctors", path: "/doctors", icon: UserRound },
-  { label: "Specialisations", path: "/specialisations", icon: Stethoscope },
+  // { label: "Doctors", path: "/doctors", icon: UserRound },
+  { label: "Specialisations", path: "/specializations", icon: Stethoscope },
   { label: "Diseases", path: "/diseases", icon: Activity },
   { label: "Symptoms", path: "/symptoms", icon: Accessibility },
   { label: "Services", path: "/services", icon: Briefcase },
-  { label: "Diagnosis", path: "/diagnosis", icon: ClipboardCheck },
+  // { label: "Diagnosis", path: "/diagnosis", icon: ClipboardCheck },
   { label: "Drugs", path: "/drugs", icon: Pill },
-  { label: "Prescriptions", path: "/prescriptions", icon: FileText },
-  { label: "Appointments", path: "/appointments", icon: Calendar },
-  { label: "Reviews", path: "/reviews", icon: Star },
-  { label: "Forum", path: "/forum", icon: MessageSquare },
-  { label: "Notifications", path: "/notifications", icon: Bell },
-  { label: "Finance", path: "/finance", icon: BarChart3 },
-  { label: "Logs", path: "/logs", icon: ScrollText },
-  { label: "Advertising", path: "/advertising", icon: Megaphone },
-  { label: "FAQ", path: "/faq", icon: HelpCircle },
+  // { label: "Prescriptions", path: "/prescriptions", icon: FileText },
+  // { label: "Appointments", path: "/appointments", icon: Calendar },
+  // { label: "Reviews", path: "/reviews", icon: Star },
+  // { label: "Forum", path: "/forum", icon: MessageSquare },
+  // { label: "Notifications", path: "/notifications", icon: Bell },
+  // { label: "Finance", path: "/finance", icon: BarChart3 },
+  // { label: "Logs", path: "/logs", icon: ScrollText },
+  // { label: "Advertising", path: "/advertising", icon: Megaphone },
+  // { label: "FAQ", path: "/faq", icon: HelpCircle },
 ];
 
 const { clear } = useUserSession();
 
-const handleLogout = async () => {
-  await clear();
-  navigateTo("/login");
-};
+// const handleLogout = async () => {
+//   await clear();
+//   navigateTo("/login");
+// };
 </script>
 
 <style scoped>

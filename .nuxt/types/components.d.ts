@@ -193,6 +193,8 @@ interface _GlobalComponents {
   NUploadTrigger: typeof import("naive-ui")['NUploadTrigger']
   NVirtualList: typeof import("naive-ui")['NVirtualList']
   NWatermark: typeof import("naive-ui")['NWatermark']
+  NuxtLinkLocale: typeof import("../../node_modules/@nuxtjs/i18n/dist/runtime/components/NuxtLinkLocale")['default']
+  SwitchLocalePathLink: typeof import("../../node_modules/@nuxtjs/i18n/dist/runtime/components/SwitchLocalePathLink")['default']
   NuxtPage: typeof import("../../node_modules/nuxt/dist/pages/runtime/page")['default']
   NoScript: typeof import("../../node_modules/nuxt/dist/head/runtime/components")['NoScript']
   Link: typeof import("../../node_modules/nuxt/dist/head/runtime/components")['Link']
@@ -383,6 +385,8 @@ interface _GlobalComponents {
   LazyNUploadTrigger: LazyComponent<typeof import("naive-ui")['NUploadTrigger']>
   LazyNVirtualList: LazyComponent<typeof import("naive-ui")['NVirtualList']>
   LazyNWatermark: LazyComponent<typeof import("naive-ui")['NWatermark']>
+  LazyNuxtLinkLocale: LazyComponent<typeof import("../../node_modules/@nuxtjs/i18n/dist/runtime/components/NuxtLinkLocale")['default']>
+  LazySwitchLocalePathLink: LazyComponent<typeof import("../../node_modules/@nuxtjs/i18n/dist/runtime/components/SwitchLocalePathLink")['default']>
   LazyNuxtPage: LazyComponent<typeof import("../../node_modules/nuxt/dist/pages/runtime/page")['default']>
   LazyNoScript: LazyComponent<typeof import("../../node_modules/nuxt/dist/head/runtime/components")['NoScript']>
   LazyLink: LazyComponent<typeof import("../../node_modules/nuxt/dist/head/runtime/components")['Link']>

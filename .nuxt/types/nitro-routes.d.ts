@@ -6,6 +6,20 @@ declare module "nitropack/types" {
     '/api/auth/login': {
       'post': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/auth/login.post').default>>>>
     }
+    '/api/auth/logout': {
+      'post': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/auth/logout.post').default>>>>
+    }
+    '/api/auth/me': {
+      'get': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/auth/me.get').default>>>>
+      'patch': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/auth/me.patch').default>>>>
+    }
+    '/api/auth/me/avatar': {
+      'delete': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/auth/me/avatar.delete').default>>>>
+      'post': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/auth/me/avatar.post').default>>>>
+    }
+    '/api/auth/refresh': {
+      'post': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/auth/refresh.post').default>>>>
+    }
     '/api/auth/session': {
       'get': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/auth/session.get').default>>>>
     }
@@ -18,6 +32,9 @@ declare module "nitropack/types" {
     '/api/_auth/session': {
       'delete': Simplify<Serialize<Awaited<ReturnType<typeof import('../../node_modules/nuxt-auth-utils/dist/runtime/server/api/session.delete').default>>>>
       'get': Simplify<Serialize<Awaited<ReturnType<typeof import('../../node_modules/nuxt-auth-utils/dist/runtime/server/api/session.get').default>>>>
+    }
+    '/_i18n/:hash/:locale/messages.json': {
+      'default': Simplify<Serialize<Awaited<ReturnType<typeof import('../../node_modules/@nuxtjs/i18n/dist/runtime/server/routes/messages').default>>>>
     }
     '/_ipx/**': {
       'default': Simplify<Serialize<Awaited<ReturnType<typeof import('../../node_modules/@nuxt/image/dist/runtime/server/routes/_ipx').default>>>>

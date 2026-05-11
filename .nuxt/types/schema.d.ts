@@ -921,12 +921,87 @@ import { NuxtModule, ModuleDependencyMeta } from '@nuxt/schema'
    auth: {
       loadStrategy: string,
    },
+
+   i18n: {
+      baseUrl: string,
+
+      defaultLocale: string,
+
+      rootRedirect: any,
+
+      redirectStatusCode: number,
+
+      skipSettingLocaleOnNavigate: boolean,
+
+      locales: Array<{
+
+      }>,
+
+      detectBrowserLanguage: {
+         alwaysRedirect: boolean,
+
+         cookieCrossOrigin: boolean,
+
+         cookieDomain: any,
+
+         cookieKey: string,
+
+         cookieSecure: boolean,
+
+         fallbackLocale: string,
+
+         redirectOn: string,
+
+         useCookie: boolean,
+      },
+
+      experimental: {
+         localeDetector: string,
+
+         typedPages: boolean,
+
+         typedOptionsAndMessages: boolean,
+
+         alternateLinkCanonicalQueries: boolean,
+
+         devCache: boolean,
+
+         cacheLifetime: any,
+
+         stripMessagesPayload: boolean,
+
+         preload: boolean,
+
+         strictSeo: boolean,
+
+         nitroContextDetection: boolean,
+
+         httpCacheDuration: number,
+
+         compactRoutes: boolean,
+      },
+
+      domainLocales: {
+         az: {
+            domain: string,
+         },
+
+         en: {
+            domain: string,
+         },
+
+         ru: {
+            domain: string,
+         },
+      },
+   },
   }
 declare module '@nuxt/schema' {
   interface ModuleDependencies {
     ["auth-utils"]?: ModuleDependencyMeta<typeof import("nuxt-auth-utils").default extends NuxtModule<infer O> ? O | false : Record<string, unknown>> | false
     ["@bg-dev/nuxt-naiveui"]?: ModuleDependencyMeta<typeof import("@bg-dev/nuxt-naiveui").default extends NuxtModule<infer O> ? O | false : Record<string, unknown>> | false
     ["@nuxt/image"]?: ModuleDependencyMeta<typeof import("@nuxt/image").default extends NuxtModule<infer O> ? O | false : Record<string, unknown>> | false
+    ["@nuxtjs/i18n"]?: ModuleDependencyMeta<typeof import("@nuxtjs/i18n").default extends NuxtModule<infer O> ? O | false : Record<string, unknown>> | false
     ["@nuxt/telemetry"]?: ModuleDependencyMeta<typeof import("@nuxt/telemetry").default extends NuxtModule<infer O> ? O | false : Record<string, unknown>> | false
   }
   interface NuxtOptions {
@@ -942,6 +1017,10 @@ declare module '@nuxt/schema' {
      * Configuration for `@nuxt/image`
      */
     ["image"]: typeof import("@nuxt/image").default extends NuxtModule<infer O, unknown, boolean> ? O | false : Record<string, any> | false
+    /**
+     * Configuration for `@nuxtjs/i18n`
+     */
+    ["i18n"]: typeof import("@nuxtjs/i18n").default extends NuxtModule<infer O, unknown, boolean> ? O | false : Record<string, any> | false
     /**
      * Configuration for `@nuxt/telemetry`
      */
@@ -961,10 +1040,14 @@ declare module '@nuxt/schema' {
      */
     ["image"]?: typeof import("@nuxt/image").default extends NuxtModule<infer O, unknown, boolean> ? Partial<O> | false : Record<string, any> | false
     /**
+     * Configuration for `@nuxtjs/i18n`
+     */
+    ["i18n"]?: typeof import("@nuxtjs/i18n").default extends NuxtModule<infer O, unknown, boolean> ? Partial<O> | false : Record<string, any> | false
+    /**
      * Configuration for `@nuxt/telemetry`
      */
     ["telemetry"]?: typeof import("@nuxt/telemetry").default extends NuxtModule<infer O, unknown, boolean> ? Partial<O> | false : Record<string, any> | false
-    modules?: (undefined | null | false | NuxtModule<any> | string | [NuxtModule | string, Record<string, any>] | ["nuxt-auth-utils", Exclude<NuxtConfig["auth"], boolean>] | ["@bg-dev/nuxt-naiveui", Exclude<NuxtConfig["naiveui"], boolean>] | ["@nuxt/image", Exclude<NuxtConfig["image"], boolean>] | ["@nuxt/telemetry", Exclude<NuxtConfig["telemetry"], boolean>])[],
+    modules?: (undefined | null | false | NuxtModule<any> | string | [NuxtModule | string, Record<string, any>] | ["nuxt-auth-utils", Exclude<NuxtConfig["auth"], boolean>] | ["@bg-dev/nuxt-naiveui", Exclude<NuxtConfig["naiveui"], boolean>] | ["@nuxt/image", Exclude<NuxtConfig["image"], boolean>] | ["@nuxtjs/i18n", Exclude<NuxtConfig["i18n"], boolean>] | ["@nuxt/telemetry", Exclude<NuxtConfig["telemetry"], boolean>])[],
   }
   interface RuntimeConfig extends UserRuntimeConfig {}
   interface PublicRuntimeConfig extends UserPublicRuntimeConfig {}
@@ -974,6 +1057,7 @@ declare module 'nuxt/schema' {
     ["auth-utils"]?: ModuleDependencyMeta<typeof import("nuxt-auth-utils").default extends NuxtModule<infer O> ? O | false : Record<string, unknown>> | false
     ["@bg-dev/nuxt-naiveui"]?: ModuleDependencyMeta<typeof import("@bg-dev/nuxt-naiveui").default extends NuxtModule<infer O> ? O | false : Record<string, unknown>> | false
     ["@nuxt/image"]?: ModuleDependencyMeta<typeof import("@nuxt/image").default extends NuxtModule<infer O> ? O | false : Record<string, unknown>> | false
+    ["@nuxtjs/i18n"]?: ModuleDependencyMeta<typeof import("@nuxtjs/i18n").default extends NuxtModule<infer O> ? O | false : Record<string, unknown>> | false
     ["@nuxt/telemetry"]?: ModuleDependencyMeta<typeof import("@nuxt/telemetry").default extends NuxtModule<infer O> ? O | false : Record<string, unknown>> | false
   }
   interface NuxtOptions {
@@ -992,6 +1076,11 @@ declare module 'nuxt/schema' {
      * @see https://www.npmjs.com/package/@nuxt/image
      */
     ["image"]: typeof import("@nuxt/image").default extends NuxtModule<infer O, unknown, boolean> ? O | false : Record<string, any> | false
+    /**
+     * Configuration for `@nuxtjs/i18n`
+     * @see https://www.npmjs.com/package/@nuxtjs/i18n
+     */
+    ["i18n"]: typeof import("@nuxtjs/i18n").default extends NuxtModule<infer O, unknown, boolean> ? O | false : Record<string, any> | false
     /**
      * Configuration for `@nuxt/telemetry`
      * @see https://www.npmjs.com/package/@nuxt/telemetry
@@ -1015,11 +1104,16 @@ declare module 'nuxt/schema' {
      */
     ["image"]?: typeof import("@nuxt/image").default extends NuxtModule<infer O, unknown, boolean> ? Partial<O> | false : Record<string, any> | false
     /**
+     * Configuration for `@nuxtjs/i18n`
+     * @see https://www.npmjs.com/package/@nuxtjs/i18n
+     */
+    ["i18n"]?: typeof import("@nuxtjs/i18n").default extends NuxtModule<infer O, unknown, boolean> ? Partial<O> | false : Record<string, any> | false
+    /**
      * Configuration for `@nuxt/telemetry`
      * @see https://www.npmjs.com/package/@nuxt/telemetry
      */
     ["telemetry"]?: typeof import("@nuxt/telemetry").default extends NuxtModule<infer O, unknown, boolean> ? Partial<O> | false : Record<string, any> | false
-    modules?: (undefined | null | false | NuxtModule<any> | string | [NuxtModule | string, Record<string, any>] | ["nuxt-auth-utils", Exclude<NuxtConfig["auth"], boolean>] | ["@bg-dev/nuxt-naiveui", Exclude<NuxtConfig["naiveui"], boolean>] | ["@nuxt/image", Exclude<NuxtConfig["image"], boolean>] | ["@nuxt/telemetry", Exclude<NuxtConfig["telemetry"], boolean>])[],
+    modules?: (undefined | null | false | NuxtModule<any> | string | [NuxtModule | string, Record<string, any>] | ["nuxt-auth-utils", Exclude<NuxtConfig["auth"], boolean>] | ["@bg-dev/nuxt-naiveui", Exclude<NuxtConfig["naiveui"], boolean>] | ["@nuxt/image", Exclude<NuxtConfig["image"], boolean>] | ["@nuxtjs/i18n", Exclude<NuxtConfig["i18n"], boolean>] | ["@nuxt/telemetry", Exclude<NuxtConfig["telemetry"], boolean>])[],
   }
   interface RuntimeConfig extends SharedRuntimeConfig {}
   interface PublicRuntimeConfig extends SharedPublicRuntimeConfig {}

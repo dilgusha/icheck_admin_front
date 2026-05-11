@@ -1,103 +1,36 @@
 <template>
   <div class="flex flex-col gap-8">
-    <!-- Header Section -->
+    <!-- Header -->
     <div class="flex items-end justify-between border-b border-slate-100 pb-6">
       <div class="space-y-1">
-        <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight">
-          Geographical Regions
-        </h2>
+        <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight">Geographical Regions</h2>
         <p class="text-slate-500 text-sm font-medium">
-          Configure and manage service deployment regions across the global
-          healthcare network.
+          Configure and manage service deployment regions across the global healthcare network.
         </p>
       </div>
-
-      <div class="flex items-center gap-4">
-        <n-button quaternary size="large" class="!rounded-xl font-semibold text-slate-600">
-          <template #icon><Download :size="18" /></template>
-          Export
-        </n-button>
-        <n-button
-          type="primary"
-          size="large"
-          class="!rounded-xl font-bold px-8"
-          @click="showAddModal = true"
-        >
-          <template #icon><Plus :size="20" :stroke-width="2.5" /></template>
-          Create New Region
-        </n-button>
-      </div>
+      <n-button type="primary" size="large" class="!rounded-xl font-bold px-8" @click="openCreateModal">
+        <template #icon><Plus :size="20" :stroke-width="2.5" /></template>
+        Create New Region
+      </n-button>
     </div>
 
-    <!-- Stats Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      <n-card
-        v-for="stat in stats"
-        :key="stat.label"
-        size="small"
-        class="border-none shadow-sm hover:shadow-md transition-all duration-300 rounded-2xl bg-white"
-      >
-        <div class="flex items-center p-2 gap-5">
-          <div :class="['w-14 h-14 rounded-2xl flex items-center justify-center', stat.colorClass.replace('text-', 'bg-')]">
-            <component :is="stat.icon" :class="stat.colorClass" :size="28" />
-          </div>
-          <div class="flex flex-col gap-0.5">
-            <p class="text-[11px] text-slate-400 font-bold uppercase tracking-widest">{{ stat.label }}</p>
-            <div class="flex items-baseline gap-2">
-              <span class="text-2xl font-black text-slate-800">{{ stat.value }}</span>
-              <span v-if="stat.trend" class="text-[10px] font-bold text-green-500 flex items-center gap-0.5">
-                <ArrowUp :size="10" /> {{ stat.trend }}
-              </span>
-            </div>
-          </div>
-        </div>
-      </n-card>
-    </div>
-
-    <!-- Main Table Card -->
+    <!-- Table Card -->
     <n-card :bordered="false" class="border-none shadow-sm rounded-2xl overflow-hidden bg-white">
-      <!-- Toolbar -->
-      <div class="mb-6 flex flex-wrap items-center justify-between gap-6 p-1">
-        <div class="flex items-center gap-3 flex-1 min-w-[300px]">
-          <div class="relative flex-1 group">
-            <n-input
-              v-model:value="searchQuery"
-              placeholder="Quick search regions..."
-              size="large"
-              class="rounded-xl"
-            >
-              <template #prefix>
-                <Search :size="18" class="text-slate-400" />
-              </template>
-            </n-input>
-          </div>
-        </div>
-
-        <div class="flex items-center gap-3 bg-slate-50 p-1.5 rounded-xl border border-slate-200">
-          <n-button quaternary circle size="medium" @click="refresh()">
-            <template #icon>
-              <RefreshCw :size="18" :class="{ 'animate-spin': isLoading }" class="text-slate-500" />
-            </template>
-          </n-button>
-          <div class="w-px h-4 bg-slate-300 mx-1"></div>
-          <n-button quaternary class="rounded-lg text-slate-600 font-bold px-4">
-            <template #icon><Filter :size="16" class="mr-1" /></template>
-            Advanced Filtering
-          </n-button>
-        </div>
+      <div class="mb-6 flex items-center justify-between gap-6 p-1">
+        <n-input v-model:value="searchQuery" placeholder="Search regions..." size="large" class="rounded-xl max-w-sm">
+          <template #prefix><Search :size="18" class="text-slate-400" /></template>
+        </n-input>
+        <n-button quaternary circle size="medium" @click="refresh()">
+          <template #icon>
+            <RefreshCw :size="18" :class="{ 'animate-spin': isLoading }" class="text-slate-500" />
+          </template>
+        </n-button>
       </div>
 
-      <!-- Skeleton -->
       <div v-if="isLoading" class="space-y-4">
-        <div class="h-10 bg-slate-50 rounded-lg animate-pulse" v-for="i in 6" :key="i" />
+        <div v-for="i in 6" :key="i" class="h-10 bg-slate-50 rounded-lg animate-pulse" />
       </div>
-
-      <!-- Error -->
-      <n-alert v-else-if="error" type="error">
-        Məlumat yüklənmədi: {{ error }}
-      </n-alert>
-
-      <!-- Table -->
+      <n-alert v-else-if="error" type="error">Məlumat yüklənmədi</n-alert>
       <n-data-table
         v-else
         :columns="columns"
@@ -110,57 +43,202 @@
       />
     </n-card>
 
-    <!-- Modal -->
+    <!-- Create / Edit Modal -->
     <n-modal
-      v-model:show="showAddModal"
+      v-model:show="showModal"
       preset="card"
-      title="Create Deployment Region"
-      class="max-w-xl rounded-3xl overflow-hidden shadow-2xl"
+      :title="editingRegion ? 'Edit Region' : 'Create Region'"
+      class="max-w-md rounded-3xl overflow-hidden shadow-2xl"
     >
-      <div class="space-y-6 p-4">
-        <div class="grid grid-cols-2 gap-4">
-          <n-form-item label="Region Name" class="col-span-2">
-            <n-input placeholder="e.g. Western European Hub" size="large" class="rounded-xl" />
-          </n-form-item>
-        </div>
-      </div>
+      <n-tabs type="segment" animated v-model:value="activeTab" @update:value="handleTabChange">
+        <n-tab-pane name="az" tab="AZ">
+          <n-spin :show="isLoadingLang && activeTab === 'az'">
+            <div class="flex flex-col gap-4 pt-4">
+              <n-form-item label="Ad (AZ)">
+                <n-input v-model:value="modalForm.title.az" placeholder="Region adı..." size="large" class="rounded-xl" />
+              </n-form-item>
+            </div>
+          </n-spin>
+        </n-tab-pane>
+
+        <n-tab-pane name="en" tab="EN">
+          <n-spin :show="isLoadingLang && activeTab === 'en'">
+            <div class="flex flex-col gap-4 pt-4">
+              <n-form-item label="Name (EN)">
+                <n-input v-model:value="modalForm.title.en" placeholder="Region name..." size="large" class="rounded-xl" />
+              </n-form-item>
+            </div>
+          </n-spin>
+        </n-tab-pane>
+
+        <n-tab-pane name="ru" tab="RU">
+          <n-spin :show="isLoadingLang && activeTab === 'ru'">
+            <div class="flex flex-col gap-4 pt-4">
+              <n-form-item label="Название (RU)">
+                <n-input v-model:value="modalForm.title.ru" placeholder="Название региона..." size="large" class="rounded-xl" />
+              </n-form-item>
+            </div>
+          </n-spin>
+        </n-tab-pane>
+      </n-tabs>
+
       <template #action>
         <div class="flex justify-end gap-3">
-          <n-button ghost class="rounded-xl px-6" @click="showAddModal = false">Cancel</n-button>
-          <n-button type="primary" class="rounded-xl px-8" @click="showAddModal = false">Save</n-button>
+          <n-button ghost class="rounded-xl px-6" @click="showModal = false">Cancel</n-button>
+          <n-button
+            type="primary"
+            class="rounded-xl px-8"
+            :loading="createLoading || updateLoading"
+            @click="handleSubmit"
+          >
+            {{ editingRegion ? 'Update' : 'Save' }}
+          </n-button>
         </div>
       </template>
     </n-modal>
+
+    <!-- Delete Modal -->
+    <n-modal
+      v-model:show="showDeleteModal"
+      preset="dialog"
+      type="error"
+      title="Delete Region"
+      content="Bu regionu silmək istədiyinizə əminsiniz?"
+      positive-text="Sil"
+      negative-text="Ləğv et"
+      :loading="deleteLoading"
+      @positive-click="handleDelete"
+      @negative-click="showDeleteModal = false"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, h } from 'vue'
-import { NButton, NTag, NSpace, NAvatar, type DataTableColumns } from 'naive-ui'
-import {
-  Plus, Search, Filter, RefreshCw, Globe,
-  Activity, MoreHorizontal, Edit, Trash2,
-  Download, ArrowUp, Users,
-} from 'lucide-vue-next'
-import { useRegions } from '../composables/useRegions'
+import { ref, computed, h, reactive } from 'vue'
+import { NButton, NSpace, NAvatar, NSpin, useMessage, type DataTableColumns } from 'naive-ui'
+import { Plus, Search, RefreshCw, Edit, Trash2 } from 'lucide-vue-next'
+import { useRegions, useCreateRegion, useUpdateRegion, useDeleteRegion } from '../composables/useRegions'
+import type { Region } from '@icheck/api-contracts'
 
-// ---- Data ----
+const message = useMessage()
+
 const searchQuery = ref('')
-const showAddModal = ref(false)
 const { regions, isLoading, error, refresh } = useRegions(searchQuery)
 
-// ---- Stats ----
-const stats = [
-  { label: 'Total Network Nodes', value: '1,248', icon: Globe, colorClass: 'text-indigo-500', trend: '12%' },
-  { label: 'Active Facilities', value: '982', icon: Activity, colorClass: 'text-emerald-500', trend: '4%' },
-  { label: 'Staff Registered', value: '14,2k', icon: Users, colorClass: 'text-amber-500', trend: '18%' },
-  { label: 'System Uptime', value: '99.9%', icon: Activity, colorClass: 'text-blue-500' },
-]
+// ---- Modal state ----
+const showModal = ref(false)
+const showDeleteModal = ref(false)
+const editingRegion = ref<Region | null>(null)
+const deletingId = ref<number | null>(null)
+const activeTab = ref('az')
+const isLoadingLang = ref(false)
+const loadedLangs = ref(new Set<string>())
+
+const modalForm = reactive({
+  title: { az: '', en: '', ru: '' },
+})
+
+const resetForm = () => {
+  modalForm.title = { az: '', en: '', ru: '' }
+}
+
+// ---- Composables ----
+const { createRegion, loading: createLoading } = useCreateRegion()
+const { updateRegion, loading: updateLoading } = useUpdateRegion()
+const { deleteRegion, loading: deleteLoading } = useDeleteRegion()
+
+// ---- Lang fetch ----
+const fetchLangData = async (id: number, lang: string) => {
+  if (loadedLangs.value.has(lang)) return
+  isLoadingLang.value = true
+  try {
+    const token = useCookie('icheck_access').value
+    const data = await $fetch<{ data: Region }>(`https://icheckapi.200soft.com/api/v1/regions/${id}/`, {
+      headers: {
+        'Accept-Language': lang,
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+    })
+    modalForm.title[lang as 'az' | 'en' | 'ru'] = data.data.title
+    loadedLangs.value.add(lang)
+  } catch {
+    message.error(`${lang.toUpperCase()} dilində məlumat yüklənmədi`)
+  } finally {
+    isLoadingLang.value = false
+  }
+}
+
+const handleTabChange = async (lang: string) => {
+  activeTab.value = lang
+  if (editingRegion.value && !loadedLangs.value.has(lang)) {
+    await fetchLangData(editingRegion.value.id, lang)
+  }
+}
+
+// ---- Handlers ----
+const openCreateModal = () => {
+  editingRegion.value = null
+  resetForm()
+  activeTab.value = 'az'
+  loadedLangs.value = new Set()
+  showModal.value = true
+}
+
+const openEditModal = async (row: Region) => {
+  editingRegion.value = row
+  resetForm()
+  loadedLangs.value = new Set()
+  activeTab.value = 'az'
+  showModal.value = true
+  await fetchLangData(row.id, 'az')
+}
+
+const openDeleteModal = (id: number) => {
+  deletingId.value = id
+  showDeleteModal.value = true
+}
+
+const handleSubmit = async () => {
+  const titleObj: Record<string, string> = {}
+  if (modalForm.title.az) titleObj.az = modalForm.title.az
+  if (modalForm.title.en) titleObj.en = modalForm.title.en
+  if (modalForm.title.ru) titleObj.ru = modalForm.title.ru
+
+  if (Object.keys(titleObj).length === 0) {
+    message.warning('Ən azı bir dildə ad daxil edin')
+    return
+  }
+
+  try {
+    if (editingRegion.value) {
+      await updateRegion(editingRegion.value.id, { title: titleObj })
+      message.success('Region yeniləndi')
+    } else {
+      await createRegion({ title: titleObj })
+      message.success('Region yaradıldı')
+    }
+    showModal.value = false
+    clearNuxtData('regions-list')
+    await refresh()
+  } catch {
+    message.error('Xəta baş verdi')
+  }
+}
+
+const handleDelete = async () => {
+  if (!deletingId.value) return
+  try {
+    await deleteRegion(deletingId.value)
+    message.success('Region silindi')
+    showDeleteModal.value = false
+    await refresh()
+  } catch {
+    message.error('Silinmə zamanı xəta baş verdi')
+  }
+}
 
 // ---- Table ----
-type RegionRow = { id: number; title: string; clinic_ids: number[] }
-
-const columns: DataTableColumns<RegionRow> = [
+const columns: DataTableColumns<Region> = [
   {
     title: 'ID',
     key: 'id',
@@ -169,7 +247,7 @@ const columns: DataTableColumns<RegionRow> = [
   },
   {
     title: 'Region Name',
-    key: 'title',             
+    key: 'title',
     sorter: 'default',
     render: (row) =>
       h('div', { class: 'flex items-center gap-3' }, [
@@ -181,9 +259,28 @@ const columns: DataTableColumns<RegionRow> = [
   {
     title: 'Clinics',
     key: 'clinic_ids',
-    render: (row) => h('span', { class: 'font-bold text-slate-700' }, row.clinic_ids.length),
+    render: (row) => h('span', { class: 'font-bold text-slate-700' }, `${row.clinic_ids.length} klinika`),
   },
-  // ... actions
+  {
+    title: 'Actions',
+    key: 'actions',
+    align: 'right',
+    render: (row) =>
+      h(NSpace, { justify: 'end' }, {
+        default: () => [
+          h(NButton, {
+            size: 'small', quaternary: true, circle: true,
+            class: 'hover:bg-indigo-50 hover:text-indigo-600 opacity-0 group-hover:opacity-100 transition-all',
+            onClick: () => openEditModal(row),
+          }, { default: () => h(Edit, { size: 16 }) }),
+          h(NButton, {
+            size: 'small', quaternary: true, circle: true, type: 'error',
+            class: 'hover:bg-rose-50 opacity-0 group-hover:opacity-100 transition-all',
+            onClick: () => openDeleteModal(row.id),
+          }, { default: () => h(Trash2, { size: 16 }) }),
+        ],
+      }),
+  },
 ]
 </script>
 

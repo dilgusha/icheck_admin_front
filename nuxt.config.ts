@@ -36,7 +36,17 @@ export default defineNuxtConfig({
     },
     "@bg-dev/nuxt-naiveui",
     "@nuxt/image",
+    "@nuxtjs/i18n",
   ],
+  i18n: {
+    locales: [
+      { code: "az", name: "AZ", file: "az.json" },
+      { code: "en", name: "EN", file: "en.json" },
+      { code: "ru", name: "RU", file: "ru.json" },
+    ],
+    defaultLocale: "az",
+    langDir: "locales/",
+  },
 
   future: {
     compatibilityVersion: 4,

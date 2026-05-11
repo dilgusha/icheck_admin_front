@@ -28,8 +28,9 @@ export const getRefreshToken = (event: any): string | undefined => {
 };
 
 export const clearAuthCookies = (event: any) => {
-  deleteCookie(event, ACCESS_TOKEN_KEY);
-  deleteCookie(event, REFRESH_TOKEN_KEY);
+  deleteCookie(event, ACCESS_TOKEN_KEY, { path: "/" });
+  deleteCookie(event, REFRESH_TOKEN_KEY, { path: "/" });
+  deleteCookie(event, "lang", { path: "/" });
 };
 
 export const requireAuth = (event: any): string => {

@@ -1,0 +1,14 @@
+{
+  "symptoms": {
+    "title": "Simptomlar",
+    "description": "Səhiyyə şəbəkəsində simptomları idarə edin.",
+    "create": "Simptom yarat",
+    "search": "Simptom axtar...",
+    "deleteTitle": "Simptomu sil",
+    "deleteContent": "Bu simptomu silmək istədiyinizə əminsiniz?",
+    "name": "Simptom adı",
+    "gender": "Cins",
+    "side": "Tərəf",
+    "bodyPart": "Bədən hissəsi"
+  }
+}

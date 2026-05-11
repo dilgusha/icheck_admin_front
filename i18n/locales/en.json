@@ -1,0 +1,14 @@
+{
+  "symptoms": {
+    "title": "Symptoms",
+    "description": "Manage symptoms in the healthcare network.",
+    "create": "Create Symptom",
+    "search": "Search symptoms...",
+    "deleteTitle": "Delete Symptom",
+    "deleteContent": "Are you sure you want to delete this symptom?",
+    "name": "Symptom Name",
+    "gender": "Gender",
+    "side": "Side",
+    "bodyPart": "Body Part"
+  }
+}

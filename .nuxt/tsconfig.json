@@ -22,6 +22,34 @@
       "@nuxt/schema": [
         "../node_modules/@nuxt/schema"
       ],
+      "vue-i18n": [
+        "../node_modules/vue-i18n/dist/vue-i18n",
+        "../node_modules/vue-i18n"
+      ],
+      "@intlify/shared": [
+        "../node_modules/@intlify/shared/dist/shared",
+        "../node_modules/@intlify/shared"
+      ],
+      "@intlify/core": [
+        "../node_modules/@intlify/core/dist/core.node",
+        "../node_modules/@intlify/core"
+      ],
+      "@intlify/core-base": [
+        "../node_modules/@intlify/core-base/dist/core-base",
+        "../node_modules/@intlify/core-base"
+      ],
+      "@intlify/utils": [
+        "../node_modules/@intlify/utils/dist/index",
+        "../node_modules/@intlify/utils"
+      ],
+      "@intlify/utils/h3": [
+        "../node_modules/@intlify/utils/dist/h3",
+        "../node_modules/@intlify/utils"
+      ],
+      "@intlify/message-compiler": [
+        "../node_modules/@intlify/message-compiler/dist/message-compiler",
+        "../node_modules/@intlify/message-compiler"
+      ],
       "defu": [
         "../node_modules/defu"
       ],
@@ -109,6 +137,18 @@
       "#auth-utils": [
         "../node_modules/nuxt-auth-utils/dist/runtime/types/index"
       ],
+      "#i18n": [
+        "../node_modules/@nuxtjs/i18n/dist/runtime/composables/index"
+      ],
+      "#i18n-kit": [
+        "../node_modules/@nuxtjs/i18n/dist/runtime/kit"
+      ],
+      "#i18n-kit/*": [
+        "../node_modules/@nuxtjs/i18n/dist/runtime/kit/*"
+      ],
+      "#internal-i18n-types": [
+        "../node_modules/@nuxtjs/i18n/dist/types"
+      ],
       "#vue-router": [
         "../node_modules/vue-router"
       ],
@@ -161,6 +201,7 @@
     "allowSyntheticDefaultImports": true
   },
   "include": [
+    "../i18n/**/*",
     "../**/*",
     "../.config/nuxt.*",
     "./nuxt.d.ts",
@@ -177,6 +218,7 @@
     "../node_modules/nuxt-auth-utils/node_modules",
     "../node_modules/@bg-dev/nuxt-naiveui/node_modules",
     "../node_modules/@nuxt/image/node_modules",
+    "../node_modules/@nuxtjs/i18n/node_modules",
     "../node_modules/@nuxt/telemetry/node_modules",
     "../node_modules/runtime/server",
     "../node_modules/dist/runtime/server",
