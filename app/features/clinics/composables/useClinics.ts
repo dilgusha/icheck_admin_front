@@ -2,7 +2,7 @@ import type { Clinic, ClinicsListResponse, ClinicPayload, ClinicsQuery } from '@
 
 const BASE_URL = 'https://icheckapi.200soft.com/api/v1/clinics'
 
-const getRequestHeaders = () => {
+export const getRequestHeaders = () => {
   const token = useCookie('icheck_access').value
   const lang = useCookie('lang').value || 'az'
   return {

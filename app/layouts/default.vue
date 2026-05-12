@@ -284,7 +284,7 @@ const menuItems = [
 
   { label: "Regions", path: "/regions", icon: MapPin },
   { label: "Clinics", path: "/clinics", icon: Hospital },
-  // { label: "Doctors", path: "/doctors", icon: UserRound },
+  { label: "Doctors", path: "/doctors", icon: UserRound },
   { label: "Specialisations", path: "/specializations", icon: Stethoscope },
   { label: "Diseases", path: "/diseases", icon: Activity },
   { label: "Symptoms", path: "/symptoms", icon: Accessibility },
@@ -292,7 +292,14 @@ const menuItems = [
   // { label: "Diagnosis", path: "/diagnosis", icon: ClipboardCheck },
   { label: "Drugs", path: "/drugs", icon: Pill },
   // { label: "Prescriptions", path: "/prescriptions", icon: FileText },
-  // { label: "Appointments", path: "/appointments", icon: Calendar },
+  { label: "Appointments", path: "/appointments", icon: Calendar },
+  { 
+    label: "Users", 
+    path: "/users", 
+    icon: UserRound, 
+    permission: "users.view_user"
+  },
+  // { label: "Users", path: "/users", icon: UserRound},
   // { label: "Reviews", path: "/reviews", icon: Star },
   // { label: "Forum", path: "/forum", icon: MessageSquare },
   // { label: "Notifications", path: "/notifications", icon: Bell },
@@ -302,12 +309,24 @@ const menuItems = [
   // { label: "FAQ", path: "/faq", icon: HelpCircle },
 ];
 
-const { clear } = useUserSession();
+// const { clear } = useUserSession();
+const hasPermission = (permissionCode: string) => {
+  const user = currentUser.value;
+  if (!user) return false;
+  if (user.is_superuser) return true; 
 
-// const handleLogout = async () => {
-//   await clear();
-//   navigateTo("/login");
-// };
+  return (
+    user.user_permissions?.includes(permissionCode) ||
+    user.permissions?.includes(permissionCode)
+  );
+};
+
+const filteredMenuItems = computed(() => {
+  return menuItems.filter(item => {
+    if (!item.permission) return true; 
+    return hasPermission(item.permission);
+  });
+});
 </script>
 
 <style scoped>

@@ -3287,10 +3287,20 @@ const pathToI18nConfig = {
     "en": "/login",
     "ru": "/login"
   },
+  "/users": {
+    "az": "/users",
+    "en": "/users",
+    "ru": "/users"
+  },
   "/clinics": {
     "az": "/clinics",
     "en": "/clinics",
     "ru": "/clinics"
+  },
+  "/doctors": {
+    "az": "/doctors",
+    "en": "/doctors",
+    "ru": "/doctors"
   },
   "/profile": {
     "az": "/profile",
@@ -3317,6 +3327,11 @@ const pathToI18nConfig = {
     "en": "/symptoms",
     "ru": "/symptoms"
   },
+  "/appointments": {
+    "az": "/appointments",
+    "en": "/appointments",
+    "ru": "/appointments"
+  },
   "/specializations": {
     "az": "/specializations",
     "en": "/specializations",
@@ -3327,12 +3342,15 @@ const i18nPathToPath = {
   "/drugs": "/drugs",
   "/": "/",
   "/login": "/login",
+  "/users": "/users",
   "/clinics": "/clinics",
+  "/doctors": "/doctors",
   "/profile": "/profile",
   "/regions": "/regions",
   "/diseases": "/diseases",
   "/services": "/services",
   "/symptoms": "/symptoms",
+  "/appointments": "/appointments",
   "/specializations": "/specializations"
 };
 
@@ -3610,22 +3628,7 @@ _xk5gaM6xHtez2cAngS3u9cFuI5KlbmsmGgui1pTqMQ,
 _wH6JrtIxmaSoA8lCPWFnE9z4lQeXW6H5z3l5aymEQw
 ];
 
-const assets = {
-  "/index.mjs": {
-    "type": "text/javascript; charset=utf-8",
-    "etag": "\"2724a-Pokcmk49a3HDqcGU/HYFRVmmAUc\"",
-    "mtime": "2026-05-11T12:52:56.488Z",
-    "size": 160330,
-    "path": "index.mjs"
-  },
-  "/index.mjs.map": {
-    "type": "application/json",
-    "etag": "\"97e19-mvSygMMwn3x6Br59kSFDNWcq9fY\"",
-    "mtime": "2026-05-11T12:52:56.488Z",
-    "size": 622105,
-    "path": "index.mjs.map"
-  }
-};
+const assets = {};
 
 function readAsset (id) {
   const serverDir = dirname$1(fileURLToPath(globalThis._importMeta_.url));

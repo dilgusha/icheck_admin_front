@@ -198,35 +198,56 @@
 <div class="flex flex-col gap-4 mt-4 border-t pt-4">
   <n-form-item label="Simptomlar">
     <n-select
-      v-model:value="modalForm.symptom_ids"
-      :options="symptomOptions"
-      multiple
-      filterable
-      placeholder="Simptom seçin..."
-      size="large"
-    />
+    v-model:value="modalForm.symptom_ids"
+    :options="symptomOptions"
+    :loading="symptomPending"
+    multiple
+    filterable
+    remote
+    clearable
+    placeholder="Simptom seçin..."
+    size="large"
+    :menu-props="{ onScroll: symptomHandleScroll }"
+    @search="symptomHandleSearch"
+    @update:value="symptomHandleValueChange"
+    @update:show="(show: boolean) => show && symptomOnDropdownShow()"
+  />
   </n-form-item>
 
   <n-form-item label="Xidmətlər">
     <n-select
-      v-model:value="modalForm.service_ids"
-      :options="serviceOptions"
-      multiple
-      filterable
-      placeholder="Xidmət seçin..."
-      size="large"
-    />
+    v-model:value="modalForm.service_ids"
+    :options="serviceOptions"
+    :loading="servicePending"
+    multiple
+    filterable
+    remote
+    clearable
+    placeholder="Xidmət seçin..."
+    size="large"
+    :menu-props="{ onScroll: serviceHandleScroll }"
+    @search="serviceHandleSearch"
+    @update:value="serviceHandleValueChange"
+    @update:show="(show: boolean) => show && serviceOnDropdownShow()"
+  />
   </n-form-item>
 
   <n-form-item label="İxtisaslar">
-    <n-select
-      v-model:value="modalForm.specialization_ids"
-      :options="specializationOptions"
-      multiple
-      filterable
-      placeholder="İxtisas seçin..."
-      size="large"
-    />
+     <n-select
+    v-model:value="modalForm.specialization_ids"
+    :options="specializationOptions"
+    :loading="specializationPending"
+    multiple
+    filterable
+    remote
+    clearable
+    placeholder="İxtisas seçin..."
+    size="large"
+    :menu-props="{ onScroll: specializationHandleScroll }"
+    @search="specializationHandleSearch"
+    @update:value="specializationHandleValueChange"
+    @update:show="(show: boolean) => show && specializationOnDropdownShow()"
+  />
   </n-form-item>
 </div>
 
@@ -293,24 +314,127 @@ import {
   useDeleteDisease,
   useGetDisease,
 } from "../composables/useDiseases";
+import type { SelectOption } from "naive-ui";
+import { useRemoteSelect } from "~/composables/useRemoteSelect";
+import { getRequestHeaders } from "../composables/useDiseases";
 
-import { useSymptoms } from "../../symptoms/composables/useSymptoms";
-import { useServices } from "../../services/composables/useServices";
-import { useSpecializations } from "../../specializations/composables/useSpecializations";
+const symptomInitialOptions = computed<SelectOption[]>(() =>
+  modalForm.symptom_ids.map((id) => ({
+    value: id,
+    label: `Simptom #${id}`,
+  }))
+);
 
-const { symptoms } = useSymptoms();
-const { services } = useServices();
-const { specializations } = useSpecializations();
+const serviceInitialOptions = computed<SelectOption[]>(() =>
+  modalForm.service_ids.map((id) => ({
+    value: id,
+    label: `Xidmət #${id}`,
+  }))
+);
 
-const symptomOptions = computed(() =>
-  symptoms.value.map((s) => ({ label: s.title, value: s.id }))
+const specializationInitialOptions = computed<SelectOption[]>(() =>
+  modalForm.specialization_ids.map((id) => ({
+    value: id,
+    label: `İxtisas #${id}`,
+  }))
 );
-const serviceOptions = computed(() =>
-  services.value.map((s) => ({ label: s.title, value: s.id }))
+
+const {
+  options: symptomOptions,
+  pending: symptomPending,
+  handleSearch: symptomHandleSearch,
+  handleScroll: symptomHandleScroll,
+  handleValueChange: symptomHandleValueChange,
+  onDropdownShow: symptomOnDropdownShow,
+  reset: symptomReset,
+} = useRemoteSelect(
+  (params) =>
+    $fetch<any>("https://icheckapi.200soft.com/api/v1/symptoms/", {
+      headers: getRequestHeaders(),
+      query: {
+        page: params.page,
+        per_page: params.per_page,
+        search: params.search,
+      },
+    }),
+  (item: any) => ({
+    value: item.id,
+    label: item.title,
+  }),
+  {
+    key: "disease-form-symptoms",
+    per_page: 10,
+    debounceMs: 300,
+    loadOnOpen: true,
+    initialOption: symptomInitialOptions,
+    selectedValues: computed(() => modalForm.symptom_ids),
+  }
 );
-const specializationOptions = computed(() =>
-  specializations.value.map((s) => ({ label: s.title, value: s.id }))
+
+const {
+  options: serviceOptions,
+  pending: servicePending,
+  handleSearch: serviceHandleSearch,
+  handleScroll: serviceHandleScroll,
+  handleValueChange: serviceHandleValueChange,
+  onDropdownShow: serviceOnDropdownShow,
+  reset: serviceReset,
+} = useRemoteSelect(
+  (params) =>
+    $fetch<any>("https://icheckapi.200soft.com/api/v1/services/", {
+      headers: getRequestHeaders(),
+      query: {
+        page: params.page,
+        per_page: params.per_page,
+        search: params.search,
+      },
+    }),
+  (item: any) => ({
+    value: item.id,
+    label: item.title,
+  }),
+  {
+    key: "disease-form-services",
+    per_page: 10,
+    debounceMs: 300,
+    loadOnOpen: true,
+    initialOption: serviceInitialOptions,
+    selectedValues: computed(() => modalForm.service_ids),
+  }
 );
+
+const {
+  options: specializationOptions,
+  pending: specializationPending,
+  handleSearch: specializationHandleSearch,
+  handleScroll: specializationHandleScroll,
+  handleValueChange: specializationHandleValueChange,
+  onDropdownShow: specializationOnDropdownShow,
+  reset: specializationReset,
+} = useRemoteSelect(
+  (params) =>
+    $fetch<any>("https://icheckapi.200soft.com/api/v1/specializations/", {
+      headers: getRequestHeaders(),
+      query: {
+        page: params.page,
+        per_page: params.per_page,
+        search: params.search,
+      },
+    }),
+  (item: any) => ({
+    value: item.id,
+    label: item.title,
+  }),
+  {
+    key: "disease-form-specializations",
+    per_page: 10,
+    debounceMs: 300,
+    loadOnOpen: true,
+    initialOption: specializationInitialOptions,
+    selectedValues: computed(() => modalForm.specialization_ids),
+  }
+);
+
 import type { Disease } from "@icheck/api-contracts";
 
 const message = useMessage();
@@ -319,7 +443,6 @@ const message = useMessage();
 const searchQuery = ref("");
 const filterTop = ref(false);
 const filterEmergency = ref(false);
-// script-ə əlavə et
 const filterGender = ref<string | null>(null);
 const filterSide = ref<string | null>(null);
 const filterBodyPart = ref("");
@@ -411,11 +534,16 @@ const handleTabChange = async (lang: string) => {
     await fetchLangData(editingDisease.value.id, lang);
   }
 };
-
+const resetRemoteSelects = () => {
+  symptomReset();
+  serviceReset();
+  specializationReset();
+};
 // ---- Handlers ----
 const openCreateModal = () => {
   editingDisease.value = null;
   resetForm();
+  resetRemoteSelects();
   activeTab.value = "az";
   loadedLangs.value = new Set();
   showModal.value = true;
@@ -424,6 +552,7 @@ const openCreateModal = () => {
 const openEditModal = async (row: Disease) => {
   editingDisease.value = row
   resetForm()
+  resetRemoteSelects();
   modalForm.symptom_ids = [...(row.symptom_ids ?? [])]
   modalForm.service_ids = [...(row.service_ids ?? [])]
   modalForm.specialization_ids = [...(row.specialization_ids ?? [])]

@@ -31,6 +31,7 @@ export { setInterval } from '#app/compat/interval';
 export { useRouteBaseName, useLocalePath, useLocaleRoute, useSwitchLocalePath, useLocaleHead, useBrowserLocale, useCookieLocale, useSetI18nParams, useI18nPreloadKeys, defineI18nRoute, defineI18nLocale, defineI18nConfig } from '../node_modules/@nuxtjs/i18n/dist/runtime/composables/index';
 export { definePageMeta } from '../node_modules/nuxt/dist/pages/runtime/composables';
 export { defineLazyHydrationComponent } from '#app/composables/lazy-hydration';
+export { useRemoteSelect, RemoteSelectParams, ICheckPaginatedResponse, UseRemoteSelectOptions } from '../app/composables/useRemoteSelect';
 export { useUserSession } from '../node_modules/nuxt-auth-utils/dist/runtime/app/composables/session';
 export { useNaiveColorMode } from '../node_modules/@bg-dev/nuxt-naiveui/dist/runtime/composables/useNaiveColorMode';
 export { useNaiveDevice } from '../node_modules/@bg-dev/nuxt-naiveui/dist/runtime/composables/useNaiveDevice';

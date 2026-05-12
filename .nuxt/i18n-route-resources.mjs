@@ -15,10 +15,20 @@ export const pathToI18nConfig = {
     "en": "/login",
     "ru": "/login"
   },
+  "/users": {
+    "az": "/users",
+    "en": "/users",
+    "ru": "/users"
+  },
   "/clinics": {
     "az": "/clinics",
     "en": "/clinics",
     "ru": "/clinics"
+  },
+  "/doctors": {
+    "az": "/doctors",
+    "en": "/doctors",
+    "ru": "/doctors"
   },
   "/profile": {
     "az": "/profile",
@@ -45,6 +55,11 @@ export const pathToI18nConfig = {
     "en": "/symptoms",
     "ru": "/symptoms"
   },
+  "/appointments": {
+    "az": "/appointments",
+    "en": "/appointments",
+    "ru": "/appointments"
+  },
   "/specializations": {
     "az": "/specializations",
     "en": "/specializations",
@@ -55,11 +70,14 @@ export const i18nPathToPath = {
   "/drugs": "/drugs",
   "/": "/",
   "/login": "/login",
+  "/users": "/users",
   "/clinics": "/clinics",
+  "/doctors": "/doctors",
   "/profile": "/profile",
   "/regions": "/regions",
   "/diseases": "/diseases",
   "/services": "/services",
   "/symptoms": "/symptoms",
+  "/appointments": "/appointments",
   "/specializations": "/specializations"
 };

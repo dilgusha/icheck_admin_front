@@ -18,7 +18,23 @@
         <n-input v-model:value="searchQuery" placeholder="Search clinics..." size="large" class="rounded-xl max-w-sm" clearable>
           <template #prefix><Search :size="18" class="text-slate-400" /></template>
         </n-input>
-        <n-select v-model:value="filterRegionId" :options="regionOptions" placeholder="Filter by region" size="large" clearable class="w-48" />
+        <n-select
+  v-model:value="filterRegionId"
+  :options="regionOptions"
+  :loading="regionPending"
+  filterable
+  remote
+  clearable
+  placeholder="Filter by region"
+  size="large"
+  class="w-48"
+  :menu-props="{ onScroll: regionHandleScroll }"
+  @update:value="onRegionFilterUpdate"
+  @search="regionHandleSearch"
+  @update:show="(show: boolean) => show && regionOnDropdownShow()"
+/>
+
+
         <div class="flex items-center gap-2">
           <span class="text-sm text-slate-500">Top</span>
           <n-switch v-model:value="filterTop" />
@@ -110,7 +126,22 @@
             <n-input v-model:value="modalForm.phone" placeholder="+994..." size="large" class="rounded-xl" />
           </n-form-item>
           <n-form-item label="Region">
-            <n-select v-model:value="modalForm.region_id" :options="regionOptions" placeholder="Seçin" size="large" clearable />
+           <n-select
+  v-model:value="modalForm.region_id"
+  :options="regionOptions"
+  :loading="regionPending"
+  filterable
+  remote
+  clearable
+  placeholder="Seçin"
+  size="large"
+  :menu-props="{ onScroll: regionHandleScroll }"
+  @update:value="onRegionFormUpdate"
+  @search="regionHandleSearch"
+  @update:show="(show: boolean) => show && regionOnDropdownShow()"
+/>
+
+
           </n-form-item>
         </div>
         <div class="grid grid-cols-2 gap-4">
@@ -155,11 +186,15 @@
 
 <script setup lang="ts">
 import { ref, computed, h, reactive } from 'vue'
-import { NButton, NSpace, NAvatar, NTag, NSpin, useMessage, type DataTableColumns } from 'naive-ui'
+import { NButton, NSpace, NAvatar, NTag, NSpin, useMessage, type DataTableColumns, type SelectOption } from 'naive-ui'
 import { Plus, Search, RefreshCw, Edit, Trash2 } from 'lucide-vue-next'
 import { useClinics, useCreateClinic, useUpdateClinic, useDeleteClinic } from '../composables/useClinics'
 import { useRegions } from '../../regions/composables/useRegions'
 import type { Clinic } from '@icheck/api-contracts'
+import {getRequestHeaders} from '../composables/useClinics'
+import { useRemoteSelect } from '~/composables/useRemoteSelect'
+
+
 
 const message = useMessage()
 
@@ -175,10 +210,67 @@ const query = computed(() => ({
 
 const { clinics, isLoading, error, refresh } = useClinics(query)
 const { regions } = useRegions()
+const regionInitialOption = computed<SelectOption | null>(() => {
+  const id = modalForm.region_id ?? filterRegionId.value
+  if (id == null) return null
 
-const regionOptions = computed(() =>
-  regions.value.map((r) => ({ label: r.title, value: r.id }))
+  const region = regions.value.find((r) => r.id === id)
+  return {
+    value: id,
+    label: region?.title ?? `Region #${id}`,
+  }
+})
+
+const selectedRegionValues = computed(() =>
+  [filterRegionId.value, modalForm.region_id].filter((v) => v != null)
 )
+
+// const regionOptions = computed(() =>
+//   regions.value.map((r) => ({ label: r.title, value: r.id }))
+// )
+
+const {
+  options: regionOptions,
+  pending: regionPending,
+  handleSearch: regionHandleSearch,
+  handleScroll: regionHandleScroll,
+  handleValueChange: regionHandleValueChange,
+  onDropdownShow: regionOnDropdownShow,
+  reset: regionReset,
+} = useRemoteSelect(
+  (params) =>
+    $fetch('https://icheckapi.200soft.com/api/v1/regions/', {
+      headers: getRequestHeaders(),
+      query: {
+        page: params.page,
+        per_page: params.per_page,
+        search: params.search,
+      },
+    }),
+  (item: any) => ({
+    value: item.id,
+    label: item.title,
+  }),
+  {
+    key: 'clinic-form-regions',
+    per_page: 10,
+    debounceMs: 300,
+    loadOnOpen: true,
+    initialOption: regionInitialOption,
+    selectedValues: selectedRegionValues,
+  }
+)
+
+function onRegionFilterUpdate(value: number | null) {
+  filterRegionId.value = value
+  regionHandleValueChange()
+}
+
+function onRegionFormUpdate(value: number | null) {
+  modalForm.region_id = value
+  regionHandleValueChange()
+}
+
 
 // ---- Modal state ----
 const showModal = ref(false)
@@ -258,6 +350,7 @@ const handleTabChange = async (lang: string) => {
 const openCreateModal = () => {
   editingClinic.value = null
   resetForm()
+  regionReset()
   activeTab.value = 'az'
   loadedLangs.value = new Set()
   showModal.value = true
@@ -266,11 +359,13 @@ const openCreateModal = () => {
 const openEditModal = async (row: Clinic) => {
   editingClinic.value = row
   resetForm()
+  regionReset()
   loadedLangs.value = new Set()
   activeTab.value = 'az'
   showModal.value = true
   await fetchLangData(row.id, 'az')
 }
+
 
 const openDeleteModal = (id: number) => {
   deletingId.value = id

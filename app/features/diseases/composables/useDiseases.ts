@@ -2,7 +2,7 @@ import type { Disease, DiseasesListResponse, DiseasePayload, DiseasesQuery } fro
 
 const BASE_URL = 'https://icheckapi.200soft.com/api/v1/diseases'
 
-const getRequestHeaders = () => {
+export const getRequestHeaders = () => {
   const token = useCookie('icheck_access').value
   const lang = useCookie('lang').value || 'az'
   return {

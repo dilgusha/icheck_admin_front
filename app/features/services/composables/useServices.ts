@@ -2,7 +2,7 @@ import type { Service, ServicesListResponse, ServicePayload, ServicesQuery } fro
 
 const BASE_URL = 'https://icheckapi.200soft.com/api/v1/services'
 
-const getRequestHeaders = () => {
+export const getRequestHeaders = () => {
   const token = useCookie('icheck_access').value
   const lang = useCookie('lang').value || 'az'
   return {
