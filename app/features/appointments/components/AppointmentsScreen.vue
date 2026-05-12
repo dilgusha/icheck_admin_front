@@ -518,10 +518,20 @@ const {
         search: params.search,
       },
     }),
-  (item: any) => ({
-    value: item.id,
-    label: `${item.first_name} ${item.last_name}`.trim() || item.username,
-  }),
+  (item: any) => {
+    const fullName =
+      item.fullname ||
+      [item.first_name, item.last_name].filter(Boolean).join(" ") ||
+      item.name ||
+      item.username ||
+      item.email ||
+      `Pasiyent #${item.id}`;
+
+    return {
+      value: item.id,
+      label: fullName,
+    };
+  },
   {
     key: "appointment-create-patients",
     per_page: 10,
