@@ -1,19 +1,15 @@
-import type { Region, RegionsListResponse } from "@icheck/api-contracts";
+import type { Region, RegionsListResponse } from '@icheck/api-contracts'
 
-const BASE_URL = "https://icheckapi.200soft.com/api/v1/regions";
+const BASE_URL = '/admin/regions'
 
-const getRequestHeaders = () => {
-  const token = useCookie("icheck_access").value;
-  const lang = useCookie("lang").value || "az";
-  return {
-    "Accept-Language": lang,
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
-  };
-};
+type RegionPayload = {
+  title: Record<string, string>
+}
 
-// GET /api/v1/regions/
 export const useRegions = (search?: Ref<string>) => {
-  const langCookie = useCookie("lang");
+  const { $api } = useNuxtApp()
+  const langCookie = useCookie('lang')
+
   const { data, status, refresh, error } = useFetch<RegionsListResponse>(
     `${BASE_URL}/`,
     {
@@ -24,100 +20,89 @@ export const useRegions = (search?: Ref<string>) => {
       query: computed(() => ({
         ...(search?.value ? { search: search.value } : {}),
       })),
-      onRequest({ options }) {
-        options.headers = {
-          ...options.headers,
-          ...getRequestHeaders(),
-        };
-      },
-      onResponse({ response }) {
-        // console.log("Full response:", JSON.stringify(response._data));
-      },
-    },
-  );
+      $fetch: $api,
+    }
+  )
 
   return {
     regions: computed(() => data.value?.data ?? []),
     total: computed(() => data.value?.data?.length ?? 0),
-    isLoading: computed(() => status.value === "pending"),
+    isLoading: computed(() => status.value === 'pending'),
     error,
     refresh,
-  };
-};
+  }
+}
 
-// POST /api/v1/regions/
 export const useCreateRegion = () => {
-  const loading = ref(false);
-  const error = ref<string | null>(null);
+  const { $api } = useNuxtApp()
+  const loading = ref(false)
+  const error = ref<string | null>(null)
 
-  const createRegion = async (payload: {title: Record<string, string>  }) => {
-    loading.value = true;
-    error.value = null;
+  const createRegion = async (payload: RegionPayload) => {
+    loading.value = true
+    error.value = null
+
     try {
-      const result = await $fetch<{ data: Region }>(`${BASE_URL}/`, {
-        method: "POST",
-        headers: getRequestHeaders(),
-        body:payload
-      });
-      return result;
+      return await $api<{ data: Region }>(`${BASE_URL}/`, {
+        method: 'POST',
+        body: payload,
+      })
     } catch (err: any) {
-      error.value = err?.data?.detail || "Xəta baş verdi";
-      throw err;
+      error.value = err?.data?.detail || 'Xəta baş verdi'
+      throw err
     } finally {
-      loading.value = false;
+      loading.value = false
     }
-  };
+  }
 
-  return { createRegion, loading, error };
-};
+  return { createRegion, loading, error }
+}
 
-// PATCH /api/v1/regions/{id}/
 export const useUpdateRegion = () => {
-  const loading = ref(false);
-  const error = ref<string | null>(null);
+  const { $api } = useNuxtApp()
+  const loading = ref(false)
+  const error = ref<string | null>(null)
 
-  // useRegions.ts - updateRegion
-  const updateRegion = async (id: number, payload: { title: Record<string, string> }) => {
-    loading.value = true;
-    error.value = null;
+  const updateRegion = async (id: number, payload: RegionPayload) => {
+    loading.value = true
+    error.value = null
+
     try {
-      const result = await $fetch<{ data: Region }>(`${BASE_URL}/${id}/`, {
-        method: "PATCH",
-        headers: getRequestHeaders(),
-        body: payload
-      });
-      return result;
+      return await $api<{ data: Region }>(`${BASE_URL}/${id}/`, {
+        method: 'PATCH',
+        body: payload,
+      })
     } catch (err: any) {
-      error.value = err?.data?.detail || "Xəta baş verdi";
-      throw err;
+      error.value = err?.data?.detail || 'Xəta baş verdi'
+      throw err
     } finally {
-      loading.value = false;
+      loading.value = false
     }
-  };
+  }
 
-  return { updateRegion, loading, error };
-};
+  return { updateRegion, loading, error }
+}
 
-// DELETE /api/v1/regions/{id}/
 export const useDeleteRegion = () => {
-  const loading = ref(false);
-  const error = ref<string | null>(null);
+  const { $api } = useNuxtApp()
+  const loading = ref(false)
+  const error = ref<string | null>(null)
 
   const deleteRegion = async (id: number) => {
-    loading.value = true;
-    error.value = null;
-    try {
-      await $fetch(`${BASE_URL}/${id}/`, {
-        method: "DELETE",
-        headers: getRequestHeaders(),
-      });
-    } catch (err: any) {
-      error.value = err?.data?.detail || "Xəta baş verdi";
-      throw err;
-    } finally {
-      loading.value = false;
-    }
-  };
+    loading.value = true
+    error.value = null
 
-  return { deleteRegion, loading, error };
-};
+    try {
+      await $api(`${BASE_URL}/${id}/`, {
+        method: 'DELETE',
+      })
+    } catch (err: any) {
+      error.value = err?.data?.detail || 'Xəta baş verdi'
+      throw err
+    } finally {
+      loading.value = false
+    }
+  }
+
+  return { deleteRegion, loading, error }
+}

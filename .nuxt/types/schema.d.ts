@@ -916,7 +916,7 @@ import { NuxtModule, ModuleDependencyMeta } from '@nuxt/schema'
       },
    },
 
-   apiBaseUrl: string,
+   apiBase: string,
 
    auth: {
       loadStrategy: string,

@@ -112,7 +112,7 @@ import { NButton, NSpace, NAvatar, NSpin, useMessage, type DataTableColumns } fr
 import { Plus, Search, RefreshCw, Edit, Trash2 } from 'lucide-vue-next'
 import { useDrugs, useCreateDrug, useUpdateDrug, useDeleteDrug } from '../composables/useDrugs'
 import type { Drug } from '@icheck/api-contracts'
-
+const { $api, clearNuxtData } = useNuxtApp()
 const message = useMessage()
 
 const searchQuery = ref('')
@@ -145,11 +145,9 @@ const fetchLangData = async (id: number, lang: string) => {
   if (loadedLangs.value.has(lang)) return
   isLoadingLang.value = true
   try {
-    const token = useCookie('icheck_access').value
-    const data = await $fetch<{ data: Drug }>(`${BASE_URL}/${id}/`, {
+    const data = await $api<{ data: Drug }>(`/admin/drugs/${id}/`, {
       headers: {
         'Accept-Language': lang,
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
       },
     })
     modalForm.title[lang as 'az' | 'en' | 'ru'] = data.data.title
@@ -230,7 +228,6 @@ const handleDelete = async () => {
   }
 }
 
-const BASE_URL = 'https://icheckapi.200soft.com/api/v1/drugs'
 
 const columns: DataTableColumns<Drug> = [
   {

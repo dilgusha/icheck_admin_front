@@ -203,7 +203,49 @@
       <!-- Page Content -->
       <div class="flex-1 overflow-auto p-8 bg-[#f8fafc]/50">
         <div class="max-w-[1600px] mx-auto">
-          <slot />
+          <!-- <Transition name="fade" mode="out-in">
+            <div :key="route.path">
+              <slot />
+            </div>
+          </Transition> -->
+          <NuxtErrorBoundary :key="route.fullPath">
+  <Transition name="fade" mode="out-in">
+    <div :key="route.fullPath">
+      <slot />
+    </div>
+  </Transition>
+
+  <template #error="{ error, clearError }">
+    <div class="rounded-2xl border border-red-100 bg-white p-6 shadow-sm">
+      <h2 class="text-lg font-extrabold text-slate-900">
+        Səhifə yüklənmədi
+      </h2>
+
+      <p class="mt-2 text-sm text-slate-500">
+        Bu bölmədə xəta baş verdi. Sol menyudan başqa bölməyə keçə bilərsiniz.
+      </p>
+
+      <pre class="mt-4 max-h-48 overflow-auto rounded-xl bg-slate-950 p-4 text-xs text-red-100">{{ error?.message }}</pre>
+
+      <div class="mt-4 flex gap-3">
+        <n-button
+          type="primary"
+          @click="clearError"
+        >
+          Yenidən yoxla
+        </n-button>
+
+        <n-button
+          secondary
+          @click="clearError(); navigateTo('/')"
+        >
+          Dashboard
+        </n-button>
+      </div>
+    </div>
+  </template>
+</NuxtErrorBoundary>
+
         </div>
       </div>
     </main>
@@ -293,11 +335,15 @@ const menuItems = [
   { label: "Drugs", path: "/drugs", icon: Pill },
   // { label: "Prescriptions", path: "/prescriptions", icon: FileText },
   { label: "Appointments", path: "/appointments", icon: Calendar },
-  { 
-    label: "Users", 
-    path: "/users", 
-    icon: UserRound, 
-    permission: "users.view_user"
+  { label: 'Forum', path: '/forum', icon: MessageSquare },
+  { label: 'Content', path: '/content', icon: FileText },
+  { label: 'Faq', path: '/faq', icon: HelpCircle },
+  { label: 'Pages', path: '/pages', icon: FileText },
+  {
+    label: "Users",
+    path: "/users",
+    icon: UserRound,
+    permission: "users.view_user",
   },
   // { label: "Users", path: "/users", icon: UserRound},
   // { label: "Reviews", path: "/reviews", icon: Star },
@@ -313,7 +359,7 @@ const menuItems = [
 const hasPermission = (permissionCode: string) => {
   const user = currentUser.value;
   if (!user) return false;
-  if (user.is_superuser) return true; 
+  if (user.is_superuser) return true;
 
   return (
     user.user_permissions?.includes(permissionCode) ||
@@ -322,14 +368,22 @@ const hasPermission = (permissionCode: string) => {
 };
 
 const filteredMenuItems = computed(() => {
-  return menuItems.filter(item => {
-    if (!item.permission) return true; 
+  return menuItems.filter((item) => {
+    if (!item.permission) return true;
     return hasPermission(item.permission);
   });
 });
 </script>
 
 <style scoped>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.15s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
 .custom-scrollbar::-webkit-scrollbar {
   width: 5px;
 }

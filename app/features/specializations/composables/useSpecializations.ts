@@ -1,31 +1,25 @@
-import type { Specialization, SpecializationsListResponse, SpecializationPayload, SpecializationsQuery } from '@icheck/api-contracts'
+import type {
+  Specialization,
+  SpecializationsListResponse,
+  SpecializationPayload,
+  SpecializationsQuery,
+} from '@icheck/api-contracts'
 
-const BASE_URL = 'https://icheckapi.200soft.com/api/v1/specializations'
-
-const getRequestHeaders = () => {
-  const token = useCookie('icheck_access').value
-  const lang = useCookie('lang').value || 'az'
-  return {
-    'Accept-Language': lang,
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
-  }
-}
+const BASE_URL = '/admin/specializations'
 
 export const useSpecializations = (query?: Ref<SpecializationsQuery>) => {
+  const { $api } = useNuxtApp()
   const langCookie = useCookie('lang')
-  const { data, status, refresh, error } = useFetch<SpecializationsListResponse>(
-    `${BASE_URL}/`,
-    {
+
+  const { data, status, refresh, error } =
+    useFetch<SpecializationsListResponse>(`${BASE_URL}/`, {
       key: 'specializations-list',
       lazy: true,
       server: false,
       watch: [langCookie, query],
       query: computed(() => query?.value ?? {}),
-      onRequest({ options }) {
-        options.headers = getRequestHeaders()
-      },
-    }
-  )
+      $fetch: $api,
+    })
 
   return {
     specializations: computed(() => data.value?.data ?? []),
@@ -36,16 +30,17 @@ export const useSpecializations = (query?: Ref<SpecializationsQuery>) => {
 }
 
 export const useCreateSpecialization = () => {
+  const { $api } = useNuxtApp()
   const loading = ref(false)
   const error = ref<string | null>(null)
 
   const createSpecialization = async (payload: SpecializationPayload) => {
     loading.value = true
     error.value = null
+
     try {
-      return await $fetch<{ data: Specialization }>(`${BASE_URL}/`, {
+      return await $api<{ data: Specialization }>(`${BASE_URL}/`, {
         method: 'POST',
-        headers: getRequestHeaders(),
         body: payload,
       })
     } catch (err: any) {
@@ -60,16 +55,20 @@ export const useCreateSpecialization = () => {
 }
 
 export const useUpdateSpecialization = () => {
+  const { $api } = useNuxtApp()
   const loading = ref(false)
   const error = ref<string | null>(null)
 
-  const updateSpecialization = async (id: number, payload: Partial<SpecializationPayload>) => {
+  const updateSpecialization = async (
+    id: number,
+    payload: Partial<SpecializationPayload>
+  ) => {
     loading.value = true
     error.value = null
+
     try {
-      return await $fetch<{ data: Specialization }>(`${BASE_URL}/${id}/`, {
+      return await $api<{ data: Specialization }>(`${BASE_URL}/${id}/`, {
         method: 'PATCH',
-        headers: getRequestHeaders(),
         body: payload,
       })
     } catch (err: any) {
@@ -84,16 +83,17 @@ export const useUpdateSpecialization = () => {
 }
 
 export const useDeleteSpecialization = () => {
+  const { $api } = useNuxtApp()
   const loading = ref(false)
   const error = ref<string | null>(null)
 
   const deleteSpecialization = async (id: number) => {
     loading.value = true
     error.value = null
+
     try {
-      await $fetch(`${BASE_URL}/${id}/`, {
+      await $api(`${BASE_URL}/${id}/`, {
         method: 'DELETE',
-        headers: getRequestHeaders(),
       })
     } catch (err: any) {
       error.value = err?.data?.detail || 'Xəta baş verdi'

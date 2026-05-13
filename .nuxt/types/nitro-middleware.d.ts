@@ -1,4 +1,4 @@
-export type MiddlewareKey = "language"
+export type MiddlewareKey = "auth-global-client" | "language"
 declare module 'nitropack' {
   interface NitroRouteConfig {
     appMiddleware?: MiddlewareKey | MiddlewareKey[] | Record<MiddlewareKey, boolean>

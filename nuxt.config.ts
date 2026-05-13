@@ -101,7 +101,7 @@ export default defineNuxtConfig({
       "bu_chox_uzun_ve_gizli_bir_shifredir_32_simvol",
 
     public: {
-      apiBaseUrl: "https://icheckapi.200soft.com",
+      apiBase: process.env.NUXT_PUBLIC_API_BASE || 'https://icheckapi.200soft.com/api/v1',
     },
   },
 

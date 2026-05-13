@@ -195,61 +195,61 @@
         </n-tab-pane>
       </n-tabs>
       <!-- switch-lərdən sonra əlavə et -->
-<div class="flex flex-col gap-4 mt-4 border-t pt-4">
-  <n-form-item label="Simptomlar">
-    <n-select
-    v-model:value="modalForm.symptom_ids"
-    :options="symptomOptions"
-    :loading="symptomPending"
-    multiple
-    filterable
-    remote
-    clearable
-    placeholder="Simptom seçin..."
-    size="large"
-    :menu-props="{ onScroll: symptomHandleScroll }"
-    @search="symptomHandleSearch"
-    @update:value="symptomHandleValueChange"
-    @update:show="(show: boolean) => show && symptomOnDropdownShow()"
-  />
-  </n-form-item>
+      <div class="flex flex-col gap-4 mt-4 border-t pt-4">
+        <n-form-item label="Simptomlar">
+          <n-select
+            v-model:value="modalForm.symptom_ids"
+            :options="symptomOptions"
+            :loading="symptomPending"
+            multiple
+            filterable
+            remote
+            clearable
+            placeholder="Simptom seçin..."
+            size="large"
+            :menu-props="{ onScroll: symptomHandleScroll }"
+            @search="symptomHandleSearch"
+            @update:value="symptomHandleValueChange"
+            @update:show="(show: boolean) => show && symptomOnDropdownShow()"
+          />
+        </n-form-item>
 
-  <n-form-item label="Xidmətlər">
-    <n-select
-    v-model:value="modalForm.service_ids"
-    :options="serviceOptions"
-    :loading="servicePending"
-    multiple
-    filterable
-    remote
-    clearable
-    placeholder="Xidmət seçin..."
-    size="large"
-    :menu-props="{ onScroll: serviceHandleScroll }"
-    @search="serviceHandleSearch"
-    @update:value="serviceHandleValueChange"
-    @update:show="(show: boolean) => show && serviceOnDropdownShow()"
-  />
-  </n-form-item>
+        <n-form-item label="Xidmətlər">
+          <n-select
+            v-model:value="modalForm.service_ids"
+            :options="serviceOptions"
+            :loading="servicePending"
+            multiple
+            filterable
+            remote
+            clearable
+            placeholder="Xidmət seçin..."
+            size="large"
+            :menu-props="{ onScroll: serviceHandleScroll }"
+            @search="serviceHandleSearch"
+            @update:value="serviceHandleValueChange"
+            @update:show="(show: boolean) => show && serviceOnDropdownShow()"
+          />
+        </n-form-item>
 
-  <n-form-item label="İxtisaslar">
-     <n-select
-    v-model:value="modalForm.specialization_ids"
-    :options="specializationOptions"
-    :loading="specializationPending"
-    multiple
-    filterable
-    remote
-    clearable
-    placeholder="İxtisas seçin..."
-    size="large"
-    :menu-props="{ onScroll: specializationHandleScroll }"
-    @search="specializationHandleSearch"
-    @update:value="specializationHandleValueChange"
-    @update:show="(show: boolean) => show && specializationOnDropdownShow()"
-  />
-  </n-form-item>
-</div>
+        <n-form-item label="İxtisaslar">
+          <n-select
+            v-model:value="modalForm.specialization_ids"
+            :options="specializationOptions"
+            :loading="specializationPending"
+            multiple
+            filterable
+            remote
+            clearable
+            placeholder="İxtisas seçin..."
+            size="large"
+            :menu-props="{ onScroll: specializationHandleScroll }"
+            @search="specializationHandleSearch"
+            @update:value="specializationHandleValueChange"
+            @update:show="(show: boolean) => show && specializationOnDropdownShow()"
+          />
+        </n-form-item>
+      </div>
 
       <div class="flex gap-8 mt-6 border-t pt-4">
         <div class="flex items-center gap-2">
@@ -316,7 +316,7 @@ import {
 } from "../composables/useDiseases";
 import type { SelectOption } from "naive-ui";
 import { useRemoteSelect } from "~/composables/useRemoteSelect";
-import { getRequestHeaders } from "../composables/useDiseases";
+const { $api } = useNuxtApp();
 
 const symptomInitialOptions = computed<SelectOption[]>(() =>
   modalForm.symptom_ids.map((id) => ({
@@ -349,8 +349,7 @@ const {
   reset: symptomReset,
 } = useRemoteSelect(
   (params) =>
-    $fetch<any>("https://icheckapi.200soft.com/api/v1/symptoms/", {
-      headers: getRequestHeaders(),
+    $api<any>("/admin/symptoms/", {
       query: {
         page: params.page,
         per_page: params.per_page,
@@ -381,8 +380,7 @@ const {
   reset: serviceReset,
 } = useRemoteSelect(
   (params) =>
-    $fetch<any>("https://icheckapi.200soft.com/api/v1/services/", {
-      headers: getRequestHeaders(),
+    $api<any>("/admin/services/", {
       query: {
         page: params.page,
         per_page: params.per_page,
@@ -413,8 +411,7 @@ const {
   reset: specializationReset,
 } = useRemoteSelect(
   (params) =>
-    $fetch<any>("https://icheckapi.200soft.com/api/v1/specializations/", {
-      headers: getRequestHeaders(),
+    $api<any>("/admin/specializations/", {
       query: {
         page: params.page,
         per_page: params.per_page,
@@ -550,20 +547,20 @@ const openCreateModal = () => {
 };
 
 const openEditModal = async (row: Disease) => {
-  editingDisease.value = row
-  resetForm()
+  editingDisease.value = row;
+  resetForm();
   resetRemoteSelects();
-  modalForm.symptom_ids = [...(row.symptom_ids ?? [])]
-  modalForm.service_ids = [...(row.service_ids ?? [])]
-  modalForm.specialization_ids = [...(row.specialization_ids ?? [])]
-  modalForm.doctor_ids = [...(row.doctor_ids ?? [])]
-  modalForm.top = row.top
-  modalForm.emergency = row.emergency
-  loadedLangs.value = new Set()
-  activeTab.value = 'az'
-  showModal.value = true
-  await fetchLangData(row.id, 'az')
-}
+  modalForm.symptom_ids = [...(row.symptom_ids ?? [])];
+  modalForm.service_ids = [...(row.service_ids ?? [])];
+  modalForm.specialization_ids = [...(row.specialization_ids ?? [])];
+  modalForm.doctor_ids = [...(row.doctor_ids ?? [])];
+  modalForm.top = row.top;
+  modalForm.emergency = row.emergency;
+  loadedLangs.value = new Set();
+  activeTab.value = "az";
+  showModal.value = true;
+  await fetchLangData(row.id, "az");
+};
 
 const openDeleteModal = (id: number) => {
   deletingId.value = id;

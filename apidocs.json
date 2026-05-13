@@ -1,101 +1,6376 @@
 {
   "swagger": "2.0",
   "info": {
-    "title": "iCheck Admin API",
-    "description": "iCheck layihəsi üçün mərkəzi idarəetmə endpointləri",
-    "termsOfService": "https://icheckapi.200soft.com",
+    "title": "200 Soft | iCheck API",
+    "description": "200 Soft | iCheck API Swagger",
+    "termsOfService": "https://www.200soft.com/",
+    "contact": {
+      "email": "info@200soft.com"
+    },
+    "license": {
+      "name": "200 Soft | 200 Soft License"
+    },
     "version": "v1"
   },
-  "host": "api.icheck.az",
-  "basePath": "/",
+  "host": "icheckapi.200soft.com",
   "schemes": ["https"],
+  "basePath": "/",
   "consumes": ["application/json"],
   "produces": ["application/json"],
   "securityDefinitions": {
     "Bearer": {
       "type": "apiKey",
       "name": "Authorization",
-      "in": "header"
+      "in": "header",
+      "description": "⚠️ Enter: Bearer <your_token>  (include the word Bearer and a space)"
     }
   },
+  "security": [
+    {
+      "Bearer": []
+    }
+  ],
   "paths": {
-    "/auth/login/": {
-      "post": {
-        "tags": ["Auth"],
-        "summary": "Sistemə giriş",
+    "/api/v1/admin/ads/": {
+      "get": {
+        "operationId": "api_v1_admin_ads_list",
+        "description": "",
         "parameters": [
           {
-            "name": "body",
+            "name": "placement",
+            "in": "query",
+            "type": "string",
+            "enum": ["home", "doctor_list"]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/BannerAd"
+              }
+            }
+          }
+        },
+        "tags": ["Admin — Content"]
+      },
+      "post": {
+        "operationId": "api_v1_admin_ads_create",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/BannerAdWrite"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/BannerAd"
+            }
+          }
+        },
+        "tags": ["Admin — Content"]
+      },
+      "parameters": []
+    },
+    "/api/v1/admin/ads/{id}/": {
+      "get": {
+        "operationId": "api_v1_admin_ads_read",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/BannerAd"
+            }
+          }
+        },
+        "tags": ["Admin — Content"]
+      },
+      "patch": {
+        "operationId": "api_v1_admin_ads_partial_update",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/BannerAdWrite"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/BannerAd"
+            }
+          }
+        },
+        "tags": ["Admin — Content"]
+      },
+      "delete": {
+        "operationId": "api_v1_admin_ads_delete",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": "Banner ad deleted."
+          }
+        },
+        "tags": ["Admin — Content"]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    },
+    "/api/v1/admin/appointments/": {
+      "get": {
+        "operationId": "api_v1_admin_appointments_list",
+        "description": "",
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "doctor_id",
+            "in": "query",
+            "type": "integer"
+          },
+          {
+            "name": "patient_id",
+            "in": "query",
+            "type": "integer"
+          },
+          {
+            "name": "date_from",
+            "in": "query",
+            "description": "YYYY-MM-DD",
+            "type": "string"
+          },
+          {
+            "name": "date_to",
+            "in": "query",
+            "description": "YYYY-MM-DD",
+            "type": "string"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "type": "integer"
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/PaginatedAdminAppointmentList"
+            }
+          }
+        },
+        "tags": ["Admin — Appointments"]
+      },
+      "post": {
+        "operationId": "api_v1_admin_appointments_create",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/AdminAppointmentCreate"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Appointment created."
+          }
+        },
+        "tags": ["Admin — Appointments"]
+      },
+      "parameters": []
+    },
+    "/api/v1/admin/appointments/{id}/": {
+      "get": {
+        "operationId": "api_v1_admin_appointments_read",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Appointment detail."
+          }
+        },
+        "tags": ["Admin — Appointments"]
+      },
+      "patch": {
+        "operationId": "api_v1_admin_appointments_partial_update",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/AdminAppointmentUpdate"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Appointment updated."
+          }
+        },
+        "tags": ["Admin — Appointments"]
+      },
+      "delete": {
+        "operationId": "api_v1_admin_appointments_delete",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": "Appointment deleted."
+          }
+        },
+        "tags": ["Admin — Appointments"]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    },
+    "/api/v1/admin/clinics/": {
+      "get": {
+        "operationId": "api_v1_admin_clinics_list",
+        "description": "",
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "region_id",
+            "in": "query",
+            "type": "integer"
+          },
+          {
+            "name": "service_id",
+            "in": "query",
+            "type": "integer"
+          },
+          {
+            "name": "top",
+            "in": "query",
+            "type": "boolean"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "type": "integer"
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/PaginatedClinic"
+            }
+          }
+        },
+        "tags": ["Admin — Reference Data"]
+      },
+      "post": {
+        "operationId": "api_v1_admin_clinics_create",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ClinicWrite"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Clinic created."
+          }
+        },
+        "tags": ["Admin — Reference Data"]
+      },
+      "parameters": []
+    },
+    "/api/v1/admin/clinics/{id}/": {
+      "get": {
+        "operationId": "api_v1_admin_clinics_read",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Clinic detail."
+          }
+        },
+        "tags": ["Admin — Reference Data"]
+      },
+      "patch": {
+        "operationId": "api_v1_admin_clinics_partial_update",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ClinicWrite"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Clinic updated."
+          }
+        },
+        "tags": ["Admin — Reference Data"]
+      },
+      "delete": {
+        "operationId": "api_v1_admin_clinics_delete",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": "Clinic deleted."
+          }
+        },
+        "tags": ["Admin — Reference Data"]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    },
+    "/api/v1/admin/diagnoses/": {
+      "get": {
+        "operationId": "api_v1_admin_diagnoses_list",
+        "description": "",
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "type": "integer"
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/PaginatedDiagnosis"
+            }
+          }
+        },
+        "tags": ["Admin — Reference Data"]
+      },
+      "post": {
+        "operationId": "api_v1_admin_diagnoses_create",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/DiagnosisWrite"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Diagnosis created."
+          }
+        },
+        "tags": ["Admin — Reference Data"]
+      },
+      "parameters": []
+    },
+    "/api/v1/admin/diagnoses/{id}/": {
+      "get": {
+        "operationId": "api_v1_admin_diagnoses_read",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Diagnosis detail."
+          }
+        },
+        "tags": ["Admin — Reference Data"]
+      },
+      "patch": {
+        "operationId": "api_v1_admin_diagnoses_partial_update",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/DiagnosisWrite"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Diagnosis updated."
+          }
+        },
+        "tags": ["Admin — Reference Data"]
+      },
+      "delete": {
+        "operationId": "api_v1_admin_diagnoses_delete",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": "Diagnosis deleted."
+          }
+        },
+        "tags": ["Admin — Reference Data"]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    },
+    "/api/v1/admin/diseases/": {
+      "get": {
+        "operationId": "api_v1_admin_diseases_list",
+        "description": "",
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "top",
+            "in": "query",
+            "type": "boolean"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "type": "integer"
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Diseases list."
+          }
+        },
+        "tags": ["Admin — Reference Data"]
+      },
+      "post": {
+        "operationId": "api_v1_admin_diseases_create",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/DiseaseWrite"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Disease created."
+          }
+        },
+        "tags": ["Admin — Reference Data"]
+      },
+      "parameters": []
+    },
+    "/api/v1/admin/diseases/{id}/": {
+      "get": {
+        "operationId": "api_v1_admin_diseases_read",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Disease detail."
+          }
+        },
+        "tags": ["Admin — Reference Data"]
+      },
+      "patch": {
+        "operationId": "api_v1_admin_diseases_partial_update",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/DiseaseWrite"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Disease updated."
+          }
+        },
+        "tags": ["Admin — Reference Data"]
+      },
+      "delete": {
+        "operationId": "api_v1_admin_diseases_delete",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": "Disease deleted."
+          }
+        },
+        "tags": ["Admin — Reference Data"]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    },
+    "/api/v1/admin/drugs/": {
+      "get": {
+        "operationId": "api_v1_admin_drugs_list",
+        "description": "",
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "type": "integer"
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Drugs list."
+          }
+        },
+        "tags": ["Admin — Reference Data"]
+      },
+      "post": {
+        "operationId": "api_v1_admin_drugs_create",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/DrugWrite"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Drug created."
+          }
+        },
+        "tags": ["Admin — Reference Data"]
+      },
+      "parameters": []
+    },
+    "/api/v1/admin/drugs/{id}/": {
+      "get": {
+        "operationId": "api_v1_admin_drugs_read",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Drug detail."
+          }
+        },
+        "tags": ["Admin — Reference Data"]
+      },
+      "patch": {
+        "operationId": "api_v1_admin_drugs_partial_update",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/DrugWrite"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Drug updated."
+          }
+        },
+        "tags": ["Admin — Reference Data"]
+      },
+      "delete": {
+        "operationId": "api_v1_admin_drugs_delete",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": "Drug deleted."
+          }
+        },
+        "tags": ["Admin — Reference Data"]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    },
+    "/api/v1/admin/faq/": {
+      "get": {
+        "operationId": "api_v1_admin_faq_list",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/FaqItem"
+              }
+            }
+          }
+        },
+        "tags": ["Admin — Content"]
+      },
+      "post": {
+        "operationId": "api_v1_admin_faq_create",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/FaqItemWrite"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/FaqItem"
+            }
+          }
+        },
+        "tags": ["Admin — Content"]
+      },
+      "parameters": []
+    },
+    "/api/v1/admin/faq/{id}/": {
+      "patch": {
+        "operationId": "api_v1_admin_faq_partial_update",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/FaqItemWrite"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/FaqItem"
+            }
+          }
+        },
+        "tags": ["Admin — Content"]
+      },
+      "delete": {
+        "operationId": "api_v1_admin_faq_delete",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": "FAQ item deleted."
+          }
+        },
+        "tags": ["Admin — Content"]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    },
+    "/api/v1/admin/finance/withdrawals/{id}/": {
+      "patch": {
+        "operationId": "api_v1_admin_finance_withdrawals_partial_update",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/AdminWithdrawalUpdate"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Withdrawal updated."
+          }
+        },
+        "tags": ["Admin — Finance"]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    },
+    "/api/v1/admin/forum-answers/": {
+      "get": {
+        "operationId": "api_v1_admin_forum-answers_list",
+        "description": "",
+        "parameters": [
+          {
+            "name": "post_id",
+            "in": "query",
+            "description": "Filter answers by post ID",
+            "type": "integer"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "type": "integer"
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/PaginatedForumAnswer"
+            }
+          }
+        },
+        "tags": ["Admin — Forum"]
+      },
+      "parameters": []
+    },
+    "/api/v1/admin/forum-answers/{id}/": {
+      "delete": {
+        "operationId": "api_v1_admin_forum-answers_delete",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": "Deleted."
+          },
+          "404": {
+            "description": "Not found."
+          }
+        },
+        "tags": ["Admin — Forum"]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    },
+    "/api/v1/admin/forum-posts/": {
+      "get": {
+        "operationId": "api_v1_admin_forum-posts_list",
+        "description": "",
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "description": "Filter by title or body",
+            "type": "string"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "type": "integer"
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/PaginatedForumPostList"
+            }
+          }
+        },
+        "tags": ["Admin — Forum"]
+      },
+      "parameters": []
+    },
+    "/api/v1/admin/forum-posts/{id}/": {
+      "delete": {
+        "operationId": "api_v1_admin_forum-posts_delete",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": "Deleted."
+          },
+          "404": {
+            "description": "Not found."
+          }
+        },
+        "tags": ["Admin — Forum"]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    },
+    "/api/v1/admin/pages/": {
+      "get": {
+        "operationId": "api_v1_admin_pages_list",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ContentPage"
+              }
+            }
+          }
+        },
+        "tags": ["Admin — Content"]
+      },
+      "post": {
+        "operationId": "api_v1_admin_pages_create",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ContentPageWrite"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ContentPage"
+            }
+          }
+        },
+        "tags": ["Admin — Content"]
+      },
+      "parameters": []
+    },
+    "/api/v1/admin/pages/{slug}/": {
+      "get": {
+        "operationId": "api_v1_admin_pages_read",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ContentPage"
+            }
+          }
+        },
+        "tags": ["Admin — Content"]
+      },
+      "patch": {
+        "operationId": "api_v1_admin_pages_partial_update",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ContentPageWrite"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ContentPage"
+            }
+          }
+        },
+        "tags": ["Admin — Content"]
+      },
+      "delete": {
+        "operationId": "api_v1_admin_pages_delete",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": "Content page deleted."
+          }
+        },
+        "tags": ["Admin — Content"]
+      },
+      "parameters": [
+        {
+          "name": "slug",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    },
+    "/api/v1/admin/prescriptions/": {
+      "get": {
+        "operationId": "api_v1_admin_prescriptions_list",
+        "description": "",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "type": "integer"
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/PaginatedAdminPrescriptionList"
+            }
+          }
+        },
+        "tags": ["Admin — Prescriptions"]
+      },
+      "post": {
+        "operationId": "api_v1_admin_prescriptions_create",
+        "summary": "Create prescription (Admin only)",
+        "description": "Creates a prescription with explicit doctor assignment.",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/AdminPrescriptionCreate"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Prescription created."
+          }
+        },
+        "tags": ["Admin — Prescriptions"]
+      },
+      "parameters": []
+    },
+    "/api/v1/admin/prescriptions/{id}/": {
+      "get": {
+        "operationId": "api_v1_admin_prescriptions_read",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Prescription detail."
+          }
+        },
+        "tags": ["Admin — Prescriptions"]
+      },
+      "patch": {
+        "operationId": "api_v1_admin_prescriptions_partial_update",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/AdminPrescriptionUpdate"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Prescription updated."
+          }
+        },
+        "tags": ["Admin — Prescriptions"]
+      },
+      "delete": {
+        "operationId": "api_v1_admin_prescriptions_delete",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": "Prescription deleted."
+          }
+        },
+        "tags": ["Admin — Prescriptions"]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    },
+    "/api/v1/admin/regions/": {
+      "get": {
+        "operationId": "api_v1_admin_regions_list",
+        "description": "",
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Regions list."
+          }
+        },
+        "tags": ["Admin — Reference Data"]
+      },
+      "post": {
+        "operationId": "api_v1_admin_regions_create",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/RegionWrite"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Region created."
+          }
+        },
+        "tags": ["Admin — Reference Data"]
+      },
+      "parameters": []
+    },
+    "/api/v1/admin/regions/{id}/": {
+      "get": {
+        "operationId": "api_v1_admin_regions_read",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Region detail."
+          }
+        },
+        "tags": ["Admin — Reference Data"]
+      },
+      "patch": {
+        "operationId": "api_v1_admin_regions_partial_update",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/RegionWrite"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Region updated."
+          }
+        },
+        "tags": ["Admin — Reference Data"]
+      },
+      "delete": {
+        "operationId": "api_v1_admin_regions_delete",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": "Region deleted."
+          }
+        },
+        "tags": ["Admin — Reference Data"]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    },
+    "/api/v1/admin/services/": {
+      "get": {
+        "operationId": "api_v1_admin_services_list",
+        "description": "",
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "clinic_id",
+            "in": "query",
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Services list."
+          }
+        },
+        "tags": ["Admin — Reference Data"]
+      },
+      "post": {
+        "operationId": "api_v1_admin_services_create",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ServiceWrite"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Service created."
+          }
+        },
+        "tags": ["Admin — Reference Data"]
+      },
+      "parameters": []
+    },
+    "/api/v1/admin/services/{id}/": {
+      "get": {
+        "operationId": "api_v1_admin_services_read",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Service detail."
+          }
+        },
+        "tags": ["Admin — Reference Data"]
+      },
+      "patch": {
+        "operationId": "api_v1_admin_services_partial_update",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ServiceWrite"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Service updated."
+          }
+        },
+        "tags": ["Admin — Reference Data"]
+      },
+      "delete": {
+        "operationId": "api_v1_admin_services_delete",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": "Service deleted."
+          }
+        },
+        "tags": ["Admin — Reference Data"]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    },
+    "/api/v1/admin/specializations/": {
+      "get": {
+        "operationId": "api_v1_admin_specializations_list",
+        "description": "",
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "type": "integer"
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/PaginatedSpecializationReference"
+            }
+          }
+        },
+        "tags": ["Admin — Reference Data"]
+      },
+      "post": {
+        "operationId": "api_v1_admin_specializations_create",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/SpecializationWrite"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Specialization created."
+          }
+        },
+        "tags": ["Admin — Reference Data"]
+      },
+      "parameters": []
+    },
+    "/api/v1/admin/specializations/{id}/": {
+      "get": {
+        "operationId": "api_v1_admin_specializations_read",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Specialization detail."
+          }
+        },
+        "tags": ["Admin — Reference Data"]
+      },
+      "patch": {
+        "operationId": "api_v1_admin_specializations_partial_update",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/SpecializationWrite"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Specialization updated."
+          }
+        },
+        "tags": ["Admin — Reference Data"]
+      },
+      "delete": {
+        "operationId": "api_v1_admin_specializations_delete",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": "Specialization deleted."
+          }
+        },
+        "tags": ["Admin — Reference Data"]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    },
+    "/api/v1/admin/symptoms/": {
+      "get": {
+        "operationId": "api_v1_admin_symptoms_list",
+        "description": "",
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "gender",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "side",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "body_part",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Symptoms list."
+          }
+        },
+        "tags": ["Admin — Reference Data"]
+      },
+      "post": {
+        "operationId": "api_v1_admin_symptoms_create",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/SymptomWrite"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Symptom created."
+          }
+        },
+        "tags": ["Admin — Reference Data"]
+      },
+      "parameters": []
+    },
+    "/api/v1/admin/symptoms/{id}/": {
+      "get": {
+        "operationId": "api_v1_admin_symptoms_read",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Symptom detail."
+          }
+        },
+        "tags": ["Admin — Reference Data"]
+      },
+      "patch": {
+        "operationId": "api_v1_admin_symptoms_partial_update",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/SymptomWrite"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Symptom updated."
+          }
+        },
+        "tags": ["Admin — Reference Data"]
+      },
+      "delete": {
+        "operationId": "api_v1_admin_symptoms_delete",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": "Symptom deleted."
+          }
+        },
+        "tags": ["Admin — Reference Data"]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    },
+    "/api/v1/ads/": {
+      "get": {
+        "operationId": "api_v1_ads_list",
+        "description": "",
+        "parameters": [
+          {
+            "name": "placement",
+            "in": "query",
+            "type": "string",
+            "enum": ["home", "doctor_list"]
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Active banner ads."
+          }
+        },
+        "tags": ["Content"]
+      },
+      "parameters": []
+    },
+    "/api/v1/appointments/": {
+      "get": {
+        "operationId": "api_v1_appointments_list",
+        "description": "",
+        "parameters": [
+          {
+            "name": "date",
+            "in": "query",
+            "description": "YYYY-MM-DD",
+            "type": "string"
+          },
+          {
+            "name": "history",
+            "in": "query",
+            "type": "boolean"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "type": "integer"
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/PaginatedAppointmentList"
+            }
+          }
+        },
+        "tags": ["Appointments"]
+      },
+      "post": {
+        "operationId": "api_v1_appointments_create",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/AppointmentCreate"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Appointment created."
+          }
+        },
+        "tags": ["Appointments"]
+      },
+      "parameters": []
+    },
+    "/api/v1/appointments/manual/": {
+      "post": {
+        "operationId": "api_v1_appointments_manual_create",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/AppointmentManualCreate"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Manual appointment created."
+          }
+        },
+        "tags": ["Appointments"]
+      },
+      "parameters": []
+    },
+    "/api/v1/appointments/{id}/": {
+      "get": {
+        "operationId": "api_v1_appointments_read",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Appointment detail."
+          }
+        },
+        "tags": ["Appointments"]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    },
+    "/api/v1/appointments/{id}/confirm/": {
+      "post": {
+        "operationId": "api_v1_appointments_confirm_create",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Appointment confirmed."
+          }
+        },
+        "tags": ["Appointments"]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    },
+    "/api/v1/appointments/{id}/decline/": {
+      "post": {
+        "operationId": "api_v1_appointments_decline_create",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/AppointmentDecline"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Appointment declined."
+          }
+        },
+        "tags": ["Appointments"]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    },
+    "/api/v1/appointments/{id}/payment/": {
+      "post": {
+        "operationId": "api_v1_appointments_payment_create",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Payment session URL."
+          }
+        },
+        "tags": ["Appointments"]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    },
+    "/api/v1/appointments/{id}/postpone/": {
+      "post": {
+        "operationId": "api_v1_appointments_postpone_create",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/AppointmentPostpone"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Appointment postponed."
+          }
+        },
+        "tags": ["Appointments"]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    },
+    "/api/v1/appointments/{id}/review/": {
+      "post": {
+        "operationId": "api_v1_appointments_review_create",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/AppointmentReviewCreate"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Appointment review created."
+          }
+        },
+        "tags": ["Reviews & Ratings"]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    },
+    "/api/v1/clinics/": {
+      "get": {
+        "operationId": "api_v1_clinics_list",
+        "description": "",
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "region_id",
+            "in": "query",
+            "type": "integer"
+          },
+          {
+            "name": "service_id",
+            "in": "query",
+            "type": "integer"
+          },
+          {
+            "name": "top",
+            "in": "query",
+            "type": "boolean"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "type": "integer"
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/PaginatedClinic"
+            }
+          }
+        },
+        "tags": ["Reference Data"]
+      },
+      "parameters": []
+    },
+    "/api/v1/clinics/{id}/": {
+      "get": {
+        "operationId": "api_v1_clinics_read",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Clinic detail."
+          }
+        },
+        "tags": ["Reference Data"]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    },
+    "/api/v1/consultations/": {
+      "get": {
+        "operationId": "api_v1_consultations_list",
+        "description": "",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "type": "integer"
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/PaginatedConsultationList"
+            }
+          }
+        },
+        "tags": ["Consultations"]
+      },
+      "parameters": []
+    },
+    "/api/v1/diagnoses/": {
+      "get": {
+        "operationId": "api_v1_diagnoses_list",
+        "description": "",
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "type": "integer"
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/PaginatedDiagnosis"
+            }
+          }
+        },
+        "tags": ["Reference Data"]
+      },
+      "parameters": []
+    },
+    "/api/v1/diagnoses/{id}/": {
+      "get": {
+        "operationId": "api_v1_diagnoses_read",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Diagnosis detail."
+          }
+        },
+        "tags": ["Reference Data"]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    },
+    "/api/v1/diseases/": {
+      "get": {
+        "operationId": "api_v1_diseases_list",
+        "description": "",
+        "parameters": [
+          {
+            "name": "symptom_ids",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "gender",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "side",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "body_part",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "top",
+            "in": "query",
+            "type": "boolean"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Diseases list."
+          }
+        },
+        "tags": ["Reference Data"]
+      },
+      "parameters": []
+    },
+    "/api/v1/diseases/{id}/": {
+      "get": {
+        "operationId": "api_v1_diseases_read",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Disease detail."
+          }
+        },
+        "tags": ["Reference Data"]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    },
+    "/api/v1/doctors/": {
+      "get": {
+        "operationId": "api_v1_doctors_list",
+        "description": "",
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "specialization_id",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "price_min",
+            "in": "query",
+            "type": "integer"
+          },
+          {
+            "name": "price_max",
+            "in": "query",
+            "type": "integer"
+          },
+          {
+            "name": "experience_min",
+            "in": "query",
+            "type": "integer"
+          },
+          {
+            "name": "experience_max",
+            "in": "query",
+            "type": "integer"
+          },
+          {
+            "name": "location_id",
+            "in": "query",
+            "type": "integer"
+          },
+          {
+            "name": "top",
+            "in": "query",
+            "type": "boolean"
+          },
+          {
+            "name": "insurance_accepted",
+            "in": "query",
+            "type": "boolean"
+          },
+          {
+            "name": "mental_health",
+            "in": "query",
+            "type": "boolean"
+          },
+          {
+            "name": "clinic_id",
+            "in": "query",
+            "type": "integer"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "type": "integer"
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/PaginatedDoctorPublicList"
+            }
+          }
+        },
+        "tags": ["Doctors"]
+      },
+      "parameters": []
+    },
+    "/api/v1/doctors/{id}/": {
+      "get": {
+        "operationId": "api_v1_doctors_read",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Doctor profile detail."
+          }
+        },
+        "tags": ["Doctors"]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    },
+    "/api/v1/doctors/{id}/reviews/": {
+      "get": {
+        "operationId": "api_v1_doctors_reviews_list",
+        "description": "",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "type": "integer"
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/PaginatedAppointmentReview"
+            }
+          }
+        },
+        "tags": ["Reviews & Ratings"]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    },
+    "/api/v1/doctors/{id}/schedule/": {
+      "get": {
+        "operationId": "api_v1_doctors_schedule_list",
+        "description": "",
+        "parameters": [
+          {
+            "name": "type",
+            "in": "query",
+            "description": "online | offline (defaults to online)",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Doctor schedule rules."
+          }
+        },
+        "tags": ["Time Slots"]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    },
+    "/api/v1/doctors/{id}/slots/": {
+      "get": {
+        "operationId": "api_v1_doctors_slots_list",
+        "description": "",
+        "parameters": [
+          {
+            "name": "type",
+            "in": "query",
+            "description": "online | offline (defaults to online)",
+            "type": "string"
+          },
+          {
+            "name": "date",
+            "in": "query",
+            "description": "YYYY-MM-DD",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Available slots for the given date."
+          }
+        },
+        "tags": ["Time Slots"]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    },
+    "/api/v1/drugs/": {
+      "get": {
+        "operationId": "api_v1_drugs_list",
+        "description": "",
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Drugs list (typeahead)."
+          }
+        },
+        "tags": ["Reference Data"]
+      },
+      "parameters": []
+    },
+    "/api/v1/drugs/{id}/": {
+      "get": {
+        "operationId": "api_v1_drugs_read",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Drug detail."
+          }
+        },
+        "tags": ["Reference Data"]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    },
+    "/api/v1/faq/": {
+      "get": {
+        "operationId": "api_v1_faq_list",
+        "description": "",
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "FAQ items."
+          }
+        },
+        "tags": ["Content"]
+      },
+      "parameters": []
+    },
+    "/api/v1/finance/earnings/": {
+      "get": {
+        "operationId": "api_v1_finance_earnings_list",
+        "description": "",
+        "parameters": [
+          {
+            "name": "month",
+            "in": "query",
+            "description": "YYYY-MM",
+            "type": "string"
+          },
+          {
+            "name": "date_from",
+            "in": "query",
+            "description": "YYYY-MM-DD",
+            "type": "string"
+          },
+          {
+            "name": "date_to",
+            "in": "query",
+            "description": "YYYY-MM-DD",
+            "type": "string"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "type": "integer"
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/PaginatedEarning"
+            }
+          }
+        },
+        "tags": ["Finance"]
+      },
+      "parameters": []
+    },
+    "/api/v1/finance/summary/": {
+      "get": {
+        "operationId": "api_v1_finance_summary_list",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/FinanceSummary"
+            }
+          }
+        },
+        "tags": ["Finance"]
+      },
+      "parameters": []
+    },
+    "/api/v1/finance/withdrawals/": {
+      "get": {
+        "operationId": "api_v1_finance_withdrawals_list",
+        "description": "",
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "description": "pending | approved | rejected | paid",
+            "type": "string"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "type": "integer"
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/PaginatedWithdrawal"
+            }
+          }
+        },
+        "tags": ["Finance"]
+      },
+      "post": {
+        "operationId": "api_v1_finance_withdrawals_create",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/WithdrawalCreate"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Withdrawal request created."
+          }
+        },
+        "tags": ["Finance"]
+      },
+      "parameters": []
+    },
+    "/api/v1/forum-answers/{id}/": {
+      "delete": {
+        "operationId": "api_v1_forum-answers_delete",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": "Deleted."
+          },
+          "403": {
+            "description": "Not author."
+          },
+          "404": {
+            "description": "Not found."
+          }
+        },
+        "tags": ["Forum"]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    },
+    "/api/v1/forum-posts/": {
+      "get": {
+        "operationId": "api_v1_forum-posts_list",
+        "description": "",
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "description": "Filter by title or body",
+            "type": "string"
+          },
+          {
+            "name": "mine",
+            "in": "query",
+            "description": "Return only the caller's posts",
+            "type": "boolean"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "type": "integer"
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/PaginatedForumPostList"
+            }
+          }
+        },
+        "tags": ["Forum"]
+      },
+      "post": {
+        "operationId": "api_v1_forum-posts_create",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ForumPostCreate"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ForumPostList"
+            }
+          }
+        },
+        "tags": ["Forum"]
+      },
+      "parameters": []
+    },
+    "/api/v1/forum-posts/{id}/": {
+      "get": {
+        "operationId": "api_v1_forum-posts_read",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ForumPostList"
+            }
+          },
+          "404": {
+            "description": "Not found."
+          }
+        },
+        "tags": ["Forum"]
+      },
+      "patch": {
+        "operationId": "api_v1_forum-posts_partial_update",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ForumPostUpdate"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ForumPostList"
+            }
+          },
+          "403": {
+            "description": "Not author."
+          },
+          "404": {
+            "description": "Not found."
+          }
+        },
+        "tags": ["Forum"]
+      },
+      "delete": {
+        "operationId": "api_v1_forum-posts_delete",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": "Deleted."
+          },
+          "403": {
+            "description": "Not author."
+          },
+          "404": {
+            "description": "Not found."
+          }
+        },
+        "tags": ["Forum"]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    },
+    "/api/v1/forum-posts/{id}/answers/": {
+      "get": {
+        "operationId": "api_v1_forum-posts_answers_list",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ForumAnswer"
+              }
+            }
+          },
+          "404": {
+            "description": "Post not found."
+          }
+        },
+        "tags": ["Forum"]
+      },
+      "post": {
+        "operationId": "api_v1_forum-posts_answers_create",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ForumAnswerCreate"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ForumAnswer"
+            }
+          },
+          "403": {
+            "description": "Doctors-only gate failed."
+          },
+          "404": {
+            "description": "Post not found."
+          }
+        },
+        "tags": ["Forum"]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    },
+    "/api/v1/forum-posts/{id}/like/": {
+      "post": {
+        "operationId": "api_v1_forum-posts_like_create",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Like toggled.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "like_count": {
+                      "type": "integer"
+                    },
+                    "liked_by_me": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Post not found."
+          }
+        },
+        "tags": ["Forum"]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    },
+    "/api/v1/notifications/": {
+      "get": {
+        "operationId": "api_v1_notifications_list",
+        "description": "",
+        "parameters": [
+          {
+            "name": "unread",
+            "in": "query",
+            "type": "boolean"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "type": "integer"
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/PaginatedNotification"
+            }
+          }
+        },
+        "tags": ["Notifications"]
+      },
+      "delete": {
+        "operationId": "api_v1_notifications_delete",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": "All notifications deleted."
+          }
+        },
+        "tags": ["Notifications"]
+      },
+      "parameters": []
+    },
+    "/api/v1/notifications/devices/": {
+      "post": {
+        "operationId": "api_v1_notifications_devices_create",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/FCMDevice"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Token re-linked to current user."
+          },
+          "201": {
+            "description": "Device registered."
+          }
+        },
+        "tags": ["Notifications"]
+      },
+      "delete": {
+        "operationId": "api_v1_notifications_devices_delete",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/FCMDevice"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Device unregistered."
+          },
+          "404": {
+            "description": "Token not found."
+          }
+        },
+        "tags": ["Notifications"]
+      },
+      "parameters": []
+    },
+    "/api/v1/notifications/read-all/": {
+      "post": {
+        "operationId": "api_v1_notifications_read-all_create",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "All marked read."
+          }
+        },
+        "tags": ["Notifications"]
+      },
+      "parameters": []
+    },
+    "/api/v1/notifications/unread-count/": {
+      "get": {
+        "operationId": "api_v1_notifications_unread-count_list",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Unread count."
+          }
+        },
+        "tags": ["Notifications"]
+      },
+      "parameters": []
+    },
+    "/api/v1/notifications/{id}/": {
+      "delete": {
+        "operationId": "api_v1_notifications_delete",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": "Deleted."
+          }
+        },
+        "tags": ["Notifications"]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    },
+    "/api/v1/notifications/{id}/read/": {
+      "post": {
+        "operationId": "api_v1_notifications_read_create",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Marked read."
+          }
+        },
+        "tags": ["Notifications"]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    },
+    "/api/v1/pages/{slug}/": {
+      "get": {
+        "operationId": "api_v1_pages_read",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Static page by slug."
+          },
+          "404": {
+            "description": "Unknown slug."
+          }
+        },
+        "tags": ["Content"]
+      },
+      "parameters": [
+        {
+          "name": "slug",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    },
+    "/api/v1/prescription-services/": {
+      "get": {
+        "operationId": "api_v1_prescription-services_list",
+        "description": "",
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Services list for prescription form."
+          }
+        },
+        "tags": ["Prescriptions"]
+      },
+      "parameters": []
+    },
+    "/api/v1/prescriptions/": {
+      "get": {
+        "operationId": "api_v1_prescriptions_list",
+        "description": "",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "type": "integer"
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/PaginatedPrescriptionList"
+            }
+          }
+        },
+        "tags": ["Prescriptions"]
+      },
+      "post": {
+        "operationId": "api_v1_prescriptions_create",
+        "summary": "Create prescription (Doctor only)",
+        "description": "Creates a prescription for a completed appointment.",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/PrescriptionCreate"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Prescription created."
+          },
+          "403": {
+            "description": "Forbidden - Doctor only"
+          }
+        },
+        "tags": ["Prescriptions"]
+      },
+      "parameters": []
+    },
+    "/api/v1/prescriptions/{id}/": {
+      "get": {
+        "operationId": "api_v1_prescriptions_read",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Prescription detail."
+          }
+        },
+        "tags": ["Prescriptions"]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    },
+    "/api/v1/regions/": {
+      "get": {
+        "operationId": "api_v1_regions_list",
+        "description": "",
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Regions list."
+          }
+        },
+        "tags": ["Reference Data"]
+      },
+      "parameters": []
+    },
+    "/api/v1/regions/{id}/": {
+      "get": {
+        "operationId": "api_v1_regions_read",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Region detail."
+          }
+        },
+        "tags": ["Reference Data"]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    },
+    "/api/v1/services/": {
+      "get": {
+        "operationId": "api_v1_services_list",
+        "description": "",
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "clinic_id",
+            "in": "query",
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Services list."
+          }
+        },
+        "tags": ["Reference Data"]
+      },
+      "parameters": []
+    },
+    "/api/v1/services/{id}/": {
+      "get": {
+        "operationId": "api_v1_services_read",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Service detail."
+          }
+        },
+        "tags": ["Reference Data"]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    },
+    "/api/v1/specializations/": {
+      "get": {
+        "operationId": "api_v1_specializations_list",
+        "description": "",
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "type": "integer"
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/PaginatedSpecializationReference"
+            }
+          }
+        },
+        "tags": ["Reference Data"]
+      },
+      "parameters": []
+    },
+    "/api/v1/specializations/{id}/": {
+      "get": {
+        "operationId": "api_v1_specializations_read",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Specialization detail."
+          }
+        },
+        "tags": ["Reference Data"]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    },
+    "/api/v1/symptoms/": {
+      "get": {
+        "operationId": "api_v1_symptoms_list",
+        "description": "",
+        "parameters": [
+          {
+            "name": "gender",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "side",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body_part",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Symptoms list."
+          }
+        },
+        "tags": ["Reference Data"]
+      },
+      "parameters": []
+    },
+    "/api/v1/symptoms/{id}/": {
+      "get": {
+        "operationId": "api_v1_symptoms_read",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Symptom detail."
+          }
+        },
+        "tags": ["Reference Data"]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    },
+    "/api/v1/users/": {
+      "get": {
+        "operationId": "api_v1_users_list",
+        "description": "",
+        "parameters": [
+          {
+            "name": "scope",
+            "in": "query",
+            "description": "Qeyri-aktiv istifadəçilər: inactive, aktiv istifadəçilər: active, leader: lider istifadəçilər",
+            "type": "string"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "description": "Axtarış",
+            "type": "string"
+          },
+          {
+            "name": "ordering",
+            "in": "query",
+            "description": "Sıralama (məs: name, -name)",
+            "type": "string"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Səhifə nömrəsi",
+            "type": "integer"
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "description": "Səhifədəki element sayı",
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "If query param `search` is provided: doctor-only patient search (simple result for doctors, full result for staff/admin), same `data` + `meta` pagination shape as the general list. Empty `search` returns an empty page. Otherwise: paginated user list."
+          }
+        },
+        "tags": ["Users - User"]
+      },
+      "post": {
+        "operationId": "api_v1_users_create",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        },
+        "tags": ["Users - User"]
+      },
+      "parameters": []
+    },
+    "/api/v1/users/password-change/": {
+      "post": {
+        "operationId": "api_v1_users_password-change_create",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "required": [
+                "old_password",
+                "new_password",
+                "new_password_confirm"
+              ],
+              "type": "object",
+              "properties": {
+                "old_password": {
+                  "description": "Köhnə şifrə",
+                  "type": "string"
+                },
+                "new_password": {
+                  "description": "Yeni şifrə",
+                  "type": "string"
+                },
+                "new_password_confirm": {
+                  "description": "Yeni şifrə təsdiqi",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Şifrə uğurla dəyişdirildi"
+          },
+          "400": {
+            "description": "Xəta"
+          }
+        },
+        "tags": ["Users - User Password"]
+      },
+      "parameters": []
+    },
+    "/api/v1/users/{id}/": {
+      "get": {
+        "operationId": "api_v1_users_read",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        },
+        "tags": ["Users - User"]
+      },
+      "put": {
+        "operationId": "api_v1_users_update",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        },
+        "tags": ["Users - User"]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    },
+    "/api/v1/users/{id}/password-reset/": {
+      "post": {
+        "operationId": "api_v1_users_password-reset_create",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Şifrə uğurla sıfırlandı"
+          },
+          "403": {
+            "description": "Səlahiyyət yoxdur"
+          }
+        },
+        "tags": ["Users - User Password"]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    },
+    "/auth/login/": {
+      "post": {
+        "operationId": "auth_login_create",
+        "description": "Takes a set of user credentials and returns an access and refresh JSON web\ntoken pair to prove the authentication of those credentials.",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/TokenObtainPair"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/TokenObtainPair"
+            }
+          }
+        },
+        "tags": ["auth"]
+      },
+      "parameters": []
+    },
+    "/auth/logout/": {
+      "post": {
+        "operationId": "auth_logout_create",
+        "description": "Takes a token and blacklists it. Must be used with the\n`rest_framework_simplejwt.token_blacklist` app installed.",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/TokenBlacklist"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/TokenBlacklist"
+            }
+          }
+        },
+        "tags": ["auth"]
+      },
+      "parameters": []
+    },
+    "/auth/otp/request/": {
+      "post": {
+        "operationId": "auth_otp_request_create",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/OTPRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OTP send acknowledged (mock)."
+          },
+          "400": {
+            "description": "Invalid phone."
+          }
+        },
+        "tags": ["Auth"]
+      },
+      "parameters": []
+    },
+    "/auth/otp/verify/": {
+      "post": {
+        "operationId": "auth_otp_verify_create",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/OTPVerify"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tokens and profile."
+          },
+          "400": {
+            "description": "Validation or invalid OTP."
+          }
+        },
+        "tags": ["Auth"]
+      },
+      "parameters": []
+    },
+    "/auth/refresh/": {
+      "post": {
+        "operationId": "auth_refresh_create",
+        "description": "Takes a refresh type JSON web token and returns an access type JSON web\ntoken if the refresh token is valid.",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/TokenRefresh"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/TokenRefresh"
+            }
+          }
+        },
+        "tags": ["auth"]
+      },
+      "parameters": []
+    },
+    "/me/": {
+      "get": {
+        "operationId": "me_list",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Authenticated profile. The data shape depends on role.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "object"
+                }
+              }
+            },
+            "examples": {
+              "application/json": {
+                "user": {
+                  "data": {
+                    "role": "user",
+                    "id": 653,
+                    "phone": "+994501234567",
+                    "fullname": "Kamran Bekirov",
+                    "avatar_url": "https://example.com/avatar.jpg",
+                    "birthday": "1990-01-15",
+                    "gender": "male",
+                    "location_id": 1,
+                    "health": {
+                      "diabetes": false,
+                      "hypertension": false,
+                      "smoking": true,
+                      "asthma": false,
+                      "allergies": false
+                    }
+                  }
+                },
+                "doctor": {
+                  "data": {
+                    "role": "doctor",
+                    "id": 58,
+                    "phone": "+994501234567",
+                    "fullname": "Dr. Aliyev",
+                    "avatar_url": "https://example.com/avatar.jpg",
+                    "birthday": "1985-03-20",
+                    "gender": "male",
+                    "location_id": 1,
+                    "specializations": [
+                      {
+                        "id": 12,
+                        "title": "Kardioloq"
+                      }
+                    ],
+                    "workplace": "MedEra Hospital",
+                    "experience_years": 10,
+                    "price": 30,
+                    "offline_price": 50,
+                    "only_offline": false,
+                    "descriptions": {
+                      "az": "...",
+                      "en": "...",
+                      "ru": "..."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Users - User Detail"]
+      },
+      "patch": {
+        "operationId": "me_partial_update",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
             "in": "body",
             "required": true,
             "schema": {
               "type": "object",
               "properties": {
-                "username": { "type": "string" },
-                "password": { "type": "string" }
+                "fullname": {
+                  "type": "string"
+                },
+                "birthday": {
+                  "type": "string",
+                  "format": "date"
+                },
+                "gender": {
+                  "type": "string"
+                },
+                "location_id": {
+                  "type": "integer",
+                  "nullable": true
+                },
+                "health": {
+                  "type": "object",
+                  "properties": {
+                    "diabetes": {
+                      "type": "boolean"
+                    },
+                    "hypertension": {
+                      "type": "boolean"
+                    },
+                    "smoking": {
+                      "type": "boolean"
+                    },
+                    "asthma": {
+                      "type": "boolean"
+                    },
+                    "allergies": {
+                      "type": "boolean"
+                    }
+                  }
+                },
+                "workplace": {
+                  "type": "string",
+                  "nullable": true
+                },
+                "experience_years": {
+                  "type": "integer",
+                  "nullable": true
+                },
+                "price": {
+                  "type": "number",
+                  "nullable": true
+                },
+                "offline_price": {
+                  "type": "number",
+                  "nullable": true
+                },
+                "only_offline": {
+                  "type": "boolean",
+                  "nullable": true
+                },
+                "descriptions": {
+                  "type": "object",
+                  "properties": {
+                    "az": {
+                      "type": "string"
+                    },
+                    "en": {
+                      "type": "string"
+                    },
+                    "ru": {
+                      "type": "string"
+                    }
+                  }
+                }
               }
             }
           }
         ],
-        "responses": { "200": { "description": "Uğurlu giriş" } }
-      }
-    },
-    "/auth/logout/": {
-      "post": {
-        "tags": ["Auth"],
-        "security": [{ "Bearer": [] }],
-        "responses": { "204": { "description": "Sistemdən çıxıldı" } }
-      }
-    },
-    "/auth/refresh/": {
-      "post": {
-        "tags": ["Auth"],
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": { "refresh": { "type": "string" } }
-            }
+        "responses": {
+          "200": {
+            "description": "Updated profile (same shape as GET /me)."
           }
-        ],
-        "responses": { "200": { "description": "Token yeniləndi" } }
-      }
-    },
-    "/me/": {
-      "get": {
-        "tags": ["User Detail"],
-        "security": [{ "Bearer": [] }],
-        "summary": "Cari istifadəçi məlumatları",
-        "responses": { "200": { "description": "Uğurlu" } }
+        },
+        "tags": ["Users - User Detail"]
       },
-      "patch": {
-        "tags": ["User Detail"],
-        "security": [{ "Bearer": [] }],
-        "summary": "Profil məlumatlarını yenilə",
-        "responses": { "200": { "description": "Yeniləndi" } }
-      }
+      "parameters": []
     },
-    "/api/v1/users/password-change/": {
+    "/me/avatar/": {
       "post": {
-        "tags": ["User Password"],
-        "security": [{ "Bearer": [] }],
+        "operationId": "me_avatar_create",
+        "description": "",
         "parameters": [
           {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "old_password": { "type": "string" },
-                "new_password": { "type": "string" },
-                "new_password_confirm": { "type": "string" }
-              }
-            }
+            "name": "file",
+            "in": "formData",
+            "description": "Avatar image (jpg/png, max 5MB).",
+            "required": true,
+            "type": "file"
           }
         ],
-        "responses": { "200": { "description": "Şifrə dəyişdi" } }
+        "responses": {
+          "200": {
+            "description": "Updated profile (same shape as GET /me)."
+          }
+        },
+        "consumes": [
+          "multipart/form-data",
+          "application/x-www-form-urlencoded"
+        ],
+        "tags": ["Users - User Detail"]
+      },
+      "delete": {
+        "operationId": "me_avatar_delete",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Updated profile (same shape as GET /me)."
+          }
+        },
+        "consumes": [
+          "multipart/form-data",
+          "application/x-www-form-urlencoded"
+        ],
+        "tags": ["Users - User Detail"]
+      },
+      "parameters": []
+    },
+    "/me/files/": {
+      "get": {
+        "operationId": "me_files_list",
+        "description": "",
+        "parameters": [
+          {
+            "name": "purpose",
+            "in": "query",
+            "type": "string",
+            "enum": ["appointment", "forum", "prescription", "review", "chat"]
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "type": "integer"
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/PaginatedUserFileList"
+            }
+          }
+        },
+        "tags": ["Files"]
+      },
+      "parameters": []
+    },
+    "/uploads/": {
+      "post": {
+        "operationId": "uploads_create",
+        "description": "",
+        "parameters": [
+          {
+            "name": "purpose",
+            "in": "formData",
+            "description": "Upload purpose.",
+            "required": true,
+            "type": "string",
+            "enum": [
+              "appointment",
+              "forum",
+              "forum_answer",
+              "prescription",
+              "review",
+              "avatar",
+              "chat"
+            ]
+          },
+          {
+            "name": "files[]",
+            "in": "formData",
+            "description": "One or more files (repeat the key for multiple files).",
+            "required": true,
+            "type": "file"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Uploaded files list."
+          }
+        },
+        "consumes": [
+          "multipart/form-data",
+          "application/x-www-form-urlencoded"
+        ],
+        "tags": ["Files"]
+      },
+      "parameters": []
+    },
+    "/uploads/{id}/": {
+      "delete": {
+        "operationId": "uploads_delete",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": "Upload deleted."
+          }
+        },
+        "tags": ["Files"]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    }
+  },
+  "definitions": {
+    "BannerAd": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "title": "ID",
+          "type": "integer",
+          "readOnly": true
+        },
+        "title": {
+          "title": "Title",
+          "type": "string",
+          "readOnly": true
+        },
+        "body": {
+          "title": "Body",
+          "type": "string",
+          "readOnly": true
+        },
+        "image_url": {
+          "title": "Image url",
+          "type": "string",
+          "readOnly": true,
+          "x-nullable": true,
+          "format": "uri"
+        },
+        "link": {
+          "title": "Link",
+          "type": "string",
+          "maxLength": 500
+        },
+        "button_text": {
+          "title": "Button text",
+          "type": "string",
+          "readOnly": true
+        }
+      }
+    },
+    "BannerAdWrite": {
+      "required": ["title"],
+      "type": "object",
+      "properties": {
+        "id": {
+          "title": "ID",
+          "type": "integer",
+          "readOnly": true
+        },
+        "title": {
+          "title": "Title",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "x-nullable": true
+          }
+        },
+        "body": {
+          "title": "Body",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "x-nullable": true
+          }
+        },
+        "button_text": {
+          "title": "Button text",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "x-nullable": true
+          }
+        },
+        "image": {
+          "title": "Image",
+          "type": "string",
+          "readOnly": true,
+          "x-nullable": true,
+          "format": "uri"
+        },
+        "link": {
+          "title": "Link",
+          "type": "string",
+          "maxLength": 500
+        },
+        "placement": {
+          "title": "Placement",
+          "type": "string",
+          "enum": ["home", "doctor_list"]
+        },
+        "starts_at": {
+          "title": "Starts at",
+          "type": "string",
+          "format": "date-time",
+          "x-nullable": true
+        },
+        "ends_at": {
+          "title": "Ends at",
+          "type": "string",
+          "format": "date-time",
+          "x-nullable": true
+        },
+        "is_active": {
+          "title": "Is active",
+          "type": "boolean"
+        },
+        "sort_order": {
+          "title": "Sort order",
+          "type": "integer",
+          "maximum": 2147483647,
+          "minimum": 0
+        }
+      }
+    },
+    "AdminAppointmentList": {
+      "required": ["type", "date", "start_time", "end_time"],
+      "type": "object",
+      "properties": {
+        "id": {
+          "title": "ID",
+          "type": "integer",
+          "readOnly": true
+        },
+        "status": {
+          "title": "Status",
+          "type": "string",
+          "enum": ["pending", "confirmed", "completed", "declined", "cancelled"]
+        },
+        "type": {
+          "title": "Type",
+          "type": "string",
+          "enum": ["online", "offline"]
+        },
+        "parent_id": {
+          "title": "Parent id",
+          "type": "integer",
+          "readOnly": true,
+          "x-nullable": true
+        },
+        "date": {
+          "title": "Date",
+          "type": "string",
+          "format": "date"
+        },
+        "start_time": {
+          "title": "Start time",
+          "type": "string"
+        },
+        "end_time": {
+          "title": "End time",
+          "type": "string"
+        },
+        "duration_minutes": {
+          "title": "Duration minutes",
+          "type": "integer",
+          "readOnly": true
+        },
+        "complaints": {
+          "title": "Complaints",
+          "type": "string"
+        },
+        "details": {
+          "title": "Details",
+          "type": "string"
+        },
+        "address": {
+          "title": "Address",
+          "type": "string",
+          "x-nullable": true
+        },
+        "payment": {
+          "title": "Payment",
+          "type": "string",
+          "readOnly": true
+        },
+        "user": {
+          "title": "User",
+          "type": "string",
+          "readOnly": true
+        },
+        "doctor": {
+          "title": "Doctor",
+          "type": "string",
+          "readOnly": true
+        },
+        "files": {
+          "title": "Files",
+          "type": "string",
+          "readOnly": true
+        },
+        "created_at": {
+          "title": "Created at",
+          "type": "string",
+          "format": "date-time",
+          "readOnly": true
+        },
+        "decline_reason": {
+          "title": "Decline reason",
+          "type": "string",
+          "readOnly": true,
+          "minLength": 1,
+          "x-nullable": true
+        },
+        "postpone_reason": {
+          "title": "Postpone reason",
+          "type": "string",
+          "readOnly": true,
+          "minLength": 1,
+          "x-nullable": true
+        }
+      }
+    },
+    "PaginationMeta": {
+      "required": ["page", "per_page", "total", "total_pages"],
+      "type": "object",
+      "properties": {
+        "page": {
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "title": "Per page",
+          "type": "integer"
+        },
+        "total": {
+          "title": "Total",
+          "type": "integer"
+        },
+        "total_pages": {
+          "title": "Total pages",
+          "type": "integer"
+        }
+      }
+    },
+    "PaginatedAdminAppointmentList": {
+      "required": ["data", "meta"],
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/AdminAppointmentList"
+          }
+        },
+        "meta": {
+          "$ref": "#/definitions/PaginationMeta"
+        }
+      }
+    },
+    "AdminAppointmentCreate": {
+      "required": ["doctor_id", "type", "date", "start_time"],
+      "type": "object",
+      "properties": {
+        "doctor_id": {
+          "title": "Doctor id",
+          "type": "integer"
+        },
+        "user_id": {
+          "title": "User id",
+          "type": "integer",
+          "x-nullable": true
+        },
+        "fullname": {
+          "title": "Fullname",
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 1
+        },
+        "type": {
+          "title": "Type",
+          "type": "string",
+          "enum": ["online", "offline"]
+        },
+        "date": {
+          "title": "Date",
+          "type": "string",
+          "format": "date"
+        },
+        "start_time": {
+          "title": "Start time",
+          "type": "string"
+        },
+        "end_time": {
+          "title": "End time",
+          "type": "string"
+        },
+        "complaints": {
+          "title": "Complaints",
+          "type": "string"
+        },
+        "details": {
+          "title": "Details",
+          "type": "string"
+        },
+        "address": {
+          "title": "Address",
+          "type": "string",
+          "x-nullable": true
+        },
+        "status": {
+          "title": "Status",
+          "type": "string",
+          "enum": [
+            "pending",
+            "confirmed",
+            "completed",
+            "declined",
+            "cancelled"
+          ],
+          "default": "confirmed"
+        },
+        "payment_method": {
+          "title": "Payment method",
+          "type": "string",
+          "enum": ["card", "insurance"],
+          "x-nullable": true
+        },
+        "payment_status": {
+          "title": "Payment status",
+          "type": "string",
+          "enum": ["unpaid", "paid"],
+          "default": "unpaid"
+        },
+        "amount": {
+          "title": "Amount",
+          "type": "string",
+          "format": "decimal",
+          "default": "0.00"
+        },
+        "paid_amount": {
+          "title": "Paid amount",
+          "type": "string",
+          "format": "decimal",
+          "default": "0.00"
+        }
+      }
+    },
+    "AdminAppointmentUpdate": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "title": "Status",
+          "type": "string",
+          "enum": ["pending", "confirmed", "completed", "declined", "cancelled"]
+        },
+        "date": {
+          "title": "Date",
+          "type": "string",
+          "format": "date"
+        },
+        "start_time": {
+          "title": "Start time",
+          "type": "string"
+        },
+        "end_time": {
+          "title": "End time",
+          "type": "string"
+        },
+        "complaints": {
+          "title": "Complaints",
+          "type": "string"
+        },
+        "details": {
+          "title": "Details",
+          "type": "string"
+        },
+        "address": {
+          "title": "Address",
+          "type": "string",
+          "x-nullable": true
+        },
+        "decline_reason": {
+          "title": "Decline reason",
+          "type": "string",
+          "x-nullable": true
+        },
+        "postpone_reason": {
+          "title": "Postpone reason",
+          "type": "string",
+          "x-nullable": true
+        },
+        "payment_method": {
+          "title": "Payment method",
+          "type": "string",
+          "enum": ["card", "insurance"],
+          "x-nullable": true
+        },
+        "payment_status": {
+          "title": "Payment status",
+          "type": "string",
+          "enum": ["unpaid", "paid"]
+        },
+        "amount": {
+          "title": "Amount",
+          "type": "string",
+          "format": "decimal"
+        },
+        "paid_amount": {
+          "title": "Paid amount",
+          "type": "string",
+          "format": "decimal"
+        }
+      }
+    },
+    "Clinic": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "title": "ID",
+          "type": "integer",
+          "readOnly": true
+        },
+        "title": {
+          "title": "Title",
+          "type": "string",
+          "readOnly": true
+        },
+        "description": {
+          "title": "Description",
+          "type": "string",
+          "readOnly": true
+        },
+        "address": {
+          "title": "Address",
+          "type": "string",
+          "readOnly": true
+        },
+        "phone": {
+          "title": "Phone",
+          "type": "string",
+          "maxLength": 32,
+          "x-nullable": true
+        },
+        "latitude": {
+          "title": "Latitude",
+          "type": "string",
+          "format": "decimal",
+          "x-nullable": true
+        },
+        "longitude": {
+          "title": "Longitude",
+          "type": "string",
+          "format": "decimal",
+          "x-nullable": true
+        },
+        "region_id": {
+          "title": "Region id",
+          "type": "integer",
+          "readOnly": true,
+          "x-nullable": true
+        },
+        "image_url": {
+          "title": "Image url",
+          "type": "string",
+          "readOnly": true,
+          "x-nullable": true,
+          "format": "uri"
+        },
+        "top": {
+          "title": "Top",
+          "type": "boolean"
+        },
+        "doctor_ids": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          },
+          "readOnly": true,
+          "uniqueItems": true
+        },
+        "service_ids": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          },
+          "readOnly": true,
+          "uniqueItems": true
+        }
+      }
+    },
+    "PaginatedClinic": {
+      "required": ["data", "meta"],
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Clinic"
+          }
+        },
+        "meta": {
+          "$ref": "#/definitions/PaginationMeta"
+        }
+      }
+    },
+    "ClinicWrite": {
+      "required": ["title"],
+      "type": "object",
+      "properties": {
+        "id": {
+          "title": "ID",
+          "type": "integer",
+          "readOnly": true
+        },
+        "title": {
+          "title": "Title",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "x-nullable": true
+          }
+        },
+        "description": {
+          "title": "Description",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "x-nullable": true
+          }
+        },
+        "address": {
+          "title": "Address",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "x-nullable": true
+          }
+        },
+        "phone": {
+          "title": "Phone",
+          "type": "string",
+          "maxLength": 32,
+          "x-nullable": true
+        },
+        "latitude": {
+          "title": "Latitude",
+          "type": "string",
+          "format": "decimal",
+          "x-nullable": true
+        },
+        "longitude": {
+          "title": "Longitude",
+          "type": "string",
+          "format": "decimal",
+          "x-nullable": true
+        },
+        "region_id": {
+          "title": "Region id",
+          "type": "integer",
+          "x-nullable": true
+        },
+        "image": {
+          "title": "Image",
+          "type": "string",
+          "readOnly": true,
+          "x-nullable": true,
+          "format": "uri"
+        },
+        "top": {
+          "title": "Top",
+          "type": "boolean"
+        },
+        "doctor_ids": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "service_ids": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        }
+      }
+    },
+    "Diagnosis": {
+      "required": ["ic_code"],
+      "type": "object",
+      "properties": {
+        "id": {
+          "title": "ID",
+          "type": "integer",
+          "readOnly": true
+        },
+        "ic_code": {
+          "title": "Ic code",
+          "type": "string",
+          "maxLength": 20,
+          "minLength": 1
+        },
+        "title": {
+          "title": "Title",
+          "type": "string",
+          "readOnly": true
+        }
+      }
+    },
+    "PaginatedDiagnosis": {
+      "required": ["data", "meta"],
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Diagnosis"
+          }
+        },
+        "meta": {
+          "$ref": "#/definitions/PaginationMeta"
+        }
+      }
+    },
+    "DiagnosisWrite": {
+      "required": ["ic_code", "title"],
+      "type": "object",
+      "properties": {
+        "id": {
+          "title": "ID",
+          "type": "integer",
+          "readOnly": true
+        },
+        "ic_code": {
+          "title": "Ic code",
+          "type": "string",
+          "minLength": 1
+        },
+        "title": {
+          "title": "Title",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "x-nullable": true
+          }
+        }
+      }
+    },
+    "DiseaseWrite": {
+      "required": ["title"],
+      "type": "object",
+      "properties": {
+        "id": {
+          "title": "ID",
+          "type": "integer",
+          "readOnly": true
+        },
+        "title": {
+          "title": "Title",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "x-nullable": true
+          }
+        },
+        "description": {
+          "title": "Description",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "x-nullable": true
+          }
+        },
+        "image": {
+          "title": "Image",
+          "type": "string",
+          "readOnly": true,
+          "x-nullable": true,
+          "format": "uri"
+        },
+        "emergency": {
+          "title": "Emergency",
+          "type": "boolean"
+        },
+        "top": {
+          "title": "Top",
+          "type": "boolean"
+        },
+        "symptom_ids": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "service_ids": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "specialization_ids": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "doctor_ids": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        }
+      }
+    },
+    "DrugWrite": {
+      "required": ["title"],
+      "type": "object",
+      "properties": {
+        "id": {
+          "title": "ID",
+          "type": "integer",
+          "readOnly": true
+        },
+        "title": {
+          "title": "Title",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "x-nullable": true
+          }
+        }
+      }
+    },
+    "FaqItem": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "title": "ID",
+          "type": "integer",
+          "readOnly": true
+        },
+        "question": {
+          "title": "Question",
+          "type": "string",
+          "readOnly": true
+        },
+        "answer": {
+          "title": "Answer",
+          "type": "string",
+          "readOnly": true
+        }
+      }
+    },
+    "FaqItemWrite": {
+      "required": ["question"],
+      "type": "object",
+      "properties": {
+        "id": {
+          "title": "ID",
+          "type": "integer",
+          "readOnly": true
+        },
+        "question": {
+          "title": "Question",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "x-nullable": true
+          }
+        },
+        "answer": {
+          "title": "Answer",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "x-nullable": true
+          }
+        },
+        "sort_order": {
+          "title": "Sort order",
+          "type": "integer",
+          "maximum": 2147483647,
+          "minimum": 0
+        }
+      }
+    },
+    "AdminWithdrawalUpdate": {
+      "required": ["status"],
+      "type": "object",
+      "properties": {
+        "status": {
+          "title": "Status",
+          "type": "string",
+          "enum": ["pending", "approved", "rejected", "paid"]
+        },
+        "rejection_reason": {
+          "title": "Rejection reason",
+          "type": "string",
+          "default": ""
+        }
+      }
+    },
+    "MeSpecialization": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "title": "ID",
+          "type": "integer",
+          "readOnly": true
+        },
+        "title": {
+          "title": "Title",
+          "type": "string",
+          "readOnly": true
+        }
+      }
+    },
+    "ForumAnswerAuthor": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "title": "ID",
+          "type": "integer",
+          "readOnly": true
+        },
+        "fullname": {
+          "title": "Fullname",
+          "type": "string",
+          "readOnly": true
+        },
+        "avatar_url": {
+          "title": "Avatar url",
+          "type": "string",
+          "readOnly": true,
+          "x-nullable": true,
+          "format": "uri"
+        },
+        "role": {
+          "title": "Role",
+          "type": "string",
+          "readOnly": true,
+          "minLength": 1
+        },
+        "specializations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/MeSpecialization"
+          },
+          "readOnly": true
+        }
+      }
+    },
+    "Upload": {
+      "required": ["mime_type", "size_bytes"],
+      "type": "object",
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "integer",
+          "readOnly": true
+        },
+        "url": {
+          "title": "Url",
+          "type": "string",
+          "readOnly": true
+        },
+        "filename": {
+          "title": "Filename",
+          "type": "string",
+          "readOnly": true,
+          "minLength": 1
+        },
+        "mime_type": {
+          "title": "Mime type",
+          "type": "string",
+          "maxLength": 100,
+          "minLength": 1
+        },
+        "size_bytes": {
+          "title": "Size bytes",
+          "type": "integer",
+          "maximum": 9223372036854776000,
+          "minimum": 0
+        },
+        "created_at": {
+          "title": "Created at",
+          "type": "string",
+          "format": "date-time",
+          "readOnly": true
+        }
+      }
+    },
+    "ForumAnswer": {
+      "required": ["body"],
+      "type": "object",
+      "properties": {
+        "id": {
+          "title": "ID",
+          "type": "integer",
+          "readOnly": true
+        },
+        "body": {
+          "title": "Body",
+          "type": "string",
+          "minLength": 1
+        },
+        "author": {
+          "$ref": "#/definitions/ForumAnswerAuthor"
+        },
+        "files": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Upload"
+          },
+          "readOnly": true
+        },
+        "created_at": {
+          "title": "Created at",
+          "type": "string",
+          "format": "date-time",
+          "readOnly": true
+        }
+      }
+    },
+    "PaginatedForumAnswer": {
+      "required": ["data", "meta"],
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ForumAnswer"
+          }
+        },
+        "meta": {
+          "$ref": "#/definitions/PaginationMeta"
+        }
+      }
+    },
+    "ForumAuthor": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "title": "ID",
+          "type": "integer",
+          "readOnly": true
+        },
+        "fullname": {
+          "title": "Fullname",
+          "type": "string",
+          "readOnly": true
+        },
+        "avatar_url": {
+          "title": "Avatar url",
+          "type": "string",
+          "readOnly": true,
+          "x-nullable": true,
+          "format": "uri"
+        }
+      }
+    },
+    "ForumPostList": {
+      "required": ["title", "body"],
+      "type": "object",
+      "properties": {
+        "id": {
+          "title": "ID",
+          "type": "integer",
+          "readOnly": true
+        },
+        "title": {
+          "title": "Title",
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 1
+        },
+        "body": {
+          "title": "Body",
+          "type": "string",
+          "minLength": 1
+        },
+        "specialization_id": {
+          "title": "Specialization id",
+          "type": "string",
+          "readOnly": true
+        },
+        "doctors_only": {
+          "title": "Doctors only",
+          "type": "boolean"
+        },
+        "author": {
+          "$ref": "#/definitions/ForumAuthor"
+        },
+        "files": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Upload"
+          },
+          "readOnly": true
+        },
+        "answer_count": {
+          "title": "Answer count",
+          "type": "integer",
+          "readOnly": true
+        },
+        "like_count": {
+          "title": "Like count",
+          "type": "integer",
+          "readOnly": true
+        },
+        "liked_by_me": {
+          "title": "Liked by me",
+          "type": "boolean",
+          "readOnly": true,
+          "x-nullable": true
+        },
+        "created_at": {
+          "title": "Created at",
+          "type": "string",
+          "format": "date-time",
+          "readOnly": true
+        }
+      }
+    },
+    "PaginatedForumPostList": {
+      "required": ["data", "meta"],
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ForumPostList"
+          }
+        },
+        "meta": {
+          "$ref": "#/definitions/PaginationMeta"
+        }
+      }
+    },
+    "ContentPage": {
+      "required": ["slug"],
+      "type": "object",
+      "properties": {
+        "slug": {
+          "title": "Slug",
+          "type": "string",
+          "format": "slug",
+          "pattern": "^[-a-zA-Z0-9_]+$",
+          "maxLength": 64,
+          "minLength": 1
+        },
+        "title": {
+          "title": "Title",
+          "type": "string",
+          "readOnly": true
+        },
+        "body": {
+          "title": "Body",
+          "type": "string",
+          "readOnly": true
+        },
+        "updated_at": {
+          "title": "Updated at",
+          "type": "string",
+          "format": "date-time",
+          "readOnly": true
+        }
+      }
+    },
+    "ContentPageWrite": {
+      "required": ["slug", "title"],
+      "type": "object",
+      "properties": {
+        "slug": {
+          "title": "Slug",
+          "type": "string",
+          "format": "slug",
+          "pattern": "^[-a-zA-Z0-9_]+$",
+          "maxLength": 64,
+          "minLength": 1
+        },
+        "title": {
+          "title": "Title",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "x-nullable": true
+          }
+        },
+        "body": {
+          "title": "Body",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "x-nullable": true
+          }
+        }
+      }
+    },
+    "AppointmentDoctor": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "title": "ID",
+          "type": "integer",
+          "readOnly": true
+        },
+        "fullname": {
+          "title": "Fullname",
+          "type": "string",
+          "readOnly": true
+        },
+        "avatar_url": {
+          "title": "Avatar url",
+          "type": "string",
+          "readOnly": true,
+          "x-nullable": true,
+          "format": "uri"
+        },
+        "specializations": {
+          "title": "Specializations",
+          "type": "string",
+          "readOnly": true
+        },
+        "workplace": {
+          "title": "Workplace",
+          "type": "string",
+          "readOnly": true
+        }
+      }
+    },
+    "AdminPrescriptionList": {
+      "required": ["date"],
+      "type": "object",
+      "properties": {
+        "id": {
+          "title": "ID",
+          "type": "integer",
+          "readOnly": true
+        },
+        "date": {
+          "title": "Date",
+          "type": "string",
+          "format": "date"
+        },
+        "diagnosis": {
+          "title": "Diagnosis",
+          "type": "string",
+          "readOnly": true
+        },
+        "drugs_summary": {
+          "title": "Drugs summary",
+          "type": "string",
+          "readOnly": true
+        },
+        "doctor": {
+          "$ref": "#/definitions/AppointmentDoctor"
+        }
+      }
+    },
+    "PaginatedAdminPrescriptionList": {
+      "required": ["data", "meta"],
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/AdminPrescriptionList"
+          }
+        },
+        "meta": {
+          "$ref": "#/definitions/PaginationMeta"
+        }
+      }
+    },
+    "PrescriptionDrug": {
+      "required": ["name", "details"],
+      "type": "object",
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string",
+          "minLength": 1
+        },
+        "details": {
+          "title": "Details",
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "AdminPrescriptionCreate": {
+      "required": ["appointment_id", "doctor_id", "date"],
+      "type": "object",
+      "properties": {
+        "appointment_id": {
+          "title": "Appointment id",
+          "type": "integer"
+        },
+        "doctor_id": {
+          "title": "Doctor id",
+          "type": "integer"
+        },
+        "date": {
+          "title": "Date",
+          "type": "string",
+          "format": "date"
+        },
+        "diagnosis_ids": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "drugs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/PrescriptionDrug"
+          }
+        },
+        "services": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string",
+              "x-nullable": true
+            }
+          }
+        }
+      }
+    },
+    "AdminPrescriptionUpdate": {
+      "type": "object",
+      "properties": {
+        "date": {
+          "title": "Date",
+          "type": "string",
+          "format": "date"
+        },
+        "diagnosis_ids": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "drugs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/PrescriptionDrug"
+          }
+        },
+        "services": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string",
+              "x-nullable": true
+            }
+          }
+        }
+      }
+    },
+    "RegionWrite": {
+      "required": ["title"],
+      "type": "object",
+      "properties": {
+        "id": {
+          "title": "ID",
+          "type": "integer",
+          "readOnly": true
+        },
+        "title": {
+          "title": "Title",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "x-nullable": true
+          }
+        }
+      }
+    },
+    "ServiceWrite": {
+      "required": ["title"],
+      "type": "object",
+      "properties": {
+        "id": {
+          "title": "ID",
+          "type": "integer",
+          "readOnly": true
+        },
+        "title": {
+          "title": "Title",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "x-nullable": true
+          }
+        },
+        "body": {
+          "title": "Body",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "x-nullable": true
+          }
+        },
+        "image": {
+          "title": "Image",
+          "type": "string",
+          "readOnly": true,
+          "x-nullable": true,
+          "format": "uri"
+        }
+      }
+    },
+    "SpecializationReference": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "title": "ID",
+          "type": "integer",
+          "readOnly": true
+        },
+        "title": {
+          "title": "Title",
+          "type": "string",
+          "readOnly": true
+        },
+        "disease_ids": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          },
+          "readOnly": true,
+          "uniqueItems": true
+        }
+      }
+    },
+    "PaginatedSpecializationReference": {
+      "required": ["data", "meta"],
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/SpecializationReference"
+          }
+        },
+        "meta": {
+          "$ref": "#/definitions/PaginationMeta"
+        }
+      }
+    },
+    "SpecializationWrite": {
+      "required": ["title"],
+      "type": "object",
+      "properties": {
+        "id": {
+          "title": "ID",
+          "type": "integer",
+          "readOnly": true
+        },
+        "title": {
+          "title": "Title",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "x-nullable": true
+          }
+        }
+      }
+    },
+    "SymptomWrite": {
+      "required": ["title"],
+      "type": "object",
+      "properties": {
+        "id": {
+          "title": "ID",
+          "type": "integer",
+          "readOnly": true
+        },
+        "title": {
+          "title": "Title",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "x-nullable": true
+          }
+        },
+        "gender": {
+          "title": "Gender",
+          "type": "string",
+          "enum": ["male", "female", "both"]
+        },
+        "side": {
+          "title": "Side",
+          "type": "string",
+          "enum": ["front", "back", "both"]
+        },
+        "body_part": {
+          "title": "Body part",
+          "type": "string",
+          "maxLength": 64
+        }
+      }
+    },
+    "AppointmentList": {
+      "required": ["type", "date", "start_time", "end_time"],
+      "type": "object",
+      "properties": {
+        "id": {
+          "title": "ID",
+          "type": "integer",
+          "readOnly": true
+        },
+        "status": {
+          "title": "Status",
+          "type": "string",
+          "enum": ["pending", "confirmed", "completed", "declined", "cancelled"]
+        },
+        "type": {
+          "title": "Type",
+          "type": "string",
+          "enum": ["online", "offline"]
+        },
+        "parent_id": {
+          "title": "Parent id",
+          "type": "integer",
+          "readOnly": true,
+          "x-nullable": true
+        },
+        "date": {
+          "title": "Date",
+          "type": "string",
+          "format": "date"
+        },
+        "start_time": {
+          "title": "Start time",
+          "type": "string"
+        },
+        "end_time": {
+          "title": "End time",
+          "type": "string"
+        },
+        "duration_minutes": {
+          "title": "Duration minutes",
+          "type": "integer",
+          "readOnly": true
+        },
+        "complaints": {
+          "title": "Complaints",
+          "type": "string"
+        },
+        "details": {
+          "title": "Details",
+          "type": "string"
+        },
+        "address": {
+          "title": "Address",
+          "type": "string",
+          "x-nullable": true
+        },
+        "payment": {
+          "title": "Payment",
+          "type": "string",
+          "readOnly": true
+        },
+        "user": {
+          "title": "User",
+          "type": "string",
+          "readOnly": true
+        },
+        "doctor": {
+          "title": "Doctor",
+          "type": "string",
+          "readOnly": true
+        },
+        "files": {
+          "title": "Files",
+          "type": "string",
+          "readOnly": true
+        },
+        "created_at": {
+          "title": "Created at",
+          "type": "string",
+          "format": "date-time",
+          "readOnly": true
+        },
+        "can_re_appointment": {
+          "title": "Can re appointment",
+          "type": "string",
+          "readOnly": true
+        },
+        "can_chat": {
+          "title": "Can chat",
+          "type": "string",
+          "readOnly": true
+        }
+      }
+    },
+    "PaginatedAppointmentList": {
+      "required": ["data", "meta"],
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/AppointmentList"
+          }
+        },
+        "meta": {
+          "$ref": "#/definitions/PaginationMeta"
+        }
+      }
+    },
+    "AppointmentInsurance": {
+      "required": ["type", "value"],
+      "type": "object",
+      "properties": {
+        "type": {
+          "title": "Type",
+          "type": "string",
+          "enum": ["fin_code", "card_number"]
+        },
+        "value": {
+          "title": "Value",
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 1
+        }
+      },
+      "x-nullable": true
+    },
+    "AppointmentCreate": {
+      "required": [
+        "doctor_id",
+        "type",
+        "date",
+        "start_time",
+        "end_time",
+        "payment_method"
+      ],
+      "type": "object",
+      "properties": {
+        "doctor_id": {
+          "title": "Doctor id",
+          "type": "integer"
+        },
+        "parent_id": {
+          "title": "Parent id",
+          "type": "integer",
+          "x-nullable": true
+        },
+        "type": {
+          "title": "Type",
+          "type": "string",
+          "enum": ["online", "offline"]
+        },
+        "date": {
+          "title": "Date",
+          "type": "string",
+          "format": "date"
+        },
+        "start_time": {
+          "title": "Start time",
+          "type": "string"
+        },
+        "end_time": {
+          "title": "End time",
+          "type": "string"
+        },
+        "complaints": {
+          "title": "Complaints",
+          "type": "string"
+        },
+        "details": {
+          "title": "Details",
+          "type": "string"
+        },
+        "payment_method": {
+          "title": "Payment method",
+          "type": "string",
+          "enum": ["card", "insurance"]
+        },
+        "insurance": {
+          "$ref": "#/definitions/AppointmentInsurance"
+        },
+        "file_ids": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 1
+          }
+        }
+      }
+    },
+    "AppointmentManualCreate": {
+      "required": ["date", "start_time", "type"],
+      "type": "object",
+      "properties": {
+        "user_id": {
+          "title": "User id",
+          "type": "integer",
+          "x-nullable": true
+        },
+        "fullname": {
+          "title": "Fullname",
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 1
+        },
+        "date": {
+          "title": "Date",
+          "type": "string",
+          "format": "date"
+        },
+        "start_time": {
+          "title": "Start time",
+          "type": "string"
+        },
+        "end_time": {
+          "title": "End time",
+          "type": "string"
+        },
+        "type": {
+          "title": "Type",
+          "type": "string",
+          "enum": ["online", "offline"]
+        },
+        "complaints": {
+          "title": "Complaints",
+          "type": "string"
+        },
+        "details": {
+          "title": "Details",
+          "type": "string"
+        },
+        "address": {
+          "title": "Address",
+          "type": "string",
+          "x-nullable": true
+        },
+        "file_ids": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 1
+          }
+        }
+      }
+    },
+    "AppointmentDecline": {
+      "type": "object",
+      "properties": {
+        "reason": {
+          "title": "Reason",
+          "type": "string",
+          "maxLength": 500,
+          "minLength": 1
+        }
+      }
+    },
+    "AppointmentPostpone": {
+      "required": ["date", "start_time"],
+      "type": "object",
+      "properties": {
+        "date": {
+          "title": "Date",
+          "type": "string",
+          "format": "date"
+        },
+        "start_time": {
+          "title": "Start time",
+          "type": "string"
+        },
+        "end_time": {
+          "title": "End time",
+          "type": "string"
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string",
+          "maxLength": 500,
+          "minLength": 1
+        }
+      }
+    },
+    "AppointmentReviewCreate": {
+      "required": ["rating"],
+      "type": "object",
+      "properties": {
+        "rating": {
+          "title": "Rating",
+          "type": "integer",
+          "maximum": 5,
+          "minimum": 1
+        },
+        "comment": {
+          "title": "Comment",
+          "type": "string"
+        },
+        "is_anonymous": {
+          "title": "Is anonymous",
+          "type": "boolean"
+        },
+        "file_ids": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 1
+          }
+        }
+      }
+    },
+    "ConsultationList": {
+      "required": ["date"],
+      "type": "object",
+      "properties": {
+        "id": {
+          "title": "ID",
+          "type": "integer",
+          "readOnly": true
+        },
+        "date": {
+          "title": "Date",
+          "type": "string",
+          "format": "date"
+        },
+        "diagnosis": {
+          "title": "Diagnosis",
+          "type": "string",
+          "readOnly": true
+        },
+        "drugs_summary": {
+          "title": "Drugs summary",
+          "type": "string",
+          "readOnly": true
+        },
+        "doctor": {
+          "$ref": "#/definitions/AppointmentDoctor"
+        }
+      }
+    },
+    "PaginatedConsultationList": {
+      "required": ["data", "meta"],
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ConsultationList"
+          }
+        },
+        "meta": {
+          "$ref": "#/definitions/PaginationMeta"
+        }
+      }
+    },
+    "DoctorPublicList": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "title": "ID",
+          "type": "integer",
+          "readOnly": true
+        },
+        "fullname": {
+          "title": "Fullname",
+          "type": "string",
+          "readOnly": true
+        },
+        "avatar_url": {
+          "title": "Avatar url",
+          "type": "string",
+          "readOnly": true,
+          "x-nullable": true,
+          "format": "uri"
+        },
+        "gender": {
+          "title": "Gender",
+          "type": "string",
+          "readOnly": true,
+          "minLength": 1,
+          "x-nullable": true
+        },
+        "specializations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/MeSpecialization"
+          },
+          "readOnly": true
+        },
+        "workplace": {
+          "title": "Workplace",
+          "type": "string",
+          "readOnly": true,
+          "minLength": 1,
+          "x-nullable": true
+        },
+        "location_id": {
+          "title": "Location id",
+          "type": "integer",
+          "readOnly": true,
+          "x-nullable": true
+        },
+        "experience_years": {
+          "title": "Experience years",
+          "type": "integer",
+          "readOnly": true,
+          "x-nullable": true
+        },
+        "price": {
+          "title": "Price",
+          "type": "number",
+          "readOnly": true,
+          "x-nullable": true
+        },
+        "offline_price": {
+          "title": "Offline price",
+          "type": "number",
+          "readOnly": true,
+          "x-nullable": true
+        },
+        "only_offline": {
+          "title": "Only offline",
+          "type": "boolean",
+          "readOnly": true
+        },
+        "insurance_accepted": {
+          "title": "Insurance accepted",
+          "type": "boolean",
+          "readOnly": true
+        },
+        "mental_health": {
+          "title": "Mental health",
+          "type": "boolean",
+          "readOnly": true
+        },
+        "top": {
+          "title": "Top",
+          "type": "boolean",
+          "readOnly": true
+        }
+      }
+    },
+    "PaginatedDoctorPublicList": {
+      "required": ["data", "meta"],
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/DoctorPublicList"
+          }
+        },
+        "meta": {
+          "$ref": "#/definitions/PaginationMeta"
+        }
+      }
+    },
+    "AppointmentReview": {
+      "required": ["rating"],
+      "type": "object",
+      "properties": {
+        "id": {
+          "title": "ID",
+          "type": "integer",
+          "readOnly": true
+        },
+        "rating": {
+          "title": "Rating",
+          "type": "integer",
+          "maximum": 32767,
+          "minimum": 0
+        },
+        "comment": {
+          "title": "Comment",
+          "type": "string"
+        },
+        "is_anonymous": {
+          "title": "Is anonymous",
+          "type": "boolean"
+        },
+        "author": {
+          "title": "Author",
+          "type": "string",
+          "readOnly": true
+        },
+        "files": {
+          "title": "Files",
+          "type": "string",
+          "readOnly": true
+        },
+        "created_at": {
+          "title": "Created at",
+          "type": "string",
+          "format": "date-time",
+          "readOnly": true
+        }
+      }
+    },
+    "PaginatedAppointmentReview": {
+      "required": ["data", "meta"],
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/AppointmentReview"
+          }
+        },
+        "meta": {
+          "$ref": "#/definitions/PaginationMeta"
+        }
+      }
+    },
+    "Earning": {
+      "required": [
+        "id",
+        "gross_amount",
+        "platform_fee_pct",
+        "amount",
+        "date",
+        "created_at"
+      ],
+      "type": "object",
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "integer"
+        },
+        "gross_amount": {
+          "title": "Gross amount",
+          "type": "string",
+          "format": "decimal"
+        },
+        "platform_fee_pct": {
+          "title": "Platform fee pct",
+          "type": "string",
+          "format": "decimal"
+        },
+        "amount": {
+          "title": "Amount",
+          "type": "string",
+          "format": "decimal"
+        },
+        "date": {
+          "title": "Date",
+          "type": "string",
+          "format": "date"
+        },
+        "appointment": {
+          "title": "Appointment",
+          "type": "string",
+          "readOnly": true
+        },
+        "user": {
+          "title": "User",
+          "type": "string",
+          "readOnly": true
+        },
+        "created_at": {
+          "title": "Created at",
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "PaginatedEarning": {
+      "required": ["data", "meta"],
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Earning"
+          }
+        },
+        "meta": {
+          "$ref": "#/definitions/PaginationMeta"
+        }
+      }
+    },
+    "FinanceSummary": {
+      "required": [
+        "balance",
+        "pending_withdrawal",
+        "total_earned",
+        "total_withdrawn"
+      ],
+      "type": "object",
+      "properties": {
+        "balance": {
+          "title": "Balance",
+          "type": "string",
+          "format": "decimal"
+        },
+        "pending_withdrawal": {
+          "title": "Pending withdrawal",
+          "type": "string",
+          "format": "decimal"
+        },
+        "total_earned": {
+          "title": "Total earned",
+          "type": "string",
+          "format": "decimal"
+        },
+        "total_withdrawn": {
+          "title": "Total withdrawn",
+          "type": "string",
+          "format": "decimal"
+        }
+      }
+    },
+    "Withdrawal": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "title": "ID",
+          "type": "integer",
+          "readOnly": true
+        },
+        "amount": {
+          "title": "Amount",
+          "type": "string",
+          "format": "decimal",
+          "readOnly": true
+        },
+        "status": {
+          "title": "Status",
+          "type": "string",
+          "enum": ["pending", "approved", "rejected", "paid"],
+          "readOnly": true
+        },
+        "comment": {
+          "title": "Comment",
+          "type": "string",
+          "readOnly": true,
+          "minLength": 1
+        },
+        "rejection_reason": {
+          "title": "Rejection reason",
+          "type": "string",
+          "readOnly": true,
+          "minLength": 1,
+          "x-nullable": true
+        },
+        "created_at": {
+          "title": "Created at",
+          "type": "string",
+          "format": "date-time",
+          "readOnly": true
+        },
+        "processed_at": {
+          "title": "Processed at",
+          "type": "string",
+          "format": "date-time",
+          "readOnly": true,
+          "x-nullable": true
+        }
+      }
+    },
+    "PaginatedWithdrawal": {
+      "required": ["data", "meta"],
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Withdrawal"
+          }
+        },
+        "meta": {
+          "$ref": "#/definitions/PaginationMeta"
+        }
+      }
+    },
+    "WithdrawalCreate": {
+      "required": ["amount"],
+      "type": "object",
+      "properties": {
+        "amount": {
+          "title": "Amount",
+          "type": "string",
+          "format": "decimal"
+        },
+        "comment": {
+          "title": "Comment",
+          "type": "string",
+          "default": ""
+        }
+      }
+    },
+    "ForumPostCreate": {
+      "required": ["title", "body"],
+      "type": "object",
+      "properties": {
+        "title": {
+          "title": "Title",
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 1
+        },
+        "body": {
+          "title": "Body",
+          "type": "string",
+          "minLength": 1
+        },
+        "specialization_id": {
+          "title": "Specialization id",
+          "type": "integer",
+          "x-nullable": true
+        },
+        "doctors_only": {
+          "title": "Doctors only",
+          "type": "boolean"
+        },
+        "file_ids": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 1
+          }
+        }
+      }
+    },
+    "ForumPostUpdate": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "title": "Title",
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 1
+        },
+        "body": {
+          "title": "Body",
+          "type": "string",
+          "minLength": 1
+        },
+        "specialization_id": {
+          "title": "Specialization id",
+          "type": "integer",
+          "x-nullable": true
+        },
+        "doctors_only": {
+          "title": "Doctors only",
+          "type": "boolean"
+        },
+        "file_ids": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 1
+          }
+        }
+      }
+    },
+    "ForumAnswerCreate": {
+      "required": ["body"],
+      "type": "object",
+      "properties": {
+        "body": {
+          "title": "Body",
+          "type": "string",
+          "minLength": 1
+        },
+        "file_ids": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 1
+          }
+        }
+      }
+    },
+    "Notification": {
+      "required": ["type", "title", "body"],
+      "type": "object",
+      "properties": {
+        "id": {
+          "title": "ID",
+          "type": "integer",
+          "readOnly": true
+        },
+        "type": {
+          "title": "Type",
+          "type": "string",
+          "maxLength": 64,
+          "minLength": 1
+        },
+        "title": {
+          "title": "Title",
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 1
+        },
+        "body": {
+          "title": "Body",
+          "type": "string",
+          "minLength": 1
+        },
+        "read_at": {
+          "title": "Read at",
+          "type": "string",
+          "format": "date-time",
+          "x-nullable": true
+        },
+        "created_at": {
+          "title": "Created at",
+          "type": "string",
+          "format": "date-time",
+          "readOnly": true
+        },
+        "actor": {
+          "title": "Actor",
+          "type": "string",
+          "readOnly": true
+        },
+        "data": {
+          "title": "Data",
+          "type": "object",
+          "readOnly": true
+        }
+      }
+    },
+    "PaginatedNotification": {
+      "required": ["data", "meta"],
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Notification"
+          }
+        },
+        "meta": {
+          "$ref": "#/definitions/PaginationMeta"
+        }
+      }
+    },
+    "FCMDevice": {
+      "required": ["token"],
+      "type": "object",
+      "properties": {
+        "token": {
+          "title": "Token",
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "PrescriptionList": {
+      "required": ["date"],
+      "type": "object",
+      "properties": {
+        "id": {
+          "title": "ID",
+          "type": "integer",
+          "readOnly": true
+        },
+        "date": {
+          "title": "Date",
+          "type": "string",
+          "format": "date"
+        },
+        "diagnosis": {
+          "title": "Diagnosis",
+          "type": "string",
+          "readOnly": true
+        },
+        "drugs_summary": {
+          "title": "Drugs summary",
+          "type": "string",
+          "readOnly": true
+        },
+        "doctor": {
+          "$ref": "#/definitions/AppointmentDoctor"
+        }
+      }
+    },
+    "PaginatedPrescriptionList": {
+      "required": ["data", "meta"],
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/PrescriptionList"
+          }
+        },
+        "meta": {
+          "$ref": "#/definitions/PaginationMeta"
+        }
+      }
+    },
+    "PrescriptionCreate": {
+      "required": ["appointment_id"],
+      "type": "object",
+      "properties": {
+        "appointment_id": {
+          "title": "Appointment id",
+          "type": "integer"
+        },
+        "diagnosis_ids": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "drugs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/PrescriptionDrug"
+          }
+        },
+        "services": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string",
+              "x-nullable": true
+            }
+          }
+        }
+      }
+    },
+    "User": {
+      "required": ["username"],
+      "type": "object",
+      "properties": {
+        "id": {
+          "title": "ID",
+          "type": "integer",
+          "readOnly": true
+        },
+        "permissions": {
+          "title": "Permissions",
+          "type": "string",
+          "readOnly": true
+        },
+        "password": {
+          "title": "Password",
+          "type": "string",
+          "maxLength": 128,
+          "minLength": 1
+        },
+        "is_superuser": {
+          "title": "Superuser status",
+          "description": "Designates that this user has all permissions without explicitly assigning them.",
+          "type": "boolean"
+        },
+        "username": {
+          "title": "Username",
+          "description": "Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.",
+          "type": "string",
+          "pattern": "^[\\w.@+-]+$",
+          "maxLength": 150,
+          "minLength": 1
+        },
+        "first_name": {
+          "title": "First name",
+          "type": "string",
+          "maxLength": 150
+        },
+        "last_name": {
+          "title": "Last name",
+          "type": "string",
+          "maxLength": 150
+        },
+        "email": {
+          "title": "Email address",
+          "type": "string",
+          "format": "email",
+          "maxLength": 254
+        },
+        "is_staff": {
+          "title": "Staff status",
+          "description": "Designates whether the user can log into this admin site.",
+          "type": "boolean"
+        },
+        "is_active": {
+          "title": "Active",
+          "description": "Designates whether this user should be treated as active. Unselect this instead of deleting accounts.",
+          "type": "boolean"
+        },
+        "phone_number": {
+          "title": "Phone number",
+          "type": "string",
+          "pattern": "^\\+?994(50|51|55|70|77|99|10|60)[0-9]{7}$",
+          "maxLength": 15,
+          "x-nullable": true
+        },
+        "address": {
+          "title": "Address",
+          "type": "string",
+          "maxLength": 255,
+          "x-nullable": true
+        },
+        "birth_date": {
+          "title": "Birth date",
+          "type": "string",
+          "format": "date",
+          "x-nullable": true
+        },
+        "sex": {
+          "title": "Sex",
+          "type": "string",
+          "maxLength": 10,
+          "x-nullable": true
+        },
+        "photo": {
+          "title": "Photo",
+          "type": "string",
+          "readOnly": true,
+          "x-nullable": true,
+          "format": "uri"
+        },
+        "role": {
+          "title": "Role",
+          "type": "string",
+          "enum": ["user", "doctor"]
+        },
+        "work_email": {
+          "title": "Work email",
+          "type": "string",
+          "format": "email",
+          "maxLength": 254,
+          "x-nullable": true
+        },
+        "work_phone_number": {
+          "title": "Work phone number",
+          "type": "string",
+          "pattern": "^\\+?994(50|51|55|70|77|99|10|60)[0-9]{7}$",
+          "maxLength": 15,
+          "x-nullable": true
+        },
+        "work_address": {
+          "title": "Work address",
+          "type": "string",
+          "maxLength": 255,
+          "x-nullable": true
+        },
+        "doctor_boolean": {
+          "title": "Doctor boolean",
+          "type": "boolean"
+        },
+        "location": {
+          "title": "Location",
+          "type": "integer",
+          "x-nullable": true
+        },
+        "groups": {
+          "description": "The groups this user belongs to. A user will get all permissions granted to each of their groups.",
+          "type": "array",
+          "items": {
+            "description": "The groups this user belongs to. A user will get all permissions granted to each of their groups.",
+            "type": "integer"
+          },
+          "uniqueItems": true
+        },
+        "user_permissions": {
+          "description": "Specific permissions for this user.",
+          "type": "array",
+          "items": {
+            "description": "Specific permissions for this user.",
+            "type": "integer"
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "TokenObtainPair": {
+      "required": ["username", "password"],
+      "type": "object",
+      "properties": {
+        "username": {
+          "title": "Username",
+          "type": "string",
+          "minLength": 1
+        },
+        "password": {
+          "title": "Password",
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "TokenBlacklist": {
+      "required": ["refresh"],
+      "type": "object",
+      "properties": {
+        "refresh": {
+          "title": "Refresh",
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "OTPRequest": {
+      "required": ["phone"],
+      "type": "object",
+      "properties": {
+        "phone": {
+          "title": "Phone",
+          "type": "string",
+          "pattern": "^\\+?[1-9]\\d{6,14}$",
+          "maxLength": 16,
+          "minLength": 1
+        }
+      }
+    },
+    "OTPVerify": {
+      "required": ["phone", "code"],
+      "type": "object",
+      "properties": {
+        "phone": {
+          "title": "Phone",
+          "type": "string",
+          "pattern": "^\\+?[1-9]\\d{6,14}$",
+          "maxLength": 16,
+          "minLength": 1
+        },
+        "code": {
+          "title": "Code",
+          "type": "string",
+          "maxLength": 32,
+          "minLength": 1
+        }
+      }
+    },
+    "TokenRefresh": {
+      "required": ["refresh"],
+      "type": "object",
+      "properties": {
+        "refresh": {
+          "title": "Refresh",
+          "type": "string",
+          "minLength": 1
+        },
+        "access": {
+          "title": "Access",
+          "type": "string",
+          "readOnly": true,
+          "minLength": 1
+        }
+      }
+    },
+    "UserFileList": {
+      "required": ["mime_type", "size_bytes", "purpose"],
+      "type": "object",
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "integer",
+          "readOnly": true
+        },
+        "url": {
+          "title": "Url",
+          "type": "string",
+          "readOnly": true
+        },
+        "filename": {
+          "title": "Filename",
+          "type": "string",
+          "readOnly": true,
+          "minLength": 1
+        },
+        "mime_type": {
+          "title": "Mime type",
+          "type": "string",
+          "maxLength": 100,
+          "minLength": 1
+        },
+        "size_bytes": {
+          "title": "Size bytes",
+          "type": "integer",
+          "maximum": 9223372036854776000,
+          "minimum": 0
+        },
+        "created_at": {
+          "title": "Created at",
+          "type": "string",
+          "format": "date-time",
+          "readOnly": true
+        },
+        "purpose": {
+          "title": "Purpose",
+          "type": "string",
+          "enum": [
+            "appointment",
+            "forum",
+            "forum_answer",
+            "prescription",
+            "review",
+            "avatar",
+            "chat"
+          ]
+        },
+        "context": {
+          "title": "Context",
+          "type": "string",
+          "readOnly": true
+        }
+      }
+    },
+    "PaginatedUserFileList": {
+      "required": ["data", "meta"],
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/UserFileList"
+          }
+        },
+        "meta": {
+          "$ref": "#/definitions/PaginationMeta"
+        }
       }
     }
   }

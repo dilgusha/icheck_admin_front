@@ -1,23 +1,25 @@
-import { ref, computed, type Ref } from 'vue'
-import type { Symptom, SymptomsListResponse, SymptomPayload, SymptomsQuery } from '@icheck/api-contracts'
+import type {
+  Symptom,
+  SymptomsListResponse,
+  SymptomPayload,
+  SymptomsQuery,
+} from '@icheck/api-contracts'
 
-const BASE_URL = 'https://icheckapi.200soft.com/api/v1/symptoms'
-
-const useAuthHeaders = () => {
-  const token = useCookie('icheck_access').value
-  return token ? { Authorization: `Bearer ${token}` } : {}
-}
+const BASE_URL = '/admin/symptoms'
 
 export const useSymptoms = (query?: Ref<SymptomsQuery>) => {
+  const { $api } = useNuxtApp()
+  const langCookie = useCookie('lang')
+
   const { data, status, refresh, error } = useFetch<SymptomsListResponse>(
     `${BASE_URL}/`,
     {
+      key: 'symptoms-list',
       lazy: true,
       server: false,
+      watch: [langCookie, query],
       query: computed(() => query?.value ?? {}),
-      onRequest({ options }) {
-        options.headers = { ...options.headers, ...useAuthHeaders() }
-      },
+      $fetch: $api,
     }
   )
 
@@ -30,19 +32,19 @@ export const useSymptoms = (query?: Ref<SymptomsQuery>) => {
 }
 
 export const useGetSymptomById = () => {
+  const { $api } = useNuxtApp()
   const loading = ref(false)
-  
+
   const getSymptom = async (id: number, lang: string) => {
     loading.value = true
+
     try {
-      return await $fetch<{ data: Symptom }>(`${BASE_URL}/${id}/`, {
+      return await $api<{ data: Symptom }>(`${BASE_URL}/${id}/`, {
         method: 'GET',
-        headers: useAuthHeaders(),
-        query: { lang }
-        
+        headers: {
+          'Accept-Language': lang,
+        },
       })
-    } catch (err) {
-      throw err
     } finally {
       loading.value = false
     }
@@ -52,16 +54,17 @@ export const useGetSymptomById = () => {
 }
 
 export const useCreateSymptom = () => {
+  const { $api } = useNuxtApp()
   const loading = ref(false)
   const error = ref<string | null>(null)
 
   const createSymptom = async (payload: SymptomPayload) => {
     loading.value = true
     error.value = null
+
     try {
-      return await $fetch<{ data: Symptom }>(`${BASE_URL}/`, {
+      return await $api<{ data: Symptom }>(`${BASE_URL}/`, {
         method: 'POST',
-        headers: useAuthHeaders(),
         body: payload,
       })
     } catch (err: any) {
@@ -76,16 +79,20 @@ export const useCreateSymptom = () => {
 }
 
 export const useUpdateSymptom = () => {
+  const { $api } = useNuxtApp()
   const loading = ref(false)
   const error = ref<string | null>(null)
 
-  const updateSymptom = async (id: number, payload: any) => {
+  const updateSymptom = async (
+    id: number,
+    payload: Partial<SymptomPayload>
+  ) => {
     loading.value = true
     error.value = null
+
     try {
-      return await $fetch<{ data: Symptom }>(`${BASE_URL}/${id}/`, {
+      return await $api<{ data: Symptom }>(`${BASE_URL}/${id}/`, {
         method: 'PATCH',
-        headers: useAuthHeaders(),
         body: payload,
       })
     } catch (err: any) {
@@ -100,16 +107,17 @@ export const useUpdateSymptom = () => {
 }
 
 export const useDeleteSymptom = () => {
+  const { $api } = useNuxtApp()
   const loading = ref(false)
   const error = ref<string | null>(null)
 
   const deleteSymptom = async (id: number) => {
     loading.value = true
     error.value = null
+
     try {
-      await $fetch(`${BASE_URL}/${id}/`, {
+      await $api(`${BASE_URL}/${id}/`, {
         method: 'DELETE',
-        headers: useAuthHeaders(),
       })
     } catch (err: any) {
       error.value = err?.data?.detail || 'Xəta baş verdi'

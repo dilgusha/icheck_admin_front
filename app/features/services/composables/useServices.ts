@@ -1,18 +1,11 @@
 import type { Service, ServicesListResponse, ServicePayload, ServicesQuery } from '@icheck/api-contracts'
 
-const BASE_URL = 'https://icheckapi.200soft.com/api/v1/services'
-
-export const getRequestHeaders = () => {
-  const token = useCookie('icheck_access').value
-  const lang = useCookie('lang').value || 'az'
-  return {
-    'Accept-Language': lang,
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
-  }
-}
+const BASE_URL = '/admin/services'
 
 export const useServices = (query?: Ref<ServicesQuery>) => {
+  const { $api } = useNuxtApp()
   const langCookie = useCookie('lang')
+
   const { data, status, refresh, error } = useFetch<ServicesListResponse>(
     `${BASE_URL}/`,
     {
@@ -21,9 +14,7 @@ export const useServices = (query?: Ref<ServicesQuery>) => {
       server: false,
       watch: [langCookie, query],
       query: computed(() => query?.value ?? {}),
-      onRequest({ options }) {
-        options.headers = { ...options.headers, ...getRequestHeaders() }
-      },
+      $fetch: $api,
     }
   )
 
@@ -36,6 +27,7 @@ export const useServices = (query?: Ref<ServicesQuery>) => {
 }
 
 export const useCreateService = () => {
+  const { $api } = useNuxtApp()
   const loading = ref(false)
   const error = ref<string | null>(null)
 
@@ -43,9 +35,8 @@ export const useCreateService = () => {
     loading.value = true
     error.value = null
     try {
-      return await $fetch<{ data: Service }>(`${BASE_URL}/`, {
+      return await $api<{ data: Service }>(`${BASE_URL}/`, {
         method: 'POST',
-        headers: getRequestHeaders(),
         body: payload,
       })
     } catch (err: any) {
@@ -60,6 +51,7 @@ export const useCreateService = () => {
 }
 
 export const useUpdateService = () => {
+  const { $api } = useNuxtApp()
   const loading = ref(false)
   const error = ref<string | null>(null)
 
@@ -67,9 +59,8 @@ export const useUpdateService = () => {
     loading.value = true
     error.value = null
     try {
-      return await $fetch<{ data: Service }>(`${BASE_URL}/${id}/`, {
+      return await $api<{ data: Service }>(`${BASE_URL}/${id}/`, {
         method: 'PATCH',
-        headers: getRequestHeaders(),
         body: payload,
       })
     } catch (err: any) {
@@ -84,6 +75,7 @@ export const useUpdateService = () => {
 }
 
 export const useDeleteService = () => {
+  const { $api } = useNuxtApp()
   const loading = ref(false)
   const error = ref<string | null>(null)
 
@@ -91,9 +83,8 @@ export const useDeleteService = () => {
     loading.value = true
     error.value = null
     try {
-      await $fetch(`${BASE_URL}/${id}/`, {
+      await $api(`${BASE_URL}/${id}/`, {
         method: 'DELETE',
-        headers: getRequestHeaders(),
       })
     } catch (err: any) {
       error.value = err?.data?.detail || 'Xəta baş verdi'

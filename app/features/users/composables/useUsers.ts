@@ -2,70 +2,58 @@ import type {
   User,
   GetUsersResponse,
   GetUsersParams,
-  CreateUserRequest
-} from "@icheck/api-contracts";
+  CreateUserRequest,
+} from '@icheck/api-contracts'
 
-const BASE_URL = "https://icheckapi.200soft.com/api/v1/users";
+export const useUsers = (query?: MaybeRefOrGetter<GetUsersParams>) => {
+  const { $api } = useNuxtApp()
+  const langCookie = useCookie('lang')
 
-const getRequestHeaders = () => {
-  const token = useCookie("icheck_access").value;
-  const lang = useCookie("lang").value || "az";
-  return {
-    "Accept-Language": lang,
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
-  };
-};
-
-export const useUsers = (query?: Ref<GetUsersParams>) => {
-  const langCookie = useCookie("lang");
-  
   const { data, status, refresh, error } = useFetch<GetUsersResponse>(
-    `${BASE_URL}/`,
+    '/users/',
     {
-      key: "users-list",
-      lazy: true,
+      key: 'users-list',
       server: false,
-      watch: [langCookie, query],
-      query: computed(() => query?.value ?? {}),
-      onRequest({ options }) {
-        options.headers = { ...options.headers, ...getRequestHeaders() };
-      },
+      query,
+      watch: [langCookie],
+      $fetch: $api,
     }
-  );
+  )
 
   return {
     users: computed(() => data.value?.data ?? []),
     meta: computed(() => data.value?.meta ?? null),
     total: computed(() => data.value?.meta?.total ?? 0),
-    isLoading: computed(() => status.value === "pending"),
+    isLoading: computed(() => status.value === 'pending'),
     error,
     refresh,
-  };
-};
+  }
+}
 
 export const useUserActions = () => {
-  const getUserId = async (id: number): Promise<User> => {
-    const data = await $fetch<{ data: User }>(`${BASE_URL}/${id}/`, {
-      headers: getRequestHeaders(),
-    });
-    return data.data;
-  };
+  const { $api } = useNuxtApp()
+
+  const getUser = async (id: number): Promise<User> => {
+    const res = await $api<{ data: User }>(`/users/${id}/`)
+    return res.data
+  }
 
   const createUser = async (payload: CreateUserRequest) => {
-    return await $fetch(`${BASE_URL}/`, {
-      method: "POST",
-      headers: getRequestHeaders(),
-      body: payload,
-    });
-  };
-
-   const updateUser = async (id: number, payload: Partial<CreateUserRequest>) => {
-    return await $fetch(`${BASE_URL}/${id}/`, {
-      method: 'PUT',
-      headers: getRequestHeaders(),
+    return await $api<{ data: User }>('/users/', {
+      method: 'POST',
       body: payload,
     })
   }
-  return { getUserId, createUser ,updateUser};
-};
 
+  const updateUser = async (
+    id: number,
+    payload: Partial<CreateUserRequest>
+  ) => {
+    return await $api<{ data: User }>(`/users/${id}/`, {
+      method: 'PUT',
+      body: payload,
+    })
+  }
+
+  return { getUser, createUser, updateUser }
+}

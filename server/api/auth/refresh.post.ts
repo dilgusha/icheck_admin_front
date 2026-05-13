@@ -1,49 +1,30 @@
-import type { TokenPair } from "@icheck/api-contracts";
-import {
-  getRefreshToken,
-  setAuthCookies,
-  clearAuthCookies,
-} from "../../utils/auth-session";
+import { clearAuthCookies, getRefreshToken, setAuthCookies } from '../../utils/auth-session'
+
+type RefreshResponse = {
+  access: string
+  refresh?: string
+}
 
 export default defineEventHandler(async (event) => {
-  const refresh = getRefreshToken(event);
+  const refresh = getRefreshToken(event)
 
   if (!refresh) {
-    clearAuthCookies(event);
-
-    throw createError({
-      statusCode: 401,
-      statusMessage: "Refresh token tapılmadı.",
-    });
+    throw createError({ statusCode: 401, statusMessage: 'Refresh token not found' })
   }
 
   try {
-    const tokens = await $fetch<Partial<TokenPair>>(
-      "https://icheckapi.200soft.com/auth/refresh/",
+    const response = await $fetch<RefreshResponse>(
+      'https://icheckapi.200soft.com/auth/refresh/',
       {
-        method: "POST",
+        method: 'POST',
         body: { refresh },
       }
-    );
+    )
 
-    if (!tokens.access) {
-      clearAuthCookies(event);
-
-      throw createError({
-        statusCode: 401,
-        statusMessage: "Refresh token etibarsızdır.",
-      });
-    }
-
-    setAuthCookies(event, tokens.access, tokens.refresh ?? refresh);
-
-    return { success: true };
-  } catch (err: any) {
-    clearAuthCookies(event);
-
-    throw createError({
-      statusCode: err?.response?.status || 401,
-      statusMessage: err?.data?.detail || "Session müddəti bitib.",
-    });
+    setAuthCookies(event, response.access, response.refresh || refresh)
+    return { ok: true }
+  } catch {
+    clearAuthCookies(event)
+    throw createError({ statusCode: 401, statusMessage: 'Session expired' })
   }
-});
+})

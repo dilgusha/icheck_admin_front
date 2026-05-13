@@ -428,7 +428,7 @@ import {
 } from "../composables/useAppointments";
 import { useRemoteSelect } from "~/composables/useRemoteSelect";
 import type { Appointment } from "@icheck/api-contracts";
-import { getRequestHeaders } from "../composables/useAppointments";
+const { $api } = useNuxtApp()
 
 const message = useMessage();
 
@@ -484,23 +484,12 @@ const {
   handleValueChange: doctorHandleValueChange,
   onDropdownShow: doctorOnDropdownShow,
 } = useRemoteSelect(
-  (params) =>
-    $fetch<any>("https://icheckapi.200soft.com/api/v1/doctors/", {
-      headers: getRequestHeaders(),
-      query: {
-        page: params.page,
-        per_page: params.per_page,
-        search: params.search,
-      },
-    }),
+  (params) => $api<any>('/doctors/', {
+    query: { page: params.page, per_page: params.per_page, search: params.search },
+  }),
   (item: any) => ({ value: item.id, label: item.fullname }),
-  {
-    key: "appointment-create-doctors",
-    per_page: 10,
-    debounceMs: 300,
-    loadOnOpen: true,
-  }
-);
+  { key: 'appointment-create-doctors', per_page: 10, debounceMs: 300, loadOnOpen: true }
+)
 
 const {
   options: patientOptions,
@@ -509,36 +498,19 @@ const {
   handleScroll: patientHandleScroll,
   onDropdownShow: patientOnDropdownShow,
 } = useRemoteSelect(
-  (params) =>
-    $fetch<any>("https://icheckapi.200soft.com/api/v1/users/", {
-      headers: getRequestHeaders(),
-      query: {
-        page: params.page,
-        per_page: params.per_page,
-        search: params.search,
-      },
-    }),
+  (params) => $api<any>('/users/', {
+    query: { page: params.page, per_page: params.per_page, search: params.search },
+  }),
   (item: any) => {
     const fullName =
       item.fullname ||
-      [item.first_name, item.last_name].filter(Boolean).join(" ") ||
-      item.name ||
+      [item.first_name, item.last_name].filter(Boolean).join(' ') ||
       item.username ||
-      item.email ||
-      `Pasiyent #${item.id}`;
-
-    return {
-      value: item.id,
-      label: fullName,
-    };
+      `Pasiyent #${item.id}`
+    return { value: item.id, label: fullName }
   },
-  {
-    key: "appointment-create-patients",
-    per_page: 10,
-    debounceMs: 300,
-    loadOnOpen: true,
-  }
-);
+  { key: 'appointment-create-patients', per_page: 10, debounceMs: 300, loadOnOpen: true }
+)
 
 // ---- Create ----
 const showCreateModal = ref(false);

@@ -28,7 +28,7 @@ type NuxtAppInjections =
   InjectionType<typeof import("../../node_modules/nuxt-auth-utils/dist/runtime/app/plugins/session.client.js")> &
   InjectionType<typeof import("../../node_modules/nuxt/dist/app/plugins/warn.dev.server.js")> &
   InjectionType<typeof import("../../node_modules/nuxt/dist/app/plugins/check-if-layout-used.js")> &
-  InjectionType<typeof import("../../app/plugins/i18n.client")> &
+  InjectionType<typeof import("../../app/plugins/api")> &
   InjectionType<typeof import("../../app/plugins/vue-query")> &
   InjectionType<typeof import("../../node_modules/@nuxtjs/i18n/dist/runtime/plugins/ssg-detect.js")>
 

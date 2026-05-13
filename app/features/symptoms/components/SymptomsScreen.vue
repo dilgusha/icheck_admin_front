@@ -163,6 +163,7 @@ import { useSymptoms, useCreateSymptom, useUpdateSymptom, useDeleteSymptom } fro
 import type { Symptom } from '@icheck/api-contracts'
 const { t } = useI18n()
 
+const { $api } = useNuxtApp()
 
 const message = useMessage()
 
@@ -214,7 +215,6 @@ const resetForm = () => {
 const { createSymptom, loading: createLoading } = useCreateSymptom()
 const { updateSymptom, loading: updateLoading } = useUpdateSymptom()
 const { deleteSymptom, loading: deleteLoading } = useDeleteSymptom()
-const BASE_URL = 'https://icheckapi.200soft.com/api/v1/symptoms'
 
 const fetchLangData = async (id: number, lang: string) => {
   if (loadedLangs.value.has(lang)) return
@@ -222,12 +222,9 @@ const fetchLangData = async (id: number, lang: string) => {
   isLoadingLang.value = true
 
   try {
-    const token = useCookie('icheck_access').value
-
-    const data = await $fetch<{ data: Symptom }>(`${BASE_URL}/${id}/`, {
+   const data = await $api<{ data: Symptom }>(`/admin/symptoms/${id}/`, {
       headers: {
         'Accept-Language': lang,
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
       },
     })
 

@@ -1,18 +1,15 @@
-import type { Drug, DrugsListResponse, DrugPayload } from '@icheck/api-contracts'
+import type {
+  Drug,
+  DrugsListResponse,
+  DrugPayload,
+} from '@icheck/api-contracts'
 
-const BASE_URL = 'https://icheckapi.200soft.com/api/v1/drugs'
-
-const getRequestHeaders = () => {
-  const token = useCookie('icheck_access').value
-  const lang = useCookie('lang').value || 'az'
-  return {
-    'Accept-Language': lang,
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
-  }
-}
+const BASE_URL = '/admin/drugs'
 
 export const useDrugs = (search?: Ref<string>) => {
+  const { $api } = useNuxtApp()
   const langCookie = useCookie('lang')
+
   const { data, status, refresh, error } = useFetch<DrugsListResponse>(
     `${BASE_URL}/`,
     {
@@ -20,10 +17,8 @@ export const useDrugs = (search?: Ref<string>) => {
       lazy: true,
       server: false,
       watch: [langCookie, search],
-      query: computed(() => search?.value ? { search: search.value } : {}),
-      onRequest({ options }) {
-        options.headers = { ...options.headers, ...getRequestHeaders() }
-      },
+      query: computed(() => (search?.value ? { search: search.value } : {})),
+      $fetch: $api,
     }
   )
 
@@ -36,16 +31,17 @@ export const useDrugs = (search?: Ref<string>) => {
 }
 
 export const useCreateDrug = () => {
+  const { $api } = useNuxtApp()
   const loading = ref(false)
   const error = ref<string | null>(null)
 
   const createDrug = async (payload: DrugPayload) => {
     loading.value = true
     error.value = null
+
     try {
-      return await $fetch<{ data: Drug }>(`${BASE_URL}/`, {
+      return await $api<{ data: Drug }>(`${BASE_URL}/`, {
         method: 'POST',
-        headers: getRequestHeaders(),
         body: payload,
       })
     } catch (err: any) {
@@ -60,16 +56,17 @@ export const useCreateDrug = () => {
 }
 
 export const useUpdateDrug = () => {
+  const { $api } = useNuxtApp()
   const loading = ref(false)
   const error = ref<string | null>(null)
 
   const updateDrug = async (id: number, payload: Partial<DrugPayload>) => {
     loading.value = true
     error.value = null
+
     try {
-      return await $fetch<{ data: Drug }>(`${BASE_URL}/${id}/`, {
+      return await $api<{ data: Drug }>(`${BASE_URL}/${id}/`, {
         method: 'PATCH',
-        headers: getRequestHeaders(),
         body: payload,
       })
     } catch (err: any) {
@@ -84,16 +81,17 @@ export const useUpdateDrug = () => {
 }
 
 export const useDeleteDrug = () => {
+  const { $api } = useNuxtApp()
   const loading = ref(false)
   const error = ref<string | null>(null)
 
   const deleteDrug = async (id: number) => {
     loading.value = true
     error.value = null
+
     try {
-      await $fetch(`${BASE_URL}/${id}/`, {
+      await $api(`${BASE_URL}/${id}/`, {
         method: 'DELETE',
-        headers: getRequestHeaders(),
       })
     } catch (err: any) {
       error.value = err?.data?.detail || 'Xəta baş verdi'

@@ -227,7 +227,8 @@ import {
 import type { Service } from "@icheck/api-contracts";
 import type { SelectOption } from "naive-ui";
 import { useRemoteSelect } from "~/composables/useRemoteSelect";
-import { getRequestHeaders } from "../composables/useServices";
+// import { getRequestHeaders } from "../composables/useServices";
+const { $api } = useNuxtApp();
 
 const message = useMessage();
 
@@ -257,8 +258,7 @@ const {
   onDropdownShow: clinicOnDropdownShow,
 } = useRemoteSelect(
   (params) =>
-    $fetch("https://icheckapi.200soft.com/api/v1/clinics/", {
-      headers: getRequestHeaders(),
+    $api("/clinics/", {
       query: {
         page: params.page,
         per_page: params.per_page,
@@ -320,12 +320,12 @@ const fetchLangData = async (id: number, lang: string) => {
   isLoadingLang.value = true;
   try {
     const token = useCookie("icheck_access").value;
-    const data = await $fetch<{ data: Service }>(`${BASE_URL}/${id}/`, {
+    const data = await $api<{ data: Service }>(`/services/${id}/`, {
       headers: {
         "Accept-Language": lang,
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
       },
     });
+
     modalForm.title[lang as "az" | "en" | "ru"] = data.data.title;
     modalForm.body[lang as "az" | "en" | "ru"] = data.data.body ?? "";
     loadedLangs.value.add(lang);
@@ -413,7 +413,6 @@ const handleDelete = async () => {
   }
 };
 
-const BASE_URL = "https://icheckapi.200soft.com/api/v1/services";
 
 const columns: DataTableColumns<Service> = [
   {
@@ -493,6 +492,11 @@ const columns: DataTableColumns<Service> = [
       ),
   },
 ];
+onMounted(async () => {
+  const test = await $api("/services/")
+  console.log("services test", test)
+})
+
 </script>
 
 <style>
