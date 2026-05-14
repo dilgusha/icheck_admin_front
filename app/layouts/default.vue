@@ -339,6 +339,8 @@ const menuItems = [
   { label: 'Content', path: '/content', icon: FileText },
   { label: 'Faq', path: '/faq', icon: HelpCircle },
   { label: 'Pages', path: '/pages', icon: FileText },
+  { label: 'Diagnoses', path: '/diagnoses', icon: ClipboardCheck },
+  { label: 'Prescriptions', path: '/prescriptions', icon: Pill },
   {
     label: "Users",
     path: "/users",

@@ -75,10 +75,20 @@ export const pathToI18nConfig = {
     "en": "/symptoms",
     "ru": "/symptoms"
   },
+  "/diagnoses": {
+    "az": "/diagnoses",
+    "en": "/diagnoses",
+    "ru": "/diagnoses"
+  },
   "/appointments": {
     "az": "/appointments",
     "en": "/appointments",
     "ru": "/appointments"
+  },
+  "/prescriptions": {
+    "az": "/prescriptions",
+    "en": "/prescriptions",
+    "ru": "/prescriptions"
   },
   "/specializations": {
     "az": "/specializations",
@@ -102,6 +112,8 @@ export const i18nPathToPath = {
   "/diseases": "/diseases",
   "/services": "/services",
   "/symptoms": "/symptoms",
+  "/diagnoses": "/diagnoses",
   "/appointments": "/appointments",
+  "/prescriptions": "/prescriptions",
   "/specializations": "/specializations"
 };

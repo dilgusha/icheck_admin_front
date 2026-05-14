@@ -24,46 +24,27 @@
       :bordered="false"
       class="border-none shadow-sm rounded-2xl overflow-hidden bg-white"
     >
-  <div class="mb-6 flex items-center gap-4 p-1">
-  <n-input
-    v-model:value="slugInput"
-    placeholder="Search by slug..."
-    size="large"
-    class="rounded-xl max-w-sm"
-    clearable
-    :loading="searchLoading"
-    @update:value="onSlugInputChange"
-    @clear="clearSlugSearch"
-  >
-    <template #prefix>
-      <Search :size="18" class="text-slate-400" />
-    </template>
-  </n-input>
+      <div class="mb-6 flex items-center gap-4 p-1">
+        <n-input
+          v-model:value="slugInput"
+          placeholder="Search by slug..."
+          size="large"
+          class="rounded-xl max-w-sm"
+          clearable
+          @update:value="onSlugInputChange"
+          @clear="clearSlugSearch"
+        >
+          <template #prefix>
+            <Search :size="18" class="text-slate-400" />
+          </template>
+        </n-input>
 
-  <n-button
-    quaternary
-    circle
-    size="medium"
-    class="ml-auto"
-    @click="handleRefresh"
-  >
-    <template #icon>
-      <RefreshCw
-        :size="18"
-        :class="{ 'animate-spin': isLoading || searchLoading }"
-        class="text-slate-500"
-      />
-    </template>
-  </n-button>
-</div>
-
-      <!-- <div class="mb-6 flex items-center gap-4 p-1">
         <n-button
           quaternary
           circle
           size="medium"
           class="ml-auto"
-          @click="refresh()"
+          @click="handleRefresh"
         >
           <template #icon>
             <RefreshCw
@@ -73,7 +54,7 @@
             />
           </template>
         </n-button>
-      </div> -->
+      </div>
 
       <div v-if="isLoading" class="space-y-3">
         <div
@@ -156,7 +137,6 @@
         </div>
       </template>
     </n-modal>
-    
   </div>
 </template>
 
@@ -170,7 +150,7 @@ import {
   useMessage,
   type DataTableColumns,
 } from "naive-ui";
-import { Edit, RefreshCw, Search, Trash2 } from 'lucide-vue-next'
+import { Edit, RefreshCw, Search, Trash2 } from "lucide-vue-next";
 import {
   usePageActions,
   usePages,
@@ -187,63 +167,32 @@ const { getPage, createPage, updatePage, deletePage } = usePageActions();
 const showModal = ref(false);
 const submitLoading = ref(false);
 const editingSlug = ref<string | null>(null);
-const slugInput = ref('')
-const searchedPage = ref<PageItem | null>(null)
-const searchLoading = ref(false)
+const slugInput = ref("");
 
-let slugSearchTimer: ReturnType<typeof setTimeout> | null = null
+let slugSearchTimer: ReturnType<typeof setTimeout> | null = null;
 
-const tableData = computed(() =>
-  searchedPage.value ? [searchedPage.value] : pages.value
-)
+const filteredPages = computed(() => {
+  if (!slugInput.value.trim()) return pages.value;
+  return pages.value.filter((p) =>
+    p.slug.toLowerCase().includes(slugInput.value.toLowerCase())
+  );
+});
 
-const searchBySlug = async () => {
-  const slug = slugInput.value.trim()
-
-  if (!slug) {
-    searchedPage.value = null
-    return
-  }
-
-  searchLoading.value = true
-
-  try {
-    const res = await getPage(slug)
-    searchedPage.value = res.data
-  } catch {
-    searchedPage.value = null
-    message.error('Bu slug ilə səhifə tapılmadı')
-  } finally {
-    searchLoading.value = false
-  }
-}
+const tableData = computed(() => filteredPages.value);
 
 const onSlugInputChange = () => {
-  if (slugSearchTimer) clearTimeout(slugSearchTimer)
+  if (slugSearchTimer) clearTimeout(slugSearchTimer);
+  slugSearchTimer = setTimeout(() => {}, 300);
+};
 
-  slugSearchTimer = setTimeout(() => {
-    searchBySlug()
-  }, 300)
-}
-
-const clearSlugSearch = async () => {
-  if (slugSearchTimer) clearTimeout(slugSearchTimer)
-
-  slugInput.value = ''
-  searchedPage.value = null
-  await refresh()
-}
+const clearSlugSearch = () => {
+  slugInput.value = "";
+};
 
 const handleRefresh = async () => {
-  searchedPage.value = null
-  slugInput.value = ''
-  await refresh()
-}
-
-
-// const tableData = computed(() =>
-//   searchedPage.value ? [searchedPage.value] : pages.value
-// );
+  slugInput.value = "";
+  await refresh();
+};
 
 const form = reactive<PagePayload>({
   slug: "",

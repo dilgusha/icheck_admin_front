@@ -15,6 +15,9 @@ export interface Doctor {
   price: number | null
   offline_price: number | null
   only_offline: boolean
+  insurance_accepted: boolean
+  mental_health: boolean
+  top: boolean
 }
 
 export interface DoctorsMeta {
@@ -37,6 +40,10 @@ export interface DoctorsQuery {
   experience_min?: number
   experience_max?: number
   location_id?: number
+  top?: boolean
+  insurance_accepted?: boolean
+  mental_health?: boolean
+  clinic_id?: number
   page?: number
   per_page?: number
 }

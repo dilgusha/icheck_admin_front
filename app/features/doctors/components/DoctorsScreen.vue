@@ -26,7 +26,6 @@
       :bordered="false"
       class="border-none shadow-sm rounded-2xl overflow-hidden bg-white"
     >
-      <!-- Toolbar -->
       <div class="mb-6 flex flex-wrap items-center gap-4 p-1">
         <n-input
           v-model:value="searchQuery"
@@ -97,9 +96,29 @@
             :min="0"
           />
         </div>
+
+        <div class="flex items-center gap-4 ml-auto">
+          <div class="flex items-center gap-2">
+            <span class="text-sm text-slate-500">Top</span>
+            <n-switch v-model:value="filterTop" @update:value="refresh()" />
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-sm text-slate-500">Sığorta</span>
+            <n-switch
+              v-model:value="filterInsurance"
+              @update:value="refresh()"
+            />
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-sm text-slate-500">Mental sağlamlıq</span>
+            <n-switch
+              v-model:value="filterMentalHealth"
+              @update:value="refresh()"
+            />
+          </div>
+        </div>
       </div>
 
-      <!-- Skeleton -->
       <div v-if="isLoading" class="space-y-4">
         <div
           v-for="i in 6"
@@ -119,6 +138,275 @@
         striped
       />
     </n-card>
+
+    <!-- View Modal -->
+    <n-modal
+      v-model:show="showViewModal"
+      preset="card"
+      title="Doctor Details"
+      class="max-w-2xl rounded-3xl overflow-hidden shadow-2xl"
+    >
+      <div v-if="viewingDoctor" class="flex flex-col gap-6 p-2">
+        <div
+          class="flex items-center gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-100"
+        >
+          <n-avatar
+            :size="64"
+            round
+            :src="viewingDoctor.avatar_url ?? undefined"
+            color="#F0F9FF"
+            style="
+              color: #0369a1;
+              font-weight: 800;
+              font-size: 28px;
+              border: 2px solid #bae6fd;
+            "
+          >
+            <template v-if="!viewingDoctor.avatar_url">
+              {{ viewingDoctor.fullname[0] }}
+            </template>
+          </n-avatar>
+          <div>
+            <h3 class="text-2xl font-bold text-slate-800 tracking-tight">
+              {{ viewingDoctor.fullname }}
+            </h3>
+            <p
+              class="text-sm font-medium text-slate-500 capitalize flex items-center gap-2"
+            >
+              <span class="w-2 h-2 rounded-full bg-indigo-400"></span>
+              {{ viewingDoctor.gender }}
+            </p>
+          </div>
+        </div>
+
+        <n-descriptions
+          bordered
+          :column="2"
+          size="small"
+          label-placement="top"
+          class="modern-descriptions"
+        >
+          <n-descriptions-item label="Workplace">
+            {{ viewingDoctor.workplace ?? "—" }}
+          </n-descriptions-item>
+
+          <n-descriptions-item label="Təcrübə">
+            {{
+              viewingDoctor.experience_years != null
+                ? `${viewingDoctor.experience_years} il`
+                : "—"
+            }}
+          </n-descriptions-item>
+
+          <n-descriptions-item label="Online qiymət">
+            <span class="font-bold text-indigo-600">
+              {{
+                viewingDoctor.price != null ? `${viewingDoctor.price} ₼` : "—"
+              }}
+            </span>
+          </n-descriptions-item>
+
+          <n-descriptions-item label="Offline qiymət">
+            <span class="font-bold text-slate-700">
+              {{
+                viewingDoctor.offline_price != null
+                  ? `${viewingDoctor.offline_price} ₼`
+                  : "—"
+              }}
+            </span>
+          </n-descriptions-item>
+
+          <n-descriptions-item label="Yalnız offline">
+            <n-tag
+              :type="viewingDoctor.only_offline ? 'warning' : 'success'"
+              size="small"
+              round
+              bordered
+            >
+              {{ viewingDoctor.only_offline ? "Bəli" : "Xeyr" }}
+            </n-tag>
+          </n-descriptions-item>
+
+          <n-descriptions-item label="Sığorta">
+            <n-tag
+              :type="viewingDoctor.insurance_accepted ? 'success' : 'default'"
+              size="small"
+              round
+              bordered
+            >
+              {{
+                viewingDoctor.insurance_accepted ? "Qəbul edir" : "Qəbul etmir"
+              }}
+            </n-tag>
+          </n-descriptions-item>
+
+          <n-descriptions-item label="Mental sağlamlıq">
+            <n-tag
+              :type="viewingDoctor.mental_health ? 'success' : 'default'"
+              size="small"
+              round
+              bordered
+            >
+              {{ viewingDoctor.mental_health ? "Bəli" : "Xeyr" }}
+            </n-tag>
+          </n-descriptions-item>
+
+          <n-descriptions-item label="Top">
+            <n-tag
+              :type="viewingDoctor.top ? 'success' : 'default'"
+              size="small"
+              round
+              bordered
+            >
+              {{ viewingDoctor.top ? "Bəli" : "Xeyr" }}
+            </n-tag>
+          </n-descriptions-item>
+
+          <n-descriptions-item label="İxtisaslar" :span="2">
+            <div class="flex flex-wrap gap-2 pt-1">
+              <n-tag
+                v-for="s in viewingDoctor.specializations"
+                :key="s.id"
+                type="info"
+                round
+                size="small"
+                bordered
+              >
+                {{ s.title }}
+              </n-tag>
+              <span v-if="!viewingDoctor.specializations?.length">—</span>
+            </div>
+          </n-descriptions-item>
+        </n-descriptions>
+      </div>
+
+      <template #action>
+        <div class="flex justify-end gap-3">
+          <n-button
+            strong
+            secondary
+            class="rounded-xl px-6"
+            @click="showViewModal = false"
+          >
+            Bağla
+          </n-button>
+        </div>
+      </template>
+    </n-modal>
+    <!-- <n-modal
+      v-model:show="showViewModal"
+      preset="card"
+      title="Doctor Details"
+      class="max-w-lg rounded-3xl overflow-hidden shadow-2xl"
+    >
+      <div v-if="viewingDoctor" class="flex flex-col gap-4 p-2">
+        <div class="flex items-center gap-4">
+          <n-avatar
+            :size="52"
+            round
+            :src="viewingDoctor.avatar_url ?? undefined"
+            color="#F0F9FF"
+            style="
+              color: #0369a1;
+              font-weight: 800;
+              font-size: 24px;
+              border: 2px solid #bae6fd;
+            "
+          >
+            <template v-if="!viewingDoctor.avatar_url">{{
+              viewingDoctor.fullname[0]
+            }}</template>
+          </n-avatar>
+          <div>
+            <h3 class="text-xl font-bold text-slate-800">
+              {{ viewingDoctor.fullname }}
+            </h3>
+            <p class="text-sm text-slate-500 capitalize">
+              {{ viewingDoctor.gender }}
+            </p>
+          </div>
+        </div>
+
+        <n-descriptions bordered :column="1" size="small">
+          <n-descriptions-item label="Workplace">{{
+            viewingDoctor.workplace ?? "—"
+          }}</n-descriptions-item>
+          <n-descriptions-item label="Təcrübə">{{
+            viewingDoctor.experience_years != null
+              ? `${viewingDoctor.experience_years} il`
+              : "—"
+          }}</n-descriptions-item>
+          <n-descriptions-item label="Online qiymət">{{
+            viewingDoctor.price != null ? `${viewingDoctor.price} ₼` : "—"
+          }}</n-descriptions-item>
+          <n-descriptions-item label="Offline qiymət">{{
+            viewingDoctor.offline_price != null
+              ? `${viewingDoctor.offline_price} ₼`
+              : "—"
+          }}</n-descriptions-item>
+          <n-descriptions-item label="Yalnız offline">
+            <n-tag
+              :type="viewingDoctor.only_offline ? 'warning' : 'success'"
+              size="small"
+              round
+              bordered
+            >
+              {{ viewingDoctor.only_offline ? "Bəli" : "Xeyr" }}
+            </n-tag>
+          </n-descriptions-item>
+          <n-descriptions-item label="Sığorta">
+            <n-tag
+              :type="viewingDoctor.insurance_accepted ? 'success' : 'default'"
+              size="small"
+              round
+              bordered
+            >
+              {{
+                viewingDoctor.insurance_accepted ? "Qəbul edir" : "Qəbul etmir"
+              }}
+            </n-tag>
+          </n-descriptions-item>
+          <n-descriptions-item label="Mental sağlamlıq">
+            <n-tag
+              :type="viewingDoctor.mental_health ? 'success' : 'default'"
+              size="small"
+              round
+              bordered
+            >
+              {{ viewingDoctor.mental_health ? "Bəli" : "Xeyr" }}
+            </n-tag>
+          </n-descriptions-item>
+          <n-descriptions-item label="Top">
+            <n-tag
+              :type="viewingDoctor.top ? 'success' : 'default'"
+              size="small"
+              round
+              bordered
+            >
+              {{ viewingDoctor.top ? "Bəli" : "Xeyr" }}
+            </n-tag>
+          </n-descriptions-item>
+          <n-descriptions-item label="İxtisaslar">
+            <n-tag
+              v-for="s in viewingDoctor.specializations"
+              :key="s.id"
+              type="info"
+              round
+              size="small"
+              bordered
+            >
+              {{ s.title }}
+            </n-tag>
+          </n-descriptions-item>
+        </n-descriptions>
+      </div>
+
+      <template #action>
+        <div class="flex justify-end">
+          <n-button ghost @click="showViewModal = false">Bağla</n-button>
+        </div>
+      </template>
+    </n-modal> -->
   </div>
 </template>
 
@@ -127,14 +415,18 @@ import { ref, computed, h } from "vue";
 import {
   NAvatar,
   NButton,
+  NSpace,
+  NTag,
+  NDescriptions,
+  NDescriptionsItem,
   type DataTableColumns,
   type SelectOption,
 } from "naive-ui";
-import { Search, RefreshCw } from "lucide-vue-next";
+import { Search, RefreshCw, Eye } from "lucide-vue-next";
 import { useDoctors } from "../composables/useDoctors";
-// import { useSpecializations } from '../../specializations/composables/useSpecializations'
 import type { Doctor } from "@icheck/api-contracts";
 import { useRemoteSelect } from "~/composables/useRemoteSelect";
+
 const { $api } = useNuxtApp();
 
 const searchQuery = ref("");
@@ -143,6 +435,9 @@ const filterPriceMin = ref<number | null>(null);
 const filterPriceMax = ref<number | null>(null);
 const filterExpMin = ref<number | null>(null);
 const filterExpMax = ref<number | null>(null);
+const filterTop = ref(false);
+const filterInsurance = ref(false);
+const filterMentalHealth = ref(false);
 
 const query = computed(() => ({
   ...(searchQuery.value ? { search: searchQuery.value } : {}),
@@ -153,23 +448,18 @@ const query = computed(() => ({
   ...(filterPriceMax.value != null ? { price_max: filterPriceMax.value } : {}),
   ...(filterExpMin.value != null ? { experience_min: filterExpMin.value } : {}),
   ...(filterExpMax.value != null ? { experience_max: filterExpMax.value } : {}),
+  ...(filterTop.value ? { top: true } : {}),
+  ...(filterInsurance.value ? { insurance_accepted: true } : {}),
+  ...(filterMentalHealth.value ? { mental_health: true } : {}),
 }));
 
 const { doctors, isLoading, error, refresh } = useDoctors(query);
-// const { specializations } = useSpecializations()
 
-// const specializationOptions = computed(() =>
-//   specializations.value.map((s) => ({ label: s.title, value: String(s.id) }))
-// )
-
+// ---- Specialization remote select ----
 const specializationInitialOption = computed<SelectOption | null>(() => {
   const id = filterSpecializationId.value;
   if (id == null) return null;
-
-  return {
-    value: id,
-    label: `Specialization #${id}`,
-  };
+  return { value: id, label: `Specialization #${id}` };
 });
 
 const {
@@ -188,10 +478,7 @@ const {
         search: params.search,
       },
     }),
-  (item: any) => ({
-    value: String(item.id),
-    label: item.title,
-  }),
+  (item: any) => ({ value: String(item.id), label: item.title }),
   {
     key: "doctors-filter-specializations",
     per_page: 10,
@@ -207,11 +494,21 @@ function onSpecializationUpdate(value: string | null) {
   specializationHandleValueChange();
 }
 
+// ---- View modal ----
+const showViewModal = ref(false);
+const viewingDoctor = ref<Doctor | null>(null);
+
+const openViewModal = (row: Doctor) => {
+  viewingDoctor.value = row;
+  showViewModal.value = true;
+};
+
+// ---- Table ----
 const columns: DataTableColumns<Doctor> = [
   {
     title: "ID",
     key: "id",
-    width: 80,
+    width: 70,
     render: (row) =>
       h(
         "span",
@@ -222,7 +519,6 @@ const columns: DataTableColumns<Doctor> = [
   {
     title: "Doctor",
     key: "fullname",
-    sorter: "default",
     render: (row) =>
       h("div", { class: "flex items-center gap-3" }, [
         h(
@@ -243,7 +539,7 @@ const columns: DataTableColumns<Doctor> = [
       ]),
   },
   {
-    title: "Specializations",
+    title: "İxtisaslar",
     key: "specializations",
     render: (row) =>
       h(
@@ -291,10 +587,76 @@ const columns: DataTableColumns<Doctor> = [
       ]),
   },
   {
-    title: "Gender",
-    key: "gender",
+    title: "Status",
+    key: "status",
     render: (row) =>
-      h("span", { class: "text-slate-600 text-sm capitalize" }, row.gender),
+      h("div", { class: "flex flex-wrap gap-1" }, [
+        row.top
+          ? h(
+              NTag,
+              {
+                type: "success",
+                size: "small",
+                round: true,
+                bordered: false,
+                style: "font-size:10px;font-weight:800;",
+              },
+              { default: () => "Top" }
+            )
+          : null,
+        row.insurance_accepted
+          ? h(
+              NTag,
+              {
+                type: "info",
+                size: "small",
+                round: true,
+                bordered: false,
+                style: "font-size:10px;font-weight:800;",
+              },
+              { default: () => "Sığorta" }
+            )
+          : null,
+        row.only_offline
+          ? h(
+              NTag,
+              {
+                type: "warning",
+                size: "small",
+                round: true,
+                bordered: false,
+                style: "font-size:10px;font-weight:800;",
+              },
+              { default: () => "Offline" }
+            )
+          : null,
+      ]),
+  },
+  {
+    title: "Actions",
+    key: "actions",
+    align: "right",
+    render: (row) =>
+      h(
+        NSpace,
+        { justify: "end" },
+        {
+          default: () => [
+            h(
+              NButton,
+              {
+                size: "small",
+                quaternary: true,
+                circle: true,
+                class:
+                  "hover:bg-blue-50 hover:text-blue-600 opacity-0 group-hover:opacity-100 transition-all",
+                onClick: () => openViewModal(row),
+              },
+              { default: () => h(Eye, { size: 16 }) }
+            ),
+          ],
+        }
+      ),
   },
 ];
 </script>

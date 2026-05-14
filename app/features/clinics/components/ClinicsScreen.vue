@@ -4,11 +4,9 @@
     <div class="flex items-end justify-between border-b border-slate-100 pb-6">
       <div class="space-y-1">
         <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight">
-          Clinics
+          {{$t("clinics.title")}}
         </h2>
-        <p class="text-slate-500 text-sm font-medium">
-          Manage clinics across all regions in the healthcare network.
-        </p>
+        
       </div>
       <n-button
         type="primary"
@@ -17,7 +15,7 @@
         @click="openCreateModal"
       >
         <template #icon><Plus :size="20" :stroke-width="2.5" /></template>
-        Create Clinic
+        {{$t("clinics.create")}}
       </n-button>
     </div>
 
@@ -29,7 +27,7 @@
       <div class="mb-6 flex flex-wrap items-center gap-4 p-1">
         <n-input
           v-model:value="searchQuery"
-          placeholder="Search clinics..."
+          :placeholder="$t('clinics.search')"
           size="large"
           class="rounded-xl max-w-sm"
           clearable
@@ -45,7 +43,7 @@
           filterable
           remote
           clearable
-          placeholder="Filter by region"
+          :placeholder="$t('clinics.regionFilter')"
           size="large"
           class="w-48"
           :menu-props="{ onScroll: regionHandleScroll }"
@@ -55,7 +53,7 @@
         />
 
         <div class="flex items-center gap-2">
-          <span class="text-sm text-slate-500">Top</span>
+          <span class="text-sm text-slate-500">{{$t('clinics.topFilter')}}</span>
           <n-switch v-model:value="filterTop" />
         </div>
         <n-button
@@ -82,7 +80,7 @@
           class="h-10 bg-slate-50 rounded-lg animate-pulse"
         />
       </div>
-      <n-alert v-else-if="error" type="error">Məlumat yüklənmədi</n-alert>
+      <n-alert v-else-if="error" type="error">{{ $t('clinics.langLoadError') }}</n-alert>
       <n-data-table
         v-else
         :columns="columns"
@@ -99,7 +97,7 @@
     <n-modal
       v-model:show="showModal"
       preset="card"
-      :title="editingClinic ? 'Edit Clinic' : 'Create Clinic'"
+      :title="editingClinic ? $t('clinics.edit') : $t('clinics.create')"
       class="max-w-lg rounded-3xl overflow-hidden shadow-2xl"
     >
       <n-tabs
@@ -111,26 +109,26 @@
         <n-tab-pane name="az" tab="AZ">
           <n-spin :show="isLoadingLang && activeTab === 'az'">
             <div class="flex flex-col gap-4 pt-4">
-              <n-form-item label="Ad (AZ)">
+              <n-form-item :label="$t('clinics.name')">
                 <n-input
                   v-model:value="modalForm.title.az"
-                  placeholder="Klinika adı..."
+                  :placeholder="$t('clinics.name')"
                   size="large"
                   class="rounded-xl"
                 />
               </n-form-item>
-              <n-form-item label="Təsvir (AZ)">
+              <n-form-item :label="$t('clinics.description')">
                 <n-input
                   v-model:value="modalForm.description.az"
                   type="textarea"
-                  placeholder="Haqqında..."
+                  :placeholder="$t('clinics.description')"
                   :rows="2"
                 />
               </n-form-item>
-              <n-form-item label="Ünvan (AZ)">
+              <n-form-item :label="$t('clinics.address')">
                 <n-input
                   v-model:value="modalForm.address.az"
-                  placeholder="Ünvan..."
+                  :placeholder="$t('clinics.address')"
                   size="large"
                   class="rounded-xl"
                 />
@@ -142,26 +140,26 @@
         <n-tab-pane name="en" tab="EN">
           <n-spin :show="isLoadingLang && activeTab === 'en'">
             <div class="flex flex-col gap-4 pt-4">
-              <n-form-item label="Name (EN)">
+              <n-form-item :label="$t('clinics.name')">
                 <n-input
                   v-model:value="modalForm.title.en"
-                  placeholder="Clinic name..."
+                  :placeholder="$t('clinics.name')"
                   size="large"
                   class="rounded-xl"
                 />
               </n-form-item>
-              <n-form-item label="Description (EN)">
+              <n-form-item :label="$t('clinics.description')">
                 <n-input
                   v-model:value="modalForm.description.en"
                   type="textarea"
-                  placeholder="Description..."
+                  :placeholder="$t('clinics.description')"
                   :rows="2"
                 />
               </n-form-item>
-              <n-form-item label="Address (EN)">
+              <n-form-item :label="$t('clinics.address')">
                 <n-input
                   v-model:value="modalForm.address.en"
-                  placeholder="Address..."
+                  :placeholder="$t('clinics.address')"
                   size="large"
                   class="rounded-xl"
                 />
@@ -173,26 +171,26 @@
         <n-tab-pane name="ru" tab="RU">
           <n-spin :show="isLoadingLang && activeTab === 'ru'">
             <div class="flex flex-col gap-4 pt-4">
-              <n-form-item label="Название (RU)">
+              <n-form-item :label="$t('clinics.name')">
                 <n-input
                   v-model:value="modalForm.title.ru"
-                  placeholder="Название клиники..."
+                  :placeholder="$t('clinics.name')"
                   size="large"
                   class="rounded-xl"
                 />
               </n-form-item>
-              <n-form-item label="Описание (RU)">
+              <n-form-item :label="$t('clinics.description')">
                 <n-input
                   v-model:value="modalForm.description.ru"
                   type="textarea"
-                  placeholder="Описание..."
+                  :placeholder="$t('clinics.description')"
                   :rows="2"
                 />
               </n-form-item>
-              <n-form-item label="Адрес (RU)">
+              <n-form-item :label="$t('clinics.address')">
                 <n-input
                   v-model:value="modalForm.address.ru"
-                  placeholder="Адрес..."
+                  :placeholder="$t('clinics.address')"
                   size="large"
                   class="rounded-xl"
                 />
@@ -205,15 +203,15 @@
       <!-- Dil asılı olmayan fieldlər -->
       <div class="flex flex-col gap-4 mt-4 border-t pt-4">
         <div class="grid grid-cols-2 gap-4">
-          <n-form-item label="Telefon">
+          <n-form-item :label="$t('clinics.phone')">
             <n-input
               v-model:value="modalForm.phone"
-              placeholder="+994..."
+              :placeholder="$t('clinics.phone')"
               size="large"
               class="rounded-xl"
             />
           </n-form-item>
-          <n-form-item label="Region">
+          <n-form-item :label="$t('clinics.region')">
             <n-select
               v-model:value="modalForm.region_id"
               :options="regionOptions"
@@ -221,7 +219,7 @@
               filterable
               remote
               clearable
-              placeholder="Seçin"
+              :placeholder="$t('clinics.region')"
               size="large"
               :menu-props="{ onScroll: regionHandleScroll }"
               @update:value="onRegionFormUpdate"
@@ -231,25 +229,26 @@
           </n-form-item>
         </div>
         <div class="grid grid-cols-2 gap-4">
-          <n-form-item label="Latitude">
+          <n-form-item :label="$t('clinics.latitude')">
+
             <n-input
               v-model:value="modalForm.latitude"
-              placeholder="40.4093"
+              :placeholder="$t('clinics.latitude')"
               size="large"
               class="rounded-xl"
             />
           </n-form-item>
-          <n-form-item label="Longitude">
+          <n-form-item :label="$t('clinics.longitude')">
             <n-input
               v-model:value="modalForm.longitude"
-              placeholder="49.8671"
+              :placeholder="$t('clinics.longitude')"
               size="large"
               class="rounded-xl"
             />
           </n-form-item>
         </div>
         <div class="flex items-center gap-2">
-          <span class="text-sm text-slate-500">Top klinika</span>
+          <span class="text-sm text-slate-500">{{ $t('clinics.top') }}</span>
           <n-switch v-model:value="modalForm.top" />
         </div>
       </div>
@@ -257,7 +256,7 @@
       <template #action>
         <div class="flex justify-end gap-3">
           <n-button ghost class="rounded-xl px-6" @click="showModal = false"
-            >Cancel</n-button
+            >{{ $t('clinics.cancel') }}</n-button
           >
           <n-button
             type="primary"
@@ -265,7 +264,7 @@
             :loading="createLoading || updateLoading"
             @click="handleSubmit"
           >
-            {{ editingClinic ? "Update" : "Save" }}
+            {{ editingClinic ? $t('clinics.update') : $t('clinics.save') }}
           </n-button>
         </div>
       </template>
@@ -276,10 +275,10 @@
       v-model:show="showDeleteModal"
       preset="dialog"
       type="error"
-      title="Delete Clinic"
-      content="Bu klikanı silmək istədiyinizə əminsiniz?"
-      positive-text="Sil"
-      negative-text="Ləğv et"
+      title="{{ $t('clinics.delete') }}"
+      content="{{ $t('clinics.deleteConfirmation') }}"
+      positive-text="{{ $t('clinics.delete') }}"
+      negative-text="{{ $t('clinics.cancel') }}"
       :loading="deleteLoading"
       @positive-click="handleDelete"
       @negative-click="showDeleteModal = false"
@@ -309,6 +308,7 @@ import {
 import { useRegions } from "../../regions/composables/useRegions";
 import type { Clinic } from "@icheck/api-contracts";
 import { useRemoteSelect } from "~/composables/useRemoteSelect";
+const { t } = useI18n();
 
 const { $api } = useNuxtApp();
 
@@ -333,7 +333,7 @@ const regionInitialOption = computed<SelectOption | null>(() => {
   const region = regions.value.find((r) => r.id === id);
   return {
     value: id,
-    label: region?.title ?? `Region #${id}`,
+    label: region?.title ?? `{{ $t('clinics.region') }} #${id}`,
   };
 });
 
@@ -451,7 +451,7 @@ const fetchLangData = async (id: number, lang: string) => {
     }
     loadedLangs.value.add(lang);
   } catch {
-    message.error(`${lang.toUpperCase()} dilində məlumat yüklənmədi`);
+    message.error(`${lang.toUpperCase()} {{$t('common.langLoadError')}}`);
   } finally {
     isLoadingLang.value = false;
   }
@@ -500,7 +500,7 @@ const handleSubmit = async () => {
 
   const titleData = clean(modalForm.title);
   if (!titleData) {
-    message.warning("Ən azı bir dildə klinika adı daxil edin");
+    message.warning("{{ $t('clinics.nameRequired') }}");
     return;
   }
 
@@ -522,16 +522,16 @@ const handleSubmit = async () => {
   try {
     if (editingClinic.value) {
       await updateClinic(editingClinic.value.id, payload);
-      message.success("Klinika yeniləndi");
+      message.success("{{ $t('clinics.updated') }}");
     } else {
       await createClinic(payload);
-      message.success("Klinika yaradıldı");
+      message.success("{{ $t('clinics.created') }}");
     }
     showModal.value = false;
     clearNuxtData("clinics-list");
     await refresh();
   } catch {
-    message.error("Xəta baş verdi");
+    message.error("{{ $t('common.error') }}");
   }
 };
 
@@ -539,18 +539,18 @@ const handleDelete = async () => {
   if (!deletingId.value) return;
   try {
     await deleteClinic(deletingId.value);
-    message.success("Klinika silindi");
+    message.success("{{ $t('clinics.deleted') }}");
     showDeleteModal.value = false;
     await refresh();
   } catch {
-    message.error("Silinmə zamanı xəta baş verdi");
+    message.error("{{ $t('common.deleteError') }}");
   }
 };
 
 // ---- Table ----
 const columns: DataTableColumns<Clinic> = [
   {
-    title: "ID",
+    title: t('common.id'),
     key: "id",
     width: 80,
     render: (row) =>
@@ -561,7 +561,7 @@ const columns: DataTableColumns<Clinic> = [
       ),
   },
   {
-    title: "Clinic Name",
+    title: t('clinics.name'),
     key: "title",
     sorter: "default",
     render: (row) =>
@@ -583,7 +583,7 @@ const columns: DataTableColumns<Clinic> = [
       ]),
   },
   {
-    title: "Region",
+    title:t('clinics.region') ,
     key: "region_id",
     render: (row) => {
       const region = regions.value.find((r) => r.id === row.region_id);
@@ -595,13 +595,13 @@ const columns: DataTableColumns<Clinic> = [
     },
   },
   {
-    title: "Phone",
+    title: t('clinics.phone'),
     key: "phone",
     render: (row) =>
       h("span", { class: "text-slate-600 text-sm" }, row.phone ?? "—"),
   },
   {
-    title: "Top",
+    title: t('clinics.top'),
     key: "top",
     render: (row) =>
       h(
@@ -617,7 +617,7 @@ const columns: DataTableColumns<Clinic> = [
       ),
   },
   {
-    title: "Actions",
+    title: t('common.actions'),
     key: "actions",
     align: "right",
     render: (row) =>

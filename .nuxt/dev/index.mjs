@@ -2770,6 +2770,116 @@ async function getLocaleMessagesMerged(locale, loaders = []) {
   return merged;
 }
 
+var common = {
+	id: "ID",
+	search: "Axtar...",
+	edit: "Redaktə et",
+	"delete": "Sil",
+	confirm: "Təsdiqlə",
+	cancel: "Ləğv et",
+	loading: "Yüklənir...",
+	noData: "Məlumat yoxdur",
+	actions: "Əməliyyatlar",
+	error: "Xəta baş verdi",
+	deleteError: "Silinmə zamanı xəta baş verdi",
+	langLoadError: "məlumat yüklənmədi",
+	loadError: "Məlumat yüklənmədi"
+};
+var clinics = {
+	title: "Klinikalar",
+	description: "Səhiyyə şəbəkəsində klinikaları idarə edin.",
+	create: "Klinika yarat",
+	search: "Klinika axtar...",
+	deleteTitle: "Klinikanı sil",
+	deleteContent: "Bu klinikanı silmək istədiyinizə əminsiniz?",
+	name: "Klinika adı",
+	region: "Region",
+	save: "Yadda saxla",
+	cancel: "Ləğv et",
+	langLoadError: "məlumat yüklənmədi",
+	titleRequired: "Ən azı bir dildə ad daxil edin",
+	updated: "Klinika yeniləndi",
+	created: "Klinika yaradıldı",
+	error: "Xəta baş verdi",
+	deleted: "Klinika silindi",
+	symptoms: "Simptomlar",
+	topFilter: "Top klinikalar",
+	regionFilter: "Regiona uyğun klinika seçin",
+	phone: "Telefon nömrəsi",
+	latitude: "Coğrafi enlik",
+	longitude: "Coğrafi uzunluq",
+	top: "Top klinika"
+};
+var appointments = {
+	title: "Randevular",
+	description: "Səhiyyə şəbəkəsində randevuları idarə edin.",
+	search: "Randevu axtar...",
+	deleteTitle: "Randevunu sil",
+	deleteContent: "Bu randevunu silmək istədiyinizə əminsiniz?",
+	patient: "Pasiyent",
+	patientSelectPlaceholder: "Pasiyent seçin...",
+	doctor: "Həkim",
+	doctorSelectPlaceholder: "Həkim seçin...",
+	dateAndTime: "Tarix & Vaxt",
+	type_label: "Növ",
+	status_label: "Status",
+	payment_label: "Ödəniş",
+	complaints: "Şikayətlər",
+	editSuccess: "Randevu yeniləndi",
+	deleteSuccess: "Randevu silindi",
+	update: "Yenilə",
+	"delete": "Sil",
+	details: "Əlavə məlumat",
+	address: "Ünvan",
+	detailsPlaceholder: "Əlavə məlumat...",
+	create: "Randevu yarat",
+	patientName: "Pasiyent adı",
+	patientNamePlaceholder: "Pasiyent adı...",
+	startTime: "Başlama vaxtı",
+	endTime: "Bitmə vaxtı",
+	paymentMethod: "Ödəniş metodu",
+	paymentStatus_label: "Ödəniş statusu",
+	amount: "Məbləğ",
+	paidAmount: "Ödənilmiş məbləğ",
+	payment: {
+		card: "Kart",
+		insurance: "Sığorta"
+	},
+	paymentStatus: {
+		paid: "Ödəndi",
+		unpaid: "Ödənmədi"
+	},
+	type: {
+		online: "Online",
+		offline: "Offline"
+	},
+	status: {
+		pending: "Gözləmədə",
+		confirmed: "Təsdiqləndi",
+		cancelled: "Ləğv edildi",
+		completed: "Tamamlandı",
+		declined: "Rədd edildi"
+	}
+};
+var regions$2 = {
+	title: "Regionlar",
+	description: "Səhiyyə şəbəkəsində regionları idarə edin.",
+	create: "Region yarat",
+	search: "Region axtar...",
+	deleteTitle: "Regionu sil",
+	deleteContent: "Bu regionu silmək istədiyinizə əminsiniz?",
+	name: "Region adı",
+	code: "Region kodu",
+	save: "Yadda saxla",
+	cancel: "Ləğv et",
+	langLoadError: "məlumat yüklənmədi",
+	titleRequired: "Ən azı bir dildə ad daxil edin",
+	updated: "Region yeniləndi",
+	created: "Region yaradıldı",
+	error: "Xəta baş verdi",
+	deleted: "Region silindi",
+	clinics: "Klinikalar"
+};
 var symptoms$2 = {
 	title: "Simptomlar",
 	description: "Səhiyyə şəbəkəsində simptomları idarə edin.",
@@ -2783,9 +2893,35 @@ var symptoms$2 = {
 	bodyPart: "Bədən hissəsi"
 };
 const locale_az_46json_79264321 = {
+	common: common,
+	clinics: clinics,
+	appointments: appointments,
+	regions: regions$2,
 	symptoms: symptoms$2
 };
 
+var regions$1 = {
+	title: "Regions",
+	description: "Manage regions within the healthcare network.",
+	create: "Create region",
+	search: "Search region...",
+	deleteTitle: "Delete region",
+	deleteContent: "Are you sure you want to delete this region?",
+	name: "Region name",
+	code: "Region code",
+	save: "Save",
+	cancel: "Cancel",
+	langLoadError: "Data could not be loaded in this language",
+	titleRequired: "Enter a name in at least one language",
+	updated: "Region updated",
+	created: "Region created",
+	error: "An error occurred",
+	deleted: "Region deleted",
+	deleteError: "An error occurred during deletion",
+	id: "ID",
+	clinics: "Clinics",
+	actions: "Actions"
+};
 var symptoms$1 = {
 	title: "Symptoms",
 	description: "Manage symptoms in the healthcare network.",
@@ -2799,9 +2935,32 @@ var symptoms$1 = {
 	bodyPart: "Body Part"
 };
 const locale_en_46json_fdca49b4 = {
+	regions: regions$1,
 	symptoms: symptoms$1
 };
 
+var regions = {
+	title: "Регионы",
+	description: "Управление регионами в сети здравоохранения.",
+	create: "Создать регион",
+	search: "Поиск региона...",
+	deleteTitle: "Удалить регион",
+	deleteContent: "Вы уверены, что хотите удалить этот регион?",
+	name: "Название региона",
+	code: "Код региона",
+	save: "Сохранить",
+	cancel: "Отмена",
+	langLoadError: "Данные на этом языке не загружены",
+	titleRequired: "Введите название хотя бы на одном языке",
+	updated: "Регион обновлен",
+	created: "Регион создан",
+	error: "Произошла ошибка",
+	deleted: "Регион удален",
+	deleteError: "Произошла ошибка при удалении",
+	id: "ID",
+	clinics: "Клиники",
+	actions: "Действия"
+};
 var symptoms = {
 	title: "Симптомы",
 	description: "Управляйте симптомами в медицинской сети.",
@@ -2815,6 +2974,7 @@ var symptoms = {
 	bodyPart: "Часть тела"
 };
 const locale_ru_46json_3b79920e = {
+	regions: regions,
 	symptoms: symptoms
 };
 
@@ -3297,6 +3457,11 @@ const pathToI18nConfig = {
     "en": "/login",
     "ru": "/login"
   },
+  "/pages": {
+    "az": "/pages",
+    "en": "/pages",
+    "ru": "/pages"
+  },
   "/users": {
     "az": "/users",
     "en": "/users",
@@ -3342,10 +3507,20 @@ const pathToI18nConfig = {
     "en": "/symptoms",
     "ru": "/symptoms"
   },
+  "/diagnoses": {
+    "az": "/diagnoses",
+    "en": "/diagnoses",
+    "ru": "/diagnoses"
+  },
   "/appointments": {
     "az": "/appointments",
     "en": "/appointments",
     "ru": "/appointments"
+  },
+  "/prescriptions": {
+    "az": "/prescriptions",
+    "en": "/prescriptions",
+    "ru": "/prescriptions"
   },
   "/specializations": {
     "az": "/specializations",
@@ -3359,6 +3534,7 @@ const i18nPathToPath = {
   "/forum": "/forum",
   "/": "/",
   "/login": "/login",
+  "/pages": "/pages",
   "/users": "/users",
   "/clinics": "/clinics",
   "/content": "/content",
@@ -3368,7 +3544,9 @@ const i18nPathToPath = {
   "/diseases": "/diseases",
   "/services": "/services",
   "/symptoms": "/symptoms",
+  "/diagnoses": "/diagnoses",
   "/appointments": "/appointments",
+  "/prescriptions": "/prescriptions",
   "/specializations": "/specializations"
 };
 
@@ -3646,22 +3824,7 @@ _xk5gaM6xHtez2cAngS3u9cFuI5KlbmsmGgui1pTqMQ,
 _wH6JrtIxmaSoA8lCPWFnE9z4lQeXW6H5z3l5aymEQw
 ];
 
-const assets = {
-  "/index.mjs": {
-    "type": "text/javascript; charset=utf-8",
-    "etag": "\"273a8-yS8uh+D4kXrNra+XFjl9a49c0Zk\"",
-    "mtime": "2026-05-13T10:19:01.333Z",
-    "size": 160680,
-    "path": "index.mjs"
-  },
-  "/index.mjs.map": {
-    "type": "application/json",
-    "etag": "\"97d6d-aGt7L2DW6TnENhlEEK6N0vSn1no\"",
-    "mtime": "2026-05-13T10:19:01.349Z",
-    "size": 621933,
-    "path": "index.mjs.map"
-  }
-};
+const assets = {};
 
 function readAsset (id) {
   const serverDir = dirname$1(fileURLToPath(globalThis._importMeta_.url));

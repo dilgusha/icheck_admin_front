@@ -4,11 +4,9 @@
     <div class="flex items-end justify-between border-b border-slate-100 pb-6">
       <div class="space-y-1">
         <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight">
-          Appointments
+          {{t('appointments.title')}}
         </h2>
-        <p class="text-slate-500 text-sm font-medium">
-          Manage patient appointments across the network.
-        </p>
+       
       </div>
       <div class="flex items-center gap-3">
         <n-button quaternary circle size="medium" @click="refresh()">
@@ -27,7 +25,7 @@
           @click="showCreateModal = true"
         >
           <template #icon><Plus :size="20" :stroke-width="2.5" /></template>
-          Create Appointment
+          {{t('appointments.create')}}
         </n-button>
       </div>
     </div>
@@ -84,7 +82,7 @@
           class="h-16 bg-slate-50 rounded-lg animate-pulse"
         />
       </div>
-      <n-alert v-else-if="error" type="error">Məlumat yüklənmədi</n-alert>
+      <n-alert v-else-if="error" type="error">{{t('common.langLoadError')}}</n-alert>
       <n-data-table
         v-else
         :columns="columns"
@@ -105,13 +103,13 @@
       class="max-w-lg rounded-3xl overflow-hidden shadow-2xl"
     >
       <div class="flex flex-col gap-4 p-2">
-        <n-form-item label="Həkim *">
+        <n-form-item :label="t('appointments.doctor')">
           <n-select
             v-model:value="createForm.doctor_id"
             filterable
             remote
             clearable
-            placeholder="Həkim seçin"
+            :placeholder="t('appointments.doctorSelectPlaceholder')"
             :options="doctorOptions"
             :loading="doctorPending"
             :menu-props="{ onScroll: doctorHandleScroll }"
@@ -121,13 +119,13 @@
           />
         </n-form-item>
         <!-- doctor select-dən sonra əlavə et -->
-        <n-form-item label="Pasiyent (seçin və ya ad yazın)">
+        <n-form-item :label="t('appointments.patient')">
           <n-select
             v-model:value="createForm.user_id"
             filterable
             remote
             clearable
-            placeholder="Pasiyent seçin"
+            :placeholder="t('appointments.patientSelectPlaceholder')"
             :options="patientOptions"
             :loading="patientPending"
             :menu-props="{ onScroll: patientHandleScroll }"
@@ -137,25 +135,24 @@
           />
         </n-form-item>
 
-        <!-- user_id seçilməyibsə fullname məcburidir -->
-        <n-form-item v-if="!createForm.user_id" label="Pasiyent adı *">
+        <n-form-item v-if="!createForm.user_id" :label="t('appointments.patientName')">
           <n-input
             v-model:value="createForm.fullname"
-            placeholder="Ad Soyad..."
+            :placeholder="t('appointments.patientNamePlaceholder')"
             size="large"
             class="rounded-xl"
           />
         </n-form-item>
 
         <div class="grid grid-cols-2 gap-4">
-          <n-form-item label="Növ">
+          <n-form-item :label="t('appointments.type_label')">
             <n-select
               v-model:value="createForm.type"
               :options="typeOptions"
               size="large"
             />
           </n-form-item>
-          <n-form-item label="Status">
+          <n-form-item :label="t('appointments.status_label')">
             <n-select
               v-model:value="createForm.status"
               :options="statusOptions"
@@ -164,7 +161,7 @@
           </n-form-item>
         </div>
 
-        <n-form-item label="Tarix *">
+        <n-form-item :label="t('appointments.dateAndTime')">
           <n-date-picker
             v-model:value="createForm.date"
             type="date"
@@ -174,14 +171,14 @@
         </n-form-item>
 
         <div class="grid grid-cols-2 gap-4">
-          <n-form-item label="Başlama *">
+          <n-form-item :label="t('appointments.startTime')">
             <n-time-picker
               v-model:value="createForm.start_time"
               size="large"
               class="w-full"
             />
           </n-form-item>
-          <n-form-item label="Bitmə *">
+          <n-form-item :label="t('appointments.endTime')">
             <n-time-picker
               v-model:value="createForm.end_time"
               size="large"
@@ -190,7 +187,7 @@
           </n-form-item>
         </div>
 
-        <n-form-item label="Şikayətlər">
+        <n-form-item :label="t('appointments.complaints')">
           <n-input
             v-model:value="createForm.complaints"
             type="textarea"
@@ -200,14 +197,15 @@
         </n-form-item>
 
         <div class="grid grid-cols-2 gap-4">
-          <n-form-item label="Ödəniş metodu">
+          <n-form-item :label="t('appointments.paymentMethod')">
+
             <n-select
               v-model:value="createForm.payment_method"
               :options="paymentOptions"
               size="large"
             />
           </n-form-item>
-          <n-form-item label="Ödəniş statusu">
+          <n-form-item :label="t('appointments.paymentStatus_label')">
             <n-select
               v-model:value="createForm.payment_status"
               :options="paymentStatusOptions"
@@ -217,7 +215,7 @@
         </div>
 
         <div class="grid grid-cols-2 gap-4">
-          <n-form-item label="Məbləğ">
+          <n-form-item :label="t('appointments.amount')">
             <n-input
               v-model:value="createForm.amount"
               placeholder="0.00"
@@ -225,7 +223,7 @@
               class="rounded-xl"
             />
           </n-form-item>
-          <n-form-item label="Ödənilmiş">
+          <n-form-item :label="t('appointments.paidAmount')">
             <n-input
               v-model:value="createForm.paid_amount"
               placeholder="0.00"
@@ -264,14 +262,14 @@
     >
       <div class="flex flex-col gap-4 p-2">
         <div class="grid grid-cols-2 gap-4">
-          <n-form-item label="Status">
+          <n-form-item :label="t('appointments.status')">
             <n-select
               v-model:value="editForm.status"
               :options="statusOptions"
               size="large"
             />
           </n-form-item>
-          <n-form-item label="Ödəniş statusu">
+          <n-form-item :label="t('appointments.paymentStatus_label')">
             <n-select
               v-model:value="editForm.payment_status"
               :options="paymentStatusOptions"
@@ -279,41 +277,41 @@
             />
           </n-form-item>
         </div>
-        <n-form-item label="Ödəniş metodu">
+        <n-form-item :label="t('appointments.paymentMethod')">
           <n-select
             v-model:value="editForm.payment_method"
             :options="paymentOptions"
             size="large"
           />
         </n-form-item>
-        <n-form-item label="Əlavə məlumat">
+        <n-form-item :label="t('appointments.details')">
           <n-input
             v-model:value="editForm.details"
             type="textarea"
-            placeholder="Əlavə məlumat..."
+            :placeholder="t('appointments.detailsPlaceholder')"
             :rows="2"
           />
         </n-form-item>
 
-        <n-form-item label="Ünvan">
+        <n-form-item :label="t('appointments.address')">
           <n-input
             v-model:value="editForm.address"
-            placeholder="Ünvan..."
+            :placeholder="t('appointments.addressPlaceholder')"
             size="large"
             class="rounded-xl"
           />
         </n-form-item>
 
-        <n-form-item label="Təxirə salma səbəbi">
+        <n-form-item :label="t('appointments.postponeReason')">
           <n-input
             v-model:value="editForm.postpone_reason"
             type="textarea"
-            placeholder="Səbəb..."
+            :placeholder="t('appointments.postponeReasonPlaceholder')"
             :rows="2"
           />
         </n-form-item>
 
-        <n-form-item label="Tarix">
+        <n-form-item :label="t('appointments.date')">
           <n-date-picker
             v-model:value="editForm.date"
             type="date"
@@ -323,14 +321,15 @@
         </n-form-item>
 
         <div class="grid grid-cols-2 gap-4">
-          <n-form-item label="Başlama">
+          <n-form-item :label="t('appointments.startTime')">
+
             <n-time-picker
               v-model:value="editForm.start_time"
               size="large"
               class="w-full"
             />
           </n-form-item>
-          <n-form-item label="Bitmə">
+          <n-form-item :label="t('appointments.endTime')">
             <n-time-picker
               v-model:value="editForm.end_time"
               size="large"
@@ -339,17 +338,17 @@
           </n-form-item>
         </div>
 
-        <n-form-item label="Şikayətlər">
+        <n-form-item :label="t('appointments.complaints')">
           <n-input
             v-model:value="editForm.complaints"
             type="textarea"
-            placeholder="Şikayətlər..."
+            :placeholder="t('appointments.complaintsPlaceholder')"
             :rows="2"
           />
         </n-form-item>
 
         <div class="grid grid-cols-2 gap-4">
-          <n-form-item label="Məbləğ">
+          <n-form-item :label="t('appointments.amount')">
             <n-input
               v-model:value="editForm.amount"
               placeholder="0.00"
@@ -357,7 +356,7 @@
               class="rounded-xl"
             />
           </n-form-item>
-          <n-form-item label="Ödənilmiş">
+          <n-form-item :label="t('appointments.paidAmount')">
             <n-input
               v-model:value="editForm.paid_amount"
               placeholder="0.00"
@@ -367,11 +366,11 @@
           </n-form-item>
         </div>
 
-        <n-form-item label="Rədd etmə səbəbi">
+        <n-form-item :label="t('appointments.declineReason')">
           <n-input
             v-model:value="editForm.decline_reason"
             type="textarea"
-            placeholder="Səbəb..."
+            :placeholder="t('appointments.declineReasonPlaceholder')"
             :rows="2"
           />
         </n-form-item>
@@ -380,14 +379,14 @@
       <template #action>
         <div class="flex justify-end gap-3">
           <n-button ghost class="rounded-xl px-6" @click="showEditModal = false"
-            >Ləğv et</n-button
+            >{{ t('appointments.cancel') }}</n-button
           >
           <n-button
             type="primary"
             class="rounded-xl px-8"
             :loading="updateLoading"
             @click="handleUpdate"
-            >Yenilə</n-button
+            >{{ t('appointments.update') }}</n-button
           >
         </div>
       </template>
@@ -398,10 +397,10 @@
       v-model:show="showDeleteModal"
       preset="dialog"
       type="error"
-      title="Delete Appointment"
-      content="Bu görüşü silmək istədiyinizə əminsiniz?"
-      positive-text="Sil"
-      negative-text="Ləğv et"
+      title="{{ t('appointments.delete') }}"
+      content="{{ t('appointments.deleteContent') }}"
+      positive-text="{{ t('appointments.delete') }}"
+      negative-text="{{ t('appointments.cancel') }}"
       :loading="deleteLoading"
       @positive-click="handleDelete"
       @negative-click="showDeleteModal = false"
@@ -429,6 +428,7 @@ import {
 import { useRemoteSelect } from "~/composables/useRemoteSelect";
 import type { Appointment } from "@icheck/api-contracts";
 const { $api } = useNuxtApp()
+const { t } = useI18n();
 
 const message = useMessage();
 
@@ -452,26 +452,26 @@ const { appointments, isLoading, error, refresh } = useAppointments(query);
 
 // ---- Options ----
 const statusOptions = [
-  { label: "Gözləyir", value: "pending" },
-  { label: "Təsdiqlənib", value: "confirmed" },
-  { label: "Rədd edilib", value: "declined" },
-  { label: "Tamamlandı", value: "completed" },
-  { label: "Ləğv edilib", value: "cancelled" },
+  { label: t('appointments.status.pending'), value: "pending" },
+  { label: t('appointments.status.confirmed'), value: "confirmed" },
+  { label: t('appointments.status.declined'), value: "declined" },
+  { label: t('appointments.status.completed'), value: "completed" },
+  { label: t('appointments.status.cancelled'), value: "cancelled" },
 ];
 
 const typeOptions = [
-  { label: "Online", value: "online" },
-  { label: "Offline", value: "offline" },
+  { label: t('appointments.type.online'), value: "online" },
+  { label: t('appointments.type.offline'), value: "offline" },
 ];
 
 const paymentOptions = [
-  { label: "Kart", value: "card" },
-  { label: "Sığorta", value: "insurance" },
+  { label: t('appointments.payment.card'), value: "card" },
+  { label: t('appointments.payment.insurance'), value: "insurance" },
 ];
 
 const paymentStatusOptions = [
-  { label: "Ödənilməyib", value: "unpaid" },
-  { label: "Ödənilib", value: "paid" },
+  { label: t('appointments.paymentStatus.unpaid'), value: "unpaid" },
+  { label: t('appointments.paymentStatus.paid'), value: "paid" },
 ];
 
 // ---- Doctor remote select ----
@@ -506,7 +506,7 @@ const {
       item.fullname ||
       [item.first_name, item.last_name].filter(Boolean).join(' ') ||
       item.username ||
-      `Pasiyent #${item.id}`
+      `${t('appointments.patient')} #${item.id}`
     return { value: item.id, label: fullName }
   },
   { key: 'appointment-create-patients', per_page: 10, debounceMs: 300, loadOnOpen: true }
@@ -559,12 +559,12 @@ const handleCreate = async () => {
     !createForm.start_time ||
     !createForm.end_time
   ) {
-    message.warning("Məcburi xanaları doldurun");
+    message.warning(t('appointments.create.validation.requiredFields'));
     return;
   }
 
   if (!createForm.user_id && !createForm.fullname.trim()) {
-    message.warning("Pasiyent seçin və ya adını daxil edin");
+    message.warning(t('appointments.create.validation.patientRequired'));
     return;
   }
 
@@ -585,13 +585,13 @@ const handleCreate = async () => {
       amount: createForm.amount,
       paid_amount: createForm.paid_amount,
     });
-    message.success("Görüş yaradıldı");
+    message.success(t('appointments.create.success'));
     showCreateModal.value = false;
     clearNuxtData("admin-appointments-list");
     await refresh();
   } catch (err: any) {
     console.log("Create error:", JSON.stringify(err?.data));
-    message.error(err?.data?.error || "Xəta baş verdi");
+    message.error(err?.data?.error || t('appointments.create.error'));
   }
 };
 
@@ -660,7 +660,7 @@ const handleUpdate = async () => {
       paid_amount: editForm.paid_amount || undefined,
     });
 
-    message.success("Görüş yeniləndi");
+    message.success(t('appointments.edit.success'));
     showEditModal.value = false;
     clearNuxtData("admin-appointments-list");
 
@@ -689,7 +689,7 @@ const handleDelete = async () => {
     clearNuxtData("admin-appointments-list");
     await refresh();
   } catch {
-    message.error("Xəta baş verdi");
+    message.error(t('common.error'));
   }
 };
 
@@ -698,17 +698,17 @@ const statusConfig: Record<
   string,
   { type: "success" | "error" | "warning" | "default" | "info"; label: string }
 > = {
-  pending: { type: "warning", label: "Gözləyir" },
-  confirmed: { type: "success", label: "Təsdiqlənib" },
-  declined: { type: "error", label: "Rədd edilib" },
-  completed: { type: "info", label: "Tamamlandı" },
-  cancelled: { type: "default", label: "Ləğv edilib" },
+  pending: { type: "warning", label: t('appointments.status.pending') },
+  confirmed: { type: "success", label: t('appointments.status.confirmed') },
+  declined: { type: "error", label: t('appointments.status.declined') },
+  completed: { type: "info", label: t('appointments.status.completed') },
+  cancelled: { type: "default", label: t('appointments.status.cancelled') },
 };
 
 // ---- Table ----
 const columns: DataTableColumns<Appointment> = [
   {
-    title: "ID",
+    title: t('common.id'),
     key: "id",
     width: 70,
     render: (row) =>
@@ -719,7 +719,7 @@ const columns: DataTableColumns<Appointment> = [
       ),
   },
   {
-    title: "Pasiyent",
+    title: t('appointments.patient'),
     key: "user",
     render: (row) =>
       h("div", { class: "flex items-center gap-3" }, [
@@ -741,7 +741,7 @@ const columns: DataTableColumns<Appointment> = [
       ]),
   },
   {
-    title: "Həkim",
+    title: t('appointments.doctor'),
     key: "doctor",
     render: (row) =>
       h("div", { class: "flex items-center gap-3" }, [
@@ -770,7 +770,7 @@ const columns: DataTableColumns<Appointment> = [
       ]),
   },
   {
-    title: "Tarix & Vaxt",
+    title: t('appointments.dateAndTime'),
     key: "date",
     render: (row) =>
       h("div", { class: "flex flex-col" }, [
@@ -783,7 +783,7 @@ const columns: DataTableColumns<Appointment> = [
       ]),
   },
   {
-    title: "Növ",
+    title: t('appointments.type_label'),
     key: "type",
     render: (row) =>
       h(
@@ -799,7 +799,7 @@ const columns: DataTableColumns<Appointment> = [
       ),
   },
   {
-    title: "Status",
+    title: t('appointments.status_label'),
     key: "status",
     render: (row) => {
       const cfg = statusConfig[row.status] ?? {
@@ -820,7 +820,7 @@ const columns: DataTableColumns<Appointment> = [
     },
   },
   {
-    title: "Ödəniş",
+    title: t('appointments.payment_label'),
     key: "payment",
     render: (row) =>
       h("div", { class: "flex flex-col" }, [
@@ -837,7 +837,7 @@ const columns: DataTableColumns<Appointment> = [
       ]),
   },
   {
-    title: "Actions",
+    title: t('common.actions'),
     key: "actions",
     align: "right",
     render: (row) =>
