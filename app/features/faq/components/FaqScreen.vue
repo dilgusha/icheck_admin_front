@@ -10,7 +10,12 @@
         </p>
       </div>
 
-      <n-button type="primary" size="large" class="!rounded-xl font-bold px-8" @click="openCreateModal">
+      <n-button
+        type="primary"
+        size="large"
+        class="!rounded-xl font-bold px-8"
+        @click="openCreateModal"
+      >
         <template #icon>
           <Plus :size="20" :stroke-width="2.5" />
         </template>
@@ -18,17 +23,34 @@
       </n-button>
     </div>
 
-    <n-card :bordered="false" class="border-none shadow-sm rounded-2xl overflow-hidden bg-white">
+    <n-card
+      :bordered="false"
+      class="border-none shadow-sm rounded-2xl overflow-hidden bg-white"
+    >
       <div class="mb-6 flex items-center gap-4 p-1">
-        <n-button quaternary circle size="medium" class="ml-auto" @click="refresh()">
+        <n-button
+          quaternary
+          circle
+          size="medium"
+          class="ml-auto"
+          @click="refresh()"
+        >
           <template #icon>
-            <RefreshCw :size="18" :class="{ 'animate-spin': isLoading }" class="text-slate-500" />
+            <RefreshCw
+              :size="18"
+              :class="{ 'animate-spin': isLoading }"
+              class="text-slate-500"
+            />
           </template>
         </n-button>
       </div>
 
       <div v-if="isLoading" class="space-y-4">
-        <div v-for="i in 6" :key="i" class="h-12 bg-slate-50 rounded-lg animate-pulse" />
+        <div
+          v-for="i in 6"
+          :key="i"
+          class="h-12 bg-slate-50 rounded-lg animate-pulse"
+        />
       </div>
 
       <n-alert v-else-if="error" type="error">Məlumat yüklənmədi</n-alert>
@@ -50,17 +72,31 @@
       preset="card"
       :title="editingFaq ? 'Edit FAQ' : 'Create FAQ'"
       class="max-w-2xl rounded-3xl overflow-hidden shadow-2xl"
-      style="width: min(720px, calc(100vw - 24px));"
+      style="width: min(720px, calc(100vw - 24px))"
     >
       <div class="p-2 flex flex-col gap-4 max-h-[75vh] overflow-y-auto">
-        <n-tabs v-model:value="activeTab" type="segment" animated @update:value="handleTabChange">
+        <n-tabs
+          v-model:value="activeTab"
+          type="segment"
+          animated
+          @update:value="handleTabChange"
+        >
           <n-tab-pane name="az" tab="AZ">
             <div class="flex flex-col gap-4 pt-4">
               <n-form-item label="Sual (AZ)">
-                <n-input v-model:value="form.question.az" size="large" placeholder="Sual..." />
+                <n-input
+                  v-model:value="form.question.az"
+                  size="large"
+                  placeholder="Sual..."
+                />
               </n-form-item>
               <n-form-item label="Cavab (AZ)">
-                <n-input v-model:value="form.answer.az" type="textarea" :rows="4" placeholder="Cavab..." />
+                <n-input
+                  v-model:value="form.answer.az"
+                  type="textarea"
+                  :rows="4"
+                  placeholder="Cavab..."
+                />
               </n-form-item>
             </div>
           </n-tab-pane>
@@ -68,10 +104,19 @@
           <n-tab-pane name="en" tab="EN">
             <div class="flex flex-col gap-4 pt-4">
               <n-form-item label="Question (EN)">
-                <n-input v-model:value="form.question.en" size="large" placeholder="Question..." />
+                <n-input
+                  v-model:value="form.question.en"
+                  size="large"
+                  placeholder="Question..."
+                />
               </n-form-item>
               <n-form-item label="Answer (EN)">
-                <n-input v-model:value="form.answer.en" type="textarea" :rows="4" placeholder="Answer..." />
+                <n-input
+                  v-model:value="form.answer.en"
+                  type="textarea"
+                  :rows="4"
+                  placeholder="Answer..."
+                />
               </n-form-item>
             </div>
           </n-tab-pane>
@@ -79,24 +124,45 @@
           <n-tab-pane name="ru" tab="RU">
             <div class="flex flex-col gap-4 pt-4">
               <n-form-item label="Вопрос (RU)">
-                <n-input v-model:value="form.question.ru" size="large" placeholder="Вопрос..." />
+                <n-input
+                  v-model:value="form.question.ru"
+                  size="large"
+                  placeholder="Вопрос..."
+                />
               </n-form-item>
               <n-form-item label="Ответ (RU)">
-                <n-input v-model:value="form.answer.ru" type="textarea" :rows="4" placeholder="Ответ..." />
+                <n-input
+                  v-model:value="form.answer.ru"
+                  type="textarea"
+                  :rows="4"
+                  placeholder="Ответ..."
+                />
               </n-form-item>
             </div>
           </n-tab-pane>
         </n-tabs>
 
         <n-form-item label="Sort order" class="border-t pt-4">
-          <n-input-number v-model:value="form.sort_order" :min="0" size="large" class="w-full" />
+          <n-input-number
+            v-model:value="form.sort_order"
+            :min="0"
+            size="large"
+            class="w-full"
+          />
         </n-form-item>
       </div>
 
       <template #action>
         <div class="flex justify-end gap-3">
-          <n-button ghost class="rounded-xl px-6" @click="showModal = false">Ləğv et</n-button>
-          <n-button type="primary" class="rounded-xl px-8" :loading="submitLoading" @click="handleSubmit">
+          <n-button ghost class="rounded-xl px-6" @click="showModal = false"
+            >Ləğv et</n-button
+          >
+          <n-button
+            type="primary"
+            class="rounded-xl px-8"
+            :loading="submitLoading"
+            @click="handleSubmit"
+          >
             {{ editingFaq ? "Yenilə" : "Yadda saxla" }}
           </n-button>
         </div>
@@ -115,23 +181,64 @@
       @positive-click="handleDelete"
       @negative-click="showDeleteModal = false"
     />
+
+    <n-modal
+      v-model:show="showViewModal"
+      preset="card"
+      title="Faq Details"
+      class="max-w-md rounded-3xl overflow-hidden shadow-2xl"
+    >
+      <div v-if="viewingFaq" class="flex flex-col gap-4 py-2">
+        <!-- Başlıq -->
+        <div class="flex items-center justify-between">
+          <div class="space-y-1">
+            <p
+              class="text-[10px] uppercase text-slate-400 font-extrabold tracking-widest"
+            >
+              Sual
+            </p>
+            <h3 class="text-2xl font-bold text-indigo-900">
+              {{ viewingFaq.question || "—" }}
+            </h3>
+          </div>
+        </div>
+        <!-- Məzmun -->
+        <div
+          v-if="viewingFaq.answer"
+          class="bg-indigo-50/60 border border-indigo-100 p-4 rounded-2xl"
+        >
+          <p class="text-[10px] uppercase text-indigo-500 font-bold mb-2">
+            Cavab
+          </p>
+          <p class="text-sm text-indigo-900 leading-relaxed">
+            {{ viewingFaq.answer }}
+          </p>
+        </div>
+
+        
+      </div>
+
+      <template #action>
+        <div class="flex justify-end gap-3">
+          <n-button ghost @click="showViewModal = false">Bağla</n-button>
+          <n-button
+            type="primary"
+            @click="() => { showViewModal = false; openEditModal(viewingFaq!) }"
+          >
+            Redaktə et
+          </n-button>
+        </div>
+      </template>
+    </n-modal>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, h, reactive, watch } from "vue";
-import {
-  NButton,
-  NSpace,
-  useMessage,
-  type DataTableColumns,
-} from "naive-ui";
-import { Plus, RefreshCw, Edit, Trash2 } from "lucide-vue-next";
-import {
-  useFaq,
-  useFaqActions,
-  type FaqItem,
-} from "../composables/useFaq";
+import { NButton, NSpace, useMessage, type DataTableColumns } from "naive-ui";
+import { Plus, RefreshCw, Edit, Trash2, Eye } from "lucide-vue-next";
+import { useFaq, useFaqActions, type FaqItem } from "../composables/useFaq";
+import type { Faq } from "~~/packages/api-contracts/src/faq";
 
 const message = useMessage();
 
@@ -161,7 +268,13 @@ const loadedLangs = ref(new Set<string>());
 const isLoadingLang = ref(false);
 const submitLoading = ref(false);
 const deleteLoading = ref(false);
+const showViewModal = ref(false);
+const viewingFaq = ref<Faq | null>(null);
 
+const openViewModal = (row: Faq) => {
+  viewingFaq.value = row;
+  showViewModal.value = true;
+};
 const form = reactive({
   question: { az: "", en: "", ru: "" },
   answer: { az: "", en: "", ru: "" },
@@ -213,10 +326,7 @@ const openEditModal = async (row: FaqItem) => {
   showModal.value = true;
 
   await fetchLangData(row.id, "az");
-  await Promise.all([
-    fetchLangData(row.id, "en"),
-    fetchLangData(row.id, "ru"),
-  ]);
+  await Promise.all([fetchLangData(row.id, "en"), fetchLangData(row.id, "ru")]);
 };
 
 const handleTabChange = async (lang: string) => {
@@ -229,20 +339,20 @@ const handleTabChange = async (lang: string) => {
 
 const handleSubmit = async () => {
   if (
-    !form.question.az.trim() ||
-    !form.question.en.trim() ||
-    !form.question.ru.trim()
+    !form.question.az?.trim() &&
+    !form.question.en?.trim() &&
+    !form.question.ru?.trim()
   ) {
-    message.warning("Sual hər 3 dildə daxil edilməlidir");
+    message.warning("Sual ən azı bir dildə daxil edilməlidir");
     return;
   }
 
   if (
-    !form.answer.az.trim() ||
-    !form.answer.en.trim() ||
-    !form.answer.ru.trim()
+    !form.answer.az?.trim() &&
+    !form.answer.en?.trim() &&
+    !form.answer.ru?.trim()
   ) {
-    message.warning("Cavab hər 3 dildə daxil edilməlidir");
+    message.warning("Cavab ən azı bir dildə daxil edilməlidir");
     return;
   }
 
@@ -306,15 +416,27 @@ const columns: DataTableColumns<FaqItem> = [
     key: "id",
     width: 80,
     render: (row) =>
-      h("span", { class: "text-slate-400 font-mono text-xs font-bold" }, `#${row.id}`),
+      h(
+        "span",
+        { class: "text-slate-400 font-mono text-xs font-bold" },
+        `#${row.id}`
+      ),
   },
   {
     title: "Question",
     key: "question",
     render: (row) =>
       h("div", { class: "flex flex-col" }, [
-        h("span", { class: "font-bold text-slate-800 text-sm" }, row.question || "—"),
-        h("span", { class: "text-xs text-slate-400 line-clamp-1" }, row.answer || "—"),
+        h(
+          "span",
+          { class: "font-bold text-slate-800 text-sm" },
+          row.question || "—"
+        ),
+        h(
+          "span",
+          { class: "text-xs text-slate-400 line-clamp-1" },
+          row.answer || "—"
+        ),
       ]),
   },
   {
@@ -322,32 +444,62 @@ const columns: DataTableColumns<FaqItem> = [
     key: "sort_order",
     width: 100,
     render: (row) =>
-      h("span", { class: "text-slate-600 text-sm" }, String(row.sort_order ?? 0)),
+      h(
+        "span",
+        { class: "text-slate-600 text-sm" },
+        String(row.sort_order ?? 0)
+      ),
   },
   {
     title: "Actions",
     key: "actions",
     align: "right",
     render: (row) =>
-      h(NSpace, { justify: "end" }, {
-        default: () => [
-          h(NButton, {
-            size: "small",
-            quaternary: true,
-            circle: true,
-            class: "hover:bg-indigo-50 hover:text-indigo-600 opacity-0 group-hover:opacity-100 transition-all",
-            onClick: () => openEditModal(row),
-          }, { default: () => h(Edit, { size: 16 }) }),
-          h(NButton, {
-            size: "small",
-            quaternary: true,
-            circle: true,
-            type: "error",
-            class: "hover:bg-rose-50 opacity-0 group-hover:opacity-100 transition-all",
-            onClick: () => openDeleteModal(row.id),
-          }, { default: () => h(Trash2, { size: 16 }) }),
-        ],
-      }),
+      h(
+        NSpace,
+        { justify: "end" },
+        {
+          default: () => [
+            h(
+              NButton,
+              {
+                size: "small",
+                quaternary: true,
+                circle: true,
+                class:
+                  "hover:bg-indigo-50 hover:text-indigo-600 opacity-0 group-hover:opacity-100 transition-all",
+                onClick: () => openEditModal(row),
+              },
+              { default: () => h(Edit, { size: 16 }) }
+            ),
+            h(
+              NButton,
+              {
+                size: "small",
+                quaternary: true,
+                circle: true,
+                type: "error",
+                class:
+                  "hover:bg-rose-50 opacity-0 group-hover:opacity-100 transition-all",
+                onClick: () => openDeleteModal(row.id),
+              },
+              { default: () => h(Trash2, { size: 16 }) }
+            ),
+            h(
+              NButton,
+              {
+                size: "small",
+                quaternary: true,
+                circle: true,
+                class:
+                  "hover:bg-blue-50 hover:text-blue-600 opacity-0 group-hover:opacity-100 transition-all",
+                onClick: () => openViewModal(row),
+              },
+              { default: () => h(Eye, { size: 16 }) }
+            ),
+          ],
+        }
+      ),
   },
 ];
 </script>

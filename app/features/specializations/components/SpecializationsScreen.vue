@@ -6,9 +6,6 @@
         <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight">
           Specializations
         </h2>
-        <p class="text-slate-500 text-sm font-medium">
-          Manage medical specializations in the healthcare network.
-        </p>
       </div>
       <n-button
         type="primary"
@@ -66,6 +63,7 @@
         :row-class-name="() => 'group h-16'"
         class="modern-table"
         striped
+        :scroll-x="800"
       />
     </n-card>
 
@@ -160,11 +158,130 @@
       @positive-click="handleDelete"
       @negative-click="showDeleteModal = false"
     />
+
+    <n-modal
+      v-model:show="showViewModal"
+      preset="card"
+      title="Specialization Details"
+      class="max-w-md rounded-3xl overflow-hidden shadow-2xl"
+    >
+      <div v-if="viewingSpecialization" class="flex flex-col gap-4 py-2">
+        <!-- Başlıq -->
+        <div class="flex items-center justify-between">
+          <div class="space-y-1">
+            <p
+              class="text-[10px] uppercase text-slate-400 font-extrabold tracking-widest"
+            >
+              İxtisas
+            </p>
+            <h3 class="text-2xl font-bold text-indigo-900">
+              {{ viewingSpecialization.title }}
+            </h3>
+          </div>
+          <n-tag type="primary" size="small" round class="font-mono">
+            #{{ viewingSpecialization.id }}
+          </n-tag>
+        </div>
+
+        <!-- Xəstəliklər sayı -->
+        <div
+          class="bg-amber-50/60 border border-amber-100 p-4 rounded-2xl flex flex-col sm:flex-row sm:items-start gap-4 justify-between transition-all duration-300 hover:shadow-sm"
+        >
+          <!-- Sol tərəf: İkon və Başlıq -->
+          <div class="flex items-start gap-3 min-w-[180px]">
+            <div
+              class="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center text-amber-600 shrink-0"
+            >
+              <Activity :size="20" />
+            </div>
+            <div class="pt-1">
+              <p
+                class="text-[11px] uppercase tracking-wider text-amber-600 font-bold"
+              >
+                Əlaqəli xəstəliklər
+              </p>
+              <span
+                class="text-xs text-amber-500/80 block mt-0.5"
+                v-if="viewingSpecialization.disease_ids?.length"
+              >
+                ({{ viewingSpecialization.disease_ids.length }} xəstəlik)
+              </span>
+            </div>
+          </div>
+
+          <!-- Sağ tərəf: Teqlərin Siyahısı -->
+          <div
+            v-if="viewingSpecialization.disease_ids?.length"
+            class="flex-1 w-full"
+          >
+            <n-spin :show="isLoadingDiseases" size="small">
+              <div class="flex flex-wrap gap-1.5 justify-start sm:justify-end">
+                <n-tag
+                  v-for="id in viewingSpecialization.disease_ids"
+                  :key="id"
+                  size="medium"
+                  type="warning"
+                  round
+                  :bordered="false"
+                  class="!bg-amber-100/50 !text-amber-800 font-medium text-xs px-2.5 transition-all hover:!bg-amber-100"
+                >
+                  {{ diseaseMap[id] ?? `#${id}` }}
+                </n-tag>
+              </div>
+            </n-spin>
+          </div>
+        </div>
+
+        <!-- Tarixlər -->
+        <div
+          class="bg-slate-50 rounded-2xl p-4 space-y-3 border border-slate-100"
+        >
+          <div class="flex justify-between items-center text-xs">
+            <div class="flex items-center gap-2 text-slate-400">
+              <Calendar :size="14" />
+              <span>Yaradılma:</span>
+            </div>
+            <span class="text-slate-700 font-semibold">
+              {{
+                new Date(viewingSpecialization.created_at).toLocaleDateString(
+                  "az-AZ"
+                )
+              }}
+            </span>
+          </div>
+          <div class="flex justify-between items-center text-xs">
+            <div class="flex items-center gap-2 text-slate-400">
+              <Clock :size="14" />
+              <span>Son yenilənmə:</span>
+            </div>
+            <span class="text-slate-700 font-semibold">
+              {{
+                new Date(viewingSpecialization.updated_at).toLocaleDateString(
+                  "az-AZ"
+                )
+              }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <template #action>
+        <div class="flex justify-end gap-3">
+          <n-button ghost @click="showViewModal = false">Bağla</n-button>
+          <n-button
+            type="primary"
+            @click="() => { showViewModal = false; openEditModal(viewingSpecialization!) }"
+          >
+            Redaktə et
+          </n-button>
+        </div>
+      </template>
+    </n-modal>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, h, reactive } from "vue";
+import { ref, computed, h, reactive, watch } from "vue";
 import {
   NButton,
   NSpace,
@@ -173,7 +290,17 @@ import {
   useMessage,
   type DataTableColumns,
 } from "naive-ui";
-import { Plus, Search, RefreshCw, Edit, Trash2 } from "lucide-vue-next";
+import {
+  Activity,
+  Calendar,
+  Clock,
+  Plus,
+  Search,
+  RefreshCw,
+  Edit,
+  Trash2,
+  Eye,
+} from "lucide-vue-next";
 import {
   useSpecializations,
   useCreateSpecialization,
@@ -181,15 +308,28 @@ import {
   useDeleteSpecialization,
 } from "../composables/useSpecializations";
 import type { Specialization } from "@icheck/api-contracts";
+import { useDiseases } from "~/features/diseases/composables/useDiseases";
+import type { SelectOption } from "naive-ui";
+
 
 const message = useMessage();
 const { $api } = useNuxtApp();
-
+const { t } = useI18n();
 const searchQuery = ref("");
 const query = computed(() => ({
   ...(searchQuery.value ? { search: searchQuery.value } : {}),
 }));
+const diseaseInitialOptions = computed<SelectOption[]>(() =>
+  modalForm.disease_ids.map((id) => ({
+    value: id,
+    label: `Xəstəlik #${id}`,
+  }))
+);
+const { diseases, isLoading: diseasesLoading } = useDiseases(ref({ per_page: 200 }));
 
+const diseaseMap = computed(() =>
+  Object.fromEntries((diseases.value ?? []).map((d) => [d.id, d.title]))
+);
 const { specializations, isLoading, error, refresh } =
   useSpecializations(query);
 
@@ -201,6 +341,14 @@ const deletingId = ref<number | null>(null);
 const activeTab = ref("az");
 const isLoadingLang = ref(false);
 const loadedLangs = ref(new Set<string>());
+const showViewModal = ref(false);
+const viewingSpecialization = ref(null);
+const isLoadingDiseases = ref(false);
+
+const openViewModal = async (row: Specialization) => {
+  viewingSpecialization.value = row;
+  showViewModal.value = true;
+};
 
 const modalForm = reactive({
   title: { az: "", en: "", ru: "" },
@@ -220,29 +368,28 @@ const { deleteSpecialization, loading: deleteLoading } =
 
 // ---- Lang fetch ----
 const fetchLangData = async (id: number, lang: string) => {
-  if (loadedLangs.value.has(lang)) return
+  if (loadedLangs.value.has(lang)) return;
 
-  isLoadingLang.value = true
+  isLoadingLang.value = true;
 
   try {
     const data = await $api<{ data: Specialization }>(
       `/admin/specializations/${id}/`,
       {
         headers: {
-          'Accept-Language': lang,
+          "Accept-Language": lang,
         },
       }
-    )
+    );
 
-    modalForm.title[lang as 'az' | 'en' | 'ru'] = data.data.title
-    loadedLangs.value.add(lang)
+    modalForm.title[lang as "az" | "en" | "ru"] = data.data.title;
+    loadedLangs.value.add(lang);
   } catch {
-    message.error(`${lang.toUpperCase()} dilində məlumat yüklənmədi`)
+    message.error(`${lang.toUpperCase()} dilində məlumat yüklənmədi`);
   } finally {
-    isLoadingLang.value = false
+    isLoadingLang.value = false;
   }
-}
-
+};
 
 const handleTabChange = async (lang: string) => {
   activeTab.value = lang;
@@ -319,7 +466,7 @@ const columns: DataTableColumns<Specialization> = [
   {
     title: "ID",
     key: "id",
-    width: 80,
+    width: 70,
     render: (row) =>
       h(
         "span",
@@ -347,6 +494,63 @@ const columns: DataTableColumns<Specialization> = [
       ]),
   },
   {
+    title: "Xəstəliklər",
+    key: "disease_ids",
+    render: (row) => {
+      const ids = row.disease_ids ?? [];
+      if (!ids.length)
+        return h("span", { class: "text-xs text-slate-400 italic" }, "Yoxdur");
+
+      return h(
+        "div",
+        { class: "flex flex-wrap gap-1" },
+        ids
+          .slice(0, 3)
+          .map((id) =>
+            h(
+              "span",
+              {
+                class:
+                  "inline-flex items-center px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 text-xs font-medium",
+              },
+              diseaseMap.value[id] ?? `#${id}`
+            )
+          )
+          .concat(
+            ids.length > 3
+              ? [
+                  h(
+                    "span",
+                    { class: "text-xs text-slate-400" },
+                    `+${ids.length - 3}`
+                  ),
+                ]
+              : []
+          )
+      );
+    },
+  },
+  {
+    title: "Yaradılma",
+    key: "created_at",
+    render: (row) =>
+      h(
+        "span",
+        { class: "text-slate-500 text-xs" },
+        new Date(row.created_at).toLocaleDateString("az-AZ")
+      ),
+  },
+  {
+    title: "Yenilənmə",
+    key: "updated_at",
+    render: (row) =>
+      h(
+        "span",
+        { class: "text-slate-500 text-xs" },
+        new Date(row.updated_at).toLocaleDateString("az-AZ")
+      ),
+  },
+  {
     title: "Actions",
     key: "actions",
     align: "right",
@@ -363,7 +567,7 @@ const columns: DataTableColumns<Specialization> = [
                 quaternary: true,
                 circle: true,
                 class:
-                  "hover:bg-indigo-50 hover:text-indigo-600 opacity-0 group-hover:opacity-100 transition-all",
+                  "hover:bg-indigo-50 hover:text-indigo-600 transition-all",
                 onClick: () => openEditModal(row),
               },
               { default: () => h(Edit, { size: 16 }) }
@@ -376,10 +580,22 @@ const columns: DataTableColumns<Specialization> = [
                 circle: true,
                 type: "error",
                 class:
-                  "hover:bg-rose-50 opacity-0 group-hover:opacity-100 transition-all",
+                  "hover:bg-rose-50 transition-all",
                 onClick: () => openDeleteModal(row.id),
               },
               { default: () => h(Trash2, { size: 16 }) }
+            ),
+            h(
+              NButton,
+              {
+                size: "small",
+                quaternary: true,
+                circle: true,
+                class:
+                  "hover:bg-blue-50 hover:text-blue-600 transition-all",
+                onClick: () => openViewModal(row),
+              },
+              { default: () => h(Eye, { size: 16 }) }
             ),
           ],
         }

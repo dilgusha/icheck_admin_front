@@ -26,7 +26,7 @@
       <div class="mb-6 flex items-center justify-between gap-6 p-1">
         <n-input
           v-model:value="searchQuery"
-          :placeholder="t('regions.search')"
+          :placeholder="t('common.search')"
           size="large"
           class="rounded-xl max-w-sm"
         >
@@ -62,6 +62,7 @@
         :row-class-name="() => 'group h-16'"
         class="modern-table"
         striped
+        :scroll-x="800"
       />
     </n-card>
 
@@ -81,10 +82,10 @@
         <n-tab-pane name="az" tab="AZ">
           <n-spin :show="isLoadingLang && activeTab === 'az'">
             <div class="flex flex-col gap-4 pt-4">
-              <n-form-item :label="t('regions.name')">
+              <n-form-item :label="t('common.name')">
                 <n-input
                   v-model:value="modalForm.title.az"
-                  :placeholder="t('regions.name')"
+                  :placeholder="t('common.name')"
                   size="large"
                   class="rounded-xl"
                 />
@@ -96,10 +97,10 @@
         <n-tab-pane name="en" tab="EN">
           <n-spin :show="isLoadingLang && activeTab === 'en'">
             <div class="flex flex-col gap-4 pt-4">
-              <n-form-item :label="t('regions.name')">
+              <n-form-item :label="t('common.name')">
                 <n-input
                   v-model:value="modalForm.title.en"
-                  :placeholder="t('regions.name')"
+                  :placeholder="t('common.name')"
                   size="large"
                   class="rounded-xl"
                 />
@@ -111,10 +112,10 @@
         <n-tab-pane name="ru" tab="RU">
           <n-spin :show="isLoadingLang && activeTab === 'ru'">
             <div class="flex flex-col gap-4 pt-4">
-              <n-form-item :label="t('regions.name')">
+              <n-form-item :label="t('common.name')">
                 <n-input
                   v-model:value="modalForm.title.ru"
-                  :placeholder="t('regions.name')"
+                  :placeholder="t('common.name')"
                   size="large"
                   class="rounded-xl"
                 />
@@ -127,7 +128,7 @@
       <template #action>
         <div class="flex justify-end gap-3">
           <n-button ghost class="rounded-xl px-6" @click="showModal = false">{{
-            t("regions.cancel")
+            t("common.cancel")
           }}</n-button>
           <n-button
             type="primary"
@@ -135,7 +136,7 @@
             :loading="createLoading || updateLoading"
             @click="handleSubmit"
           >
-            {{ editingRegion ? t("regions.update") : t("regions.save") }}
+            {{ editingRegion ? t("regions.update") : t("common.save") }}
           </n-button>
         </div>
       </template>
@@ -149,11 +150,117 @@
       title="{{ t('regions.deleteTitle') }}"
       content="{{ t('regions.deleteContent') }}"
       positive-text="{{ t('regions.delete') }}"
-      negative-text="{{ t('regions.cancel') }}"
+      negative-text="{{ t('common.cancel') }}"
       :loading="deleteLoading"
       @positive-click="handleDelete"
       @negative-click="showDeleteModal = false"
     />
+    <!-- Readonly Info Modal -->
+    <n-modal
+      v-model:show="showViewModal"
+      preset="card"
+      :title="t('common.details')"
+      class="max-w-md rounded-3xl overflow-hidden shadow-2xl"
+    >
+      <div v-if="viewingRegion" class="flex flex-col gap-6 py-2">
+        <!-- Header: Ad və ID -->
+        <div class="flex items-center justify-between items-start">
+          <div>
+            <p
+              class="text-[10px] uppercase text-slate-400 font-extrabold tracking-widest mb-1"
+            >
+              Region Adı
+            </p>
+            <h3 class="text-2xl font-bold text-slate-900 leading-tight">
+              {{ viewingRegion.title }}
+            </h3>
+          </div>
+          <div class="text-right">
+            <n-tag type="info" size="small" round strong class="font-mono"
+              >#{{ viewingRegion.id }}</n-tag
+            >
+          </div>
+        </div>
+
+        <!-- Info Grid -->
+        <div class="grid grid-cols-2 gap-3">
+          <div
+            class="bg-indigo-50/50 p-4 rounded-2xl border border-indigo-100/50"
+          >
+            <span
+              class="text-[10px] uppercase text-indigo-400 font-bold block mb-2"
+              >Klinikalar</span
+            >
+            <n-spin :show="isLoadingClinics" size="small">
+              <div
+                v-if="viewingRegion.clinic_ids?.length"
+                class="flex flex-wrap gap-1.5 mt-1"
+              >
+                <n-tag
+                  v-for="id in viewingRegion.clinic_ids"
+                  :key="id"
+                  size="small"
+                  type="info"
+                  round
+                  :bordered="false"
+                  class="!bg-indigo-100/50 !text-indigo-800 font-medium text-xs"
+                >
+                  {{ clinicMap[id] ?? `#${id}` }}
+                </n-tag>
+              </div>
+              <span v-else class="text-indigo-900 font-bold text-lg">0</span>
+            </n-spin>
+          </div>
+          <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+            <span
+              class="text-[10px] uppercase text-slate-400 font-bold block mb-1"
+              >Status</span
+            >
+            <span
+              class="text-emerald-600 font-bold text-sm flex items-center gap-1"
+            >
+              <span
+                class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"
+              ></span>
+              Aktiv
+            </span>
+          </div>
+        </div>
+
+        <!-- Tarixlər -->
+        <div
+          class="space-y-3 bg-slate-50/50 p-4 rounded-2xl border border-dashed border-slate-200"
+        >
+          <div class="flex justify-between items-center text-xs">
+            <span class="text-slate-500 font-medium italic"
+              >Yaradılma tarixi:</span
+            >
+            <span class="text-slate-700 font-semibold">{{
+              new Date(viewingRegion.created_at).toLocaleDateString("az-AZ")
+            }}</span>
+          </div>
+          <div class="flex justify-between items-center text-xs">
+            <span class="text-slate-500 font-medium italic">Son düzəliş:</span>
+            <span class="text-slate-700 font-semibold">{{
+              new Date(viewingRegion.updated_at).toLocaleDateString("az-AZ")
+            }}</span>
+          </div>
+        </div>
+      </div>
+
+      <template #action>
+        <n-button
+          block
+          secondary
+          strong
+          size="large"
+          class="!rounded-xl"
+          @click="showViewModal = false"
+        >
+          {{ t("common.close") }}
+        </n-button>
+      </template>
+    </n-modal>
   </div>
 </template>
 
@@ -167,7 +274,7 @@ import {
   useMessage,
   type DataTableColumns,
 } from "naive-ui";
-import { Plus, Search, RefreshCw, Edit, Trash2 } from "lucide-vue-next";
+import { Plus, Search, RefreshCw, Edit, Trash2, Eye } from "lucide-vue-next";
 import {
   useRegions,
   useCreateRegion,
@@ -176,7 +283,9 @@ import {
 } from "../composables/useRegions";
 import type { Region } from "@icheck/api-contracts";
 const { t } = useI18n();
-
+const { $api } = useNuxtApp();
+const clinicMap = ref<Record<number, string>>({});
+const isLoadingClinics = ref(false);
 const message = useMessage();
 
 const searchQuery = ref("");
@@ -190,7 +299,13 @@ const deletingId = ref<number | null>(null);
 const activeTab = ref("az");
 const isLoadingLang = ref(false);
 const loadedLangs = ref(new Set<string>());
+const showViewModal = ref(false);
+const viewingRegion = ref(null);
 
+const openViewModal = (row: Region) => {
+  viewingRegion.value = row;
+  showViewModal.value = true;
+};
 const modalForm = reactive({
   title: { az: "", en: "", ru: "" },
 });
@@ -222,7 +337,7 @@ const fetchLangData = async (id: number, lang: string) => {
     modalForm.title[lang as "az" | "en" | "ru"] = data.data.title;
     loadedLangs.value.add(lang);
   } catch {
-    message.error(`${lang.toUpperCase()} ${t('regions.langLoadError')}`);
+    message.error(`${lang.toUpperCase()} ${t("regions.langLoadError")}`);
   } finally {
     isLoadingLang.value = false;
   }
@@ -257,7 +372,28 @@ const openDeleteModal = (id: number) => {
   deletingId.value = id;
   showDeleteModal.value = true;
 };
+const fetchClinicNames = async (ids: number[]) => {
+  if (!ids?.length) return;
 
+  const unfetched = ids.filter((id) => !(id in clinicMap.value));
+  if (!unfetched.length) return;
+
+  isLoadingClinics.value = true;
+  try {
+    const results = await Promise.all(
+      unfetched.map((id) =>
+        $api<{ data: { id: number; title: string } }>(`/admin/clinics/${id}/`)
+      )
+    );
+    for (const res of results) {
+      clinicMap.value[res.data.id] = res.data.title;
+    }
+  } catch {
+    message.error("Klinika məlumatları yüklənmədi");
+  } finally {
+    isLoadingClinics.value = false;
+  }
+};
 const handleSubmit = async () => {
   const titleObj: Record<string, string> = {};
   if (modalForm.title.az) titleObj.az = modalForm.title.az;
@@ -265,23 +401,23 @@ const handleSubmit = async () => {
   if (modalForm.title.ru) titleObj.ru = modalForm.title.ru;
 
   if (Object.keys(titleObj).length === 0) {
-    message.warning(t('regions.titleRequired'));
+    message.warning(t("common.titleRequired"));
     return;
   }
 
   try {
     if (editingRegion.value) {
       await updateRegion(editingRegion.value.id, { title: titleObj });
-      message.success(t('regions.updated'));
+      message.success(t("regions.updated"));
     } else {
       await createRegion({ title: titleObj });
-      message.success(t('regions.created'));
+      message.success(t("common.created"));
     }
     showModal.value = false;
     clearNuxtData("regions-list");
     await refresh();
   } catch {
-    message.error(t('regions.error'));
+    message.error(t("regions.error"));
   }
 };
 
@@ -289,18 +425,26 @@ const handleDelete = async () => {
   if (!deletingId.value) return;
   try {
     await deleteRegion(deletingId.value);
-    message.success(t('regions.deleted'));
+    message.success(t("regions.deleted"));
     showDeleteModal.value = false;
     await refresh();
   } catch {
-    message.error(t('regions.deleteError'));
+    message.error(t("regions.deleteError"));
   }
 };
-
+watch(
+  () => regions.value,
+  async (regs) => {
+    if (!regs?.length) return;
+    const allIds = [...new Set(regs.flatMap((r) => r.clinic_ids ?? []))];
+    await fetchClinicNames(allIds);
+  },
+  { immediate: true }
+);
 // ---- Table ----
 const columns: DataTableColumns<Region> = [
   {
-    title: t('common.id'),
+    title: t("common.id"),
     key: "id",
     width: 80,
     render: (row) =>
@@ -311,7 +455,7 @@ const columns: DataTableColumns<Region> = [
       ),
   },
   {
-    title: t('regions.name'),
+    title: t("common.name"),
     key: "title",
     sorter: "default",
     render: (row) =>
@@ -330,17 +474,44 @@ const columns: DataTableColumns<Region> = [
       ]),
   },
   {
-    title: t('regions.clinics'),
+    title: t("regions.clinics"),
     key: "clinic_ids",
-    render: (row) =>
-      h(
-        "span",
-        { class: "font-bold text-slate-700" },
-        `${row.clinic_ids.length} klinika`
-      ),
+    render: (row) => {
+      const ids = row.clinic_ids ?? [];
+      if (!ids.length)
+        return h("span", { class: "text-xs text-slate-400 italic" }, "Yoxdur");
+
+      return h(
+        "div",
+        { class: "flex flex-wrap gap-1" },
+        ids
+          .slice(0, 2)
+          .map((id) =>
+            h(
+              "span",
+              {
+                class:
+                  "inline-flex items-center px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-700 text-xs font-medium",
+              },
+              clinicMap.value[id] ?? `#${id}`
+            )
+          )
+          .concat(
+            ids.length > 2
+              ? [
+                  h(
+                    "span",
+                    { class: "text-xs text-slate-400" },
+                    `+${ids.length - 2}`
+                  ),
+                ]
+              : []
+          )
+      );
+    },
   },
   {
-    title: t('common.actions'),
+    title: t("common.actions"),
     key: "actions",
     align: "right",
     render: (row) =>
@@ -356,7 +527,7 @@ const columns: DataTableColumns<Region> = [
                 quaternary: true,
                 circle: true,
                 class:
-                  "hover:bg-indigo-50 hover:text-indigo-600 opacity-0 group-hover:opacity-100 transition-all",
+                  "hover:bg-indigo-50 hover:text-indigo-600  transition-all",
                 onClick: () => openEditModal(row),
               },
               { default: () => h(Edit, { size: 16 }) }
@@ -369,10 +540,22 @@ const columns: DataTableColumns<Region> = [
                 circle: true,
                 type: "error",
                 class:
-                  "hover:bg-rose-50 opacity-0 group-hover:opacity-100 transition-all",
+                  "hover:bg-rose-50  transition-all",
                 onClick: () => openDeleteModal(row.id),
               },
               { default: () => h(Trash2, { size: 16 }) }
+            ),
+            h(
+              NButton,
+              {
+                quaternary: true,
+                circle: true,
+                type: "info",
+                class:
+                  "hover:bg-blue-50 hover:text-blue-600  transition-all",
+                onClick: () => openViewModal(row),
+              },
+              { icon: () => h(Eye, { size: 18 }) }
             ),
           ],
         }

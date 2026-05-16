@@ -6,9 +6,6 @@
         <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight">
           Services
         </h2>
-        <p class="text-slate-500 text-sm font-medium">
-          Manage medical services in the healthcare network.
-        </p>
       </div>
       <n-button
         type="primary"
@@ -87,6 +84,7 @@
         :row-class-name="() => 'group h-16'"
         class="modern-table"
         striped
+        :scroll-x="800"
       />
     </n-card>
 
@@ -203,6 +201,97 @@
       @positive-click="handleDelete"
       @negative-click="showDeleteModal = false"
     />
+    <!-- View Modal -->
+    <n-modal
+      v-model:show="showViewModal"
+      preset="card"
+      title="Service Details"
+      class="max-w-md rounded-3xl overflow-hidden shadow-2xl"
+    >
+      <div v-if="viewingService" class="flex flex-col gap-4 py-2">
+        <!-- Başlıq -->
+        <div class="flex items-center justify-between">
+          <div class="space-y-1">
+            <p
+              class="text-[10px] uppercase text-slate-400 font-extrabold tracking-widest"
+            >
+              Xidmət
+            </p>
+            <h3 class="text-2xl font-bold text-purple-900">
+              {{ viewingService.title }}
+            </h3>
+          </div>
+          <n-tag type="info" size="small" round class="font-mono"
+            >#{{ viewingService.id }}</n-tag
+          >
+        </div>
+
+        <!-- Body -->
+        <div
+          v-if="viewingService.body"
+          class="bg-purple-50/60 border border-purple-100 p-4 rounded-2xl"
+        >
+          <p class="text-[10px] uppercase text-purple-500 font-bold mb-2">
+            Məzmun
+          </p>
+          <p class="text-sm text-purple-900 leading-relaxed">
+            {{ viewingService.body }}
+          </p>
+        </div>
+
+        <!-- Şəkil -->
+        <div
+          v-if="viewingService.image_url"
+          class="rounded-2xl overflow-hidden border border-slate-100"
+        >
+          <img
+            :src="viewingService.image_url"
+            alt="Service image"
+            class="w-full object-cover max-h-48"
+          />
+        </div>
+
+        <!-- Tarixlər -->
+        <div
+          class="bg-slate-50 rounded-2xl p-4 space-y-3 border border-slate-100"
+        >
+          <div class="flex justify-between items-center text-xs">
+            <div class="flex items-center gap-2 text-slate-400">
+              <Calendar :size="14" />
+              <span>Yaradılma:</span>
+            </div>
+            <span class="text-slate-700 font-semibold">
+              {{
+                new Date(viewingService.created_at).toLocaleDateString("az-AZ")
+              }}
+            </span>
+          </div>
+          <div class="flex justify-between items-center text-xs">
+            <div class="flex items-center gap-2 text-slate-400">
+              <Clock :size="14" />
+              <span>Son yenilənmə:</span>
+            </div>
+            <span class="text-slate-700 font-semibold">
+              {{
+                new Date(viewingService.updated_at).toLocaleDateString("az-AZ")
+              }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <template #action>
+        <div class="flex justify-end gap-3">
+          <n-button ghost @click="showViewModal = false">Bağla</n-button>
+          <n-button
+            type="primary"
+            @click="() => { showViewModal = false; openEditModal(viewingService!) }"
+          >
+            Redaktə et
+          </n-button>
+        </div>
+      </template>
+    </n-modal>
   </div>
 </template>
 
@@ -216,7 +305,16 @@ import {
   useMessage,
   type DataTableColumns,
 } from "naive-ui";
-import { Plus, Search, RefreshCw, Edit, Trash2 } from "lucide-vue-next";
+import {
+  Plus,
+  Search,
+  RefreshCw,
+  Edit,
+  Trash2,
+  Eye,
+  Calendar,
+  Clock,
+} from "lucide-vue-next";
 import {
   useServices,
   useCreateService,
@@ -231,7 +329,13 @@ import { useRemoteSelect } from "~/composables/useRemoteSelect";
 const { $api } = useNuxtApp();
 
 const message = useMessage();
+const showViewModal = ref(false);
+const viewingService = ref<Service | null>(null);
 
+const openViewModal = (row: Service) => {
+  viewingService.value = row;
+  showViewModal.value = true;
+};
 const searchQuery = ref("");
 const filterClinicId = ref<number | null>(null);
 // const { clinics } = useClinics()
@@ -413,7 +517,6 @@ const handleDelete = async () => {
   }
 };
 
-
 const columns: DataTableColumns<Service> = [
   {
     title: "ID",
@@ -453,6 +556,26 @@ const columns: DataTableColumns<Service> = [
       ]),
   },
   {
+    title: "Məzmun",
+    key: "body",
+    render: (row) =>
+      h(
+        "span",
+        { class: "text-xs text-slate-500 line-clamp-1 max-w-xs block" },
+        row.body ?? "—"
+      ),
+  },
+  {
+    title: "Yaradılma",
+    key: "created_at",
+    render: (row) =>
+      h(
+        "span",
+        { class: "text-slate-500 text-xs" },
+        new Date(row.created_at).toLocaleDateString("az-AZ")
+      ),
+  },
+  {
     title: "Actions",
     key: "actions",
     align: "right",
@@ -469,7 +592,7 @@ const columns: DataTableColumns<Service> = [
                 quaternary: true,
                 circle: true,
                 class:
-                  "hover:bg-indigo-50 hover:text-indigo-600 opacity-0 group-hover:opacity-100 transition-all",
+                  "hover:bg-indigo-50 hover:text-indigo-600 transition-all",
                 onClick: () => openEditModal(row),
               },
               { default: () => h(Edit, { size: 16 }) }
@@ -482,10 +605,22 @@ const columns: DataTableColumns<Service> = [
                 circle: true,
                 type: "error",
                 class:
-                  "hover:bg-rose-50 opacity-0 group-hover:opacity-100 transition-all",
+                  "hover:bg-rose-50 transition-all",
                 onClick: () => openDeleteModal(row.id),
               },
               { default: () => h(Trash2, { size: 16 }) }
+            ),
+            h(
+              NButton,
+              {
+                size: "small",
+                quaternary: true,
+                circle: true,
+                class:
+                  "hover:bg-blue-50 hover:text-blue-600 transition-all",
+                onClick: () => openViewModal(row),
+              },
+              { default: () => h(Eye, { size: 16 }) }
             ),
           ],
         }
@@ -493,10 +628,9 @@ const columns: DataTableColumns<Service> = [
   },
 ];
 onMounted(async () => {
-  const test = await $api("/services/")
-  console.log("services test", test)
-})
-
+  const test = await $api("/services/");
+  console.log("services test", test);
+});
 </script>
 
 <style>

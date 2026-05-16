@@ -1,6 +1,9 @@
 export interface Specialization {
   id: number
   title: string
+  disease_ids: number[]
+  created_at: string
+  updated_at: string
 }
 
 export interface SpecializationPayload {

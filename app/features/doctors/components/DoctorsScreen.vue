@@ -4,11 +4,8 @@
     <div class="flex items-end justify-between border-b border-slate-100 pb-6">
       <div class="space-y-1">
         <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight">
-          Doctors
+          {{ t("doctors.title") }}
         </h2>
-        <p class="text-slate-500 text-sm font-medium">
-          View doctors across the healthcare network.
-        </p>
       </div>
       <n-button quaternary circle size="medium" @click="refresh()">
         <template #icon>
@@ -56,9 +53,7 @@
         />
 
         <div class="flex items-center gap-2">
-          <span class="text-xs text-slate-400 font-bold uppercase"
-            >Qiymət:</span
-          >
+          <span class="text-xs text-slate-400 font-bold uppercase" >{{ t("doctors.price") }}</span>
           <n-input-number
             v-model:value="filterPriceMin"
             placeholder="Min"
@@ -78,11 +73,11 @@
 
         <div class="flex items-center gap-2">
           <span class="text-xs text-slate-400 font-bold uppercase"
-            >Təcrübə:</span
+            >{{ t("doctors.experience") }}</span
           >
           <n-input-number
             v-model:value="filterExpMin"
-            placeholder="Min"
+            :placeholder="t('doctors.experience_min')"
             size="large"
             class="w-24"
             :min="0"
@@ -90,7 +85,7 @@
           <span class="text-slate-400">—</span>
           <n-input-number
             v-model:value="filterExpMax"
-            placeholder="Max"
+            :placeholder="t('doctors.experience_max')"
             size="large"
             class="w-24"
             :min="0"
@@ -136,6 +131,8 @@
         :row-class-name="() => 'group h-16'"
         class="modern-table"
         striped
+        :scroll-x="800"
+
       />
     </n-card>
 
@@ -428,7 +425,7 @@ import type { Doctor } from "@icheck/api-contracts";
 import { useRemoteSelect } from "~/composables/useRemoteSelect";
 
 const { $api } = useNuxtApp();
-
+const { t } = useI18n();
 const searchQuery = ref("");
 const filterSpecializationId = ref<string | null>(null);
 const filterPriceMin = ref<number | null>(null);
@@ -649,14 +646,14 @@ const columns: DataTableColumns<Doctor> = [
                 quaternary: true,
                 circle: true,
                 class:
-                  "hover:bg-blue-50 hover:text-blue-600 opacity-0 group-hover:opacity-100 transition-all",
+                  "hover:bg-blue-50 hover:text-blue-600  transition-all",
                 onClick: () => openViewModal(row),
               },
               { default: () => h(Eye, { size: 16 }) }
             ),
           ],
         }
-      ),
+      ), 
   },
 ];
 </script>

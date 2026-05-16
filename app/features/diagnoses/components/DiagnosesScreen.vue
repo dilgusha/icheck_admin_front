@@ -229,7 +229,7 @@ import {
   useDeleteDiagnosis,
 } from "../composables/useDiagnoses";
 import type { Diagnosis } from "@icheck/api-contracts";
-
+const { t } = useI18n();
 const message = useMessage();
 
 const searchQuery = ref("");
@@ -366,7 +366,7 @@ const handleDelete = async () => {
 // ---- Table ----
 const columns: DataTableColumns<Diagnosis> = [
   {
-    title: "ID",
+    title: t("common.id"),
     key: "id",
     width: 70,
     render: (row) =>
@@ -406,6 +406,16 @@ const columns: DataTableColumns<Diagnosis> = [
         ),
         h("span", { class: "font-bold text-slate-800" }, row.title),
       ]),
+  },
+  {
+    title: "Yaradılma",
+    key: "created_at",
+    render: (row) =>
+      h(
+        "span",
+        { class: "text-slate-500 text-xs" },
+        new Date(row.created_at).toLocaleDateString("az-AZ")
+      ),
   },
   {
     title: "Actions",

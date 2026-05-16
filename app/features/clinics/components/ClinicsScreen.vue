@@ -4,9 +4,8 @@
     <div class="flex items-end justify-between border-b border-slate-100 pb-6">
       <div class="space-y-1">
         <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight">
-          {{$t("clinics.title")}}
+          {{ $t("clinics.title") }}
         </h2>
-        
       </div>
       <n-button
         type="primary"
@@ -15,7 +14,7 @@
         @click="openCreateModal"
       >
         <template #icon><Plus :size="20" :stroke-width="2.5" /></template>
-        {{$t("clinics.create")}}
+        {{ $t("clinics.create") }}
       </n-button>
     </div>
 
@@ -27,7 +26,7 @@
       <div class="mb-6 flex flex-wrap items-center gap-4 p-1">
         <n-input
           v-model:value="searchQuery"
-          :placeholder="$t('clinics.search')"
+          :placeholder="$t('common.search')"
           size="large"
           class="rounded-xl max-w-sm"
           clearable
@@ -53,7 +52,9 @@
         />
 
         <div class="flex items-center gap-2">
-          <span class="text-sm text-slate-500">{{$t('clinics.topFilter')}}</span>
+          <span class="text-sm text-slate-500">{{
+            $t("clinics.topFilter")
+          }}</span>
           <n-switch v-model:value="filterTop" />
         </div>
         <n-button
@@ -80,7 +81,9 @@
           class="h-10 bg-slate-50 rounded-lg animate-pulse"
         />
       </div>
-      <n-alert v-else-if="error" type="error">{{ $t('clinics.langLoadError') }}</n-alert>
+      <n-alert v-else-if="error" type="error">{{
+        $t("clinics.langLoadError")
+      }}</n-alert>
       <n-data-table
         v-else
         :columns="columns"
@@ -90,6 +93,8 @@
         :row-class-name="() => 'group h-16'"
         class="modern-table"
         striped
+        :scroll-x="800"
+
       />
     </n-card>
 
@@ -109,10 +114,10 @@
         <n-tab-pane name="az" tab="AZ">
           <n-spin :show="isLoadingLang && activeTab === 'az'">
             <div class="flex flex-col gap-4 pt-4">
-              <n-form-item :label="$t('clinics.name')">
+              <n-form-item :label="$t('common.name')">
                 <n-input
                   v-model:value="modalForm.title.az"
-                  :placeholder="$t('clinics.name')"
+                  :placeholder="$t('common.name')"
                   size="large"
                   class="rounded-xl"
                 />
@@ -125,10 +130,10 @@
                   :rows="2"
                 />
               </n-form-item>
-              <n-form-item :label="$t('clinics.address')">
+              <n-form-item :label="$t('common.address')">
                 <n-input
                   v-model:value="modalForm.address.az"
-                  :placeholder="$t('clinics.address')"
+                  :placeholder="$t('common.address')"
                   size="large"
                   class="rounded-xl"
                 />
@@ -140,10 +145,10 @@
         <n-tab-pane name="en" tab="EN">
           <n-spin :show="isLoadingLang && activeTab === 'en'">
             <div class="flex flex-col gap-4 pt-4">
-              <n-form-item :label="$t('clinics.name')">
+              <n-form-item :label="$t('common.name')">
                 <n-input
                   v-model:value="modalForm.title.en"
-                  :placeholder="$t('clinics.name')"
+                  :placeholder="$t('common.name')"
                   size="large"
                   class="rounded-xl"
                 />
@@ -156,10 +161,10 @@
                   :rows="2"
                 />
               </n-form-item>
-              <n-form-item :label="$t('clinics.address')">
+              <n-form-item :label="$t('common.address')">
                 <n-input
                   v-model:value="modalForm.address.en"
-                  :placeholder="$t('clinics.address')"
+                  :placeholder="$t('common.address')"
                   size="large"
                   class="rounded-xl"
                 />
@@ -171,10 +176,10 @@
         <n-tab-pane name="ru" tab="RU">
           <n-spin :show="isLoadingLang && activeTab === 'ru'">
             <div class="flex flex-col gap-4 pt-4">
-              <n-form-item :label="$t('clinics.name')">
+              <n-form-item :label="$t('common.name')">
                 <n-input
                   v-model:value="modalForm.title.ru"
-                  :placeholder="$t('clinics.name')"
+                  :placeholder="$t('common.name')"
                   size="large"
                   class="rounded-xl"
                 />
@@ -187,10 +192,10 @@
                   :rows="2"
                 />
               </n-form-item>
-              <n-form-item :label="$t('clinics.address')">
+              <n-form-item :label="$t('common.address')">
                 <n-input
                   v-model:value="modalForm.address.ru"
-                  :placeholder="$t('clinics.address')"
+                  :placeholder="$t('common.address')"
                   size="large"
                   class="rounded-xl"
                 />
@@ -211,7 +216,7 @@
               class="rounded-xl"
             />
           </n-form-item>
-          <n-form-item :label="$t('clinics.region')">
+          <n-form-item :label="$t('common.region')">
             <n-select
               v-model:value="modalForm.region_id"
               :options="regionOptions"
@@ -219,7 +224,7 @@
               filterable
               remote
               clearable
-              :placeholder="$t('clinics.region')"
+              :placeholder="$t('common.region')"
               size="large"
               :menu-props="{ onScroll: regionHandleScroll }"
               @update:value="onRegionFormUpdate"
@@ -230,7 +235,6 @@
         </div>
         <div class="grid grid-cols-2 gap-4">
           <n-form-item :label="$t('clinics.latitude')">
-
             <n-input
               v-model:value="modalForm.latitude"
               :placeholder="$t('clinics.latitude')"
@@ -248,23 +252,23 @@
           </n-form-item>
         </div>
         <div class="flex items-center gap-2">
-          <span class="text-sm text-slate-500">{{ $t('clinics.top') }}</span>
+          <span class="text-sm text-slate-500">{{ $t("clinics.top") }}</span>
           <n-switch v-model:value="modalForm.top" />
         </div>
       </div>
 
       <template #action>
         <div class="flex justify-end gap-3">
-          <n-button ghost class="rounded-xl px-6" @click="showModal = false"
-            >{{ $t('clinics.cancel') }}</n-button
-          >
+          <n-button ghost class="rounded-xl px-6" @click="showModal = false">{{
+            $t("common.cancel")
+          }}</n-button>
           <n-button
             type="primary"
             class="rounded-xl px-8"
             :loading="createLoading || updateLoading"
             @click="handleSubmit"
           >
-            {{ editingClinic ? $t('clinics.update') : $t('clinics.save') }}
+            {{ editingClinic ? $t("common.update") : $t("common.save") }}
           </n-button>
         </div>
       </template>
@@ -275,14 +279,157 @@
       v-model:show="showDeleteModal"
       preset="dialog"
       type="error"
-      title="{{ $t('clinics.delete') }}"
+      title="{{ $t('common.delete') }}"
       content="{{ $t('clinics.deleteConfirmation') }}"
-      positive-text="{{ $t('clinics.delete') }}"
-      negative-text="{{ $t('clinics.cancel') }}"
+      positive-text="{{ $t('common.delete') }}"
+      negative-text="{{ $t('common.cancel') }}"
       :loading="deleteLoading"
       @positive-click="handleDelete"
       @negative-click="showDeleteModal = false"
     />
+    <!-- Readonly Info Modal -->
+    <n-modal
+      v-model:show="showViewModal"
+      preset="card"
+      :title="t('common.details')"
+      class="max-w-md rounded-3xl overflow-hidden shadow-2xl"
+    >
+      <div v-if="viewingClinic" class="flex flex-col gap-5 py-2">
+        <!-- Üst hissə: Başlıq və Top statusu -->
+        <div class="flex justify-between items-start">
+          <div class="space-y-1">
+            <div class="flex items-center gap-2">
+              <p
+                class="text-[10px] uppercase text-slate-400 font-extrabold tracking-widest"
+              >
+                Klinika
+              </p>
+              <n-tag
+                v-if="viewingClinic.top"
+                type="warning"
+                size="small"
+                round
+                borderless
+                class="text-[9px] font-bold italic"
+                >⭐ TOP</n-tag
+              >
+            </div>
+            <h3 class="text-xl font-bold text-slate-900 leading-tight">
+              {{ viewingClinic.title }}
+            </h3>
+          </div>
+          <n-tag type="info" size="small" round strong class="font-mono italic"
+            >#{{ viewingClinic.id }}</n-tag
+          >
+        </div>
+
+        <!-- Təsvir (Description) -->
+        <div
+          v-if="viewingClinic.description"
+          class="bg-slate-50 p-3 rounded-xl border border-slate-100 italic text-slate-600 text-sm"
+        >
+          "{{ viewingClinic.description }}"
+        </div>
+
+        <!-- Əsas Məlumatlar Paneli -->
+        <div class="grid grid-cols-1 gap-3">
+          <!-- Ünvan -->
+          <div
+            class="flex items-center gap-3 bg-white border border-slate-100 p-3 rounded-2xl shadow-sm"
+          >
+            <div
+              class="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center text-blue-500"
+            >
+              <MapPin :size="16" />
+            </div>
+            <div class="flex flex-col">
+              <span class="text-[10px] text-slate-400 font-bold uppercase"
+                >Ünvan</span
+              >
+              <span class="text-xs text-slate-700 font-medium">{{
+                viewingClinic.address || "Qeyd edilməyib"
+              }}</span>
+            </div>
+          </div>
+
+          <!-- Telefon -->
+          <div
+            class="flex items-center gap-3 bg-white border border-slate-100 p-3 rounded-2xl shadow-sm"
+          >
+            <div
+              class="w-8 h-8 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-500"
+            >
+              <Phone :size="16" />
+            </div>
+            <div class="flex flex-col">
+              <span class="text-[10px] text-slate-400 font-bold uppercase"
+                >Telefon</span
+              >
+              <span class="text-xs text-slate-700 font-medium font-mono">{{
+                viewingClinic.phone || "—"
+              }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Statistika (Həkim və Xidmət sayları) -->
+        <div class="grid grid-cols-2 gap-3">
+          <div
+            class="bg-indigo-50/50 p-3 rounded-2xl border border-indigo-100/50 flex flex-col items-center"
+          >
+            <span class="text-[10px] uppercase text-indigo-400 font-bold mb-1"
+              >Həkimlər</span
+            >
+            <span class="text-indigo-900 font-black text-lg">{{
+              viewingClinic.doctor_ids?.length || 0
+            }}</span>
+          </div>
+          <div
+            class="bg-rose-50/50 p-3 rounded-2xl border border-rose-100/50 flex flex-col items-center"
+          >
+            <span class="text-[10px] uppercase text-rose-400 font-bold mb-1"
+              >Xidmətlər</span
+            >
+            <span class="text-rose-900 font-black text-lg">{{
+              viewingClinic.service_ids?.length || 0
+            }}</span>
+          </div>
+        </div>
+
+        <!-- Tarixlər (Alt hissə) -->
+        <div class="mt-2 space-y-2 px-1">
+          <div class="flex justify-between items-center text-[10px]">
+            <span class="text-slate-400 uppercase font-bold tracking-tighter"
+              >Yaradılma tarixi:</span
+            >
+            <span class="text-slate-500 font-semibold">{{
+              new Date(viewingClinic.created_at).toLocaleDateString("az-AZ")
+            }}</span>
+          </div>
+          <div class="flex justify-between items-center text-[10px]">
+            <span class="text-slate-400 uppercase font-bold tracking-tighter"
+              >Son düzəliş:</span
+            >
+            <span class="text-slate-500 font-semibold">{{
+              new Date(viewingClinic.updated_at).toLocaleDateString("az-AZ")
+            }}</span>
+          </div>
+        </div>
+      </div>
+
+      <template #action>
+        <n-button
+          block
+          secondary
+          strong
+          size="large"
+          class="!rounded-2xl"
+          @click="showViewModal = false"
+        >
+          {{ t("common.close") }}
+        </n-button>
+      </template>
+    </n-modal>
   </div>
 </template>
 
@@ -298,7 +445,7 @@ import {
   type DataTableColumns,
   type SelectOption,
 } from "naive-ui";
-import { Plus, Search, RefreshCw, Edit, Trash2 } from "lucide-vue-next";
+import { Plus, Search, RefreshCw, Edit, Trash2, Eye } from "lucide-vue-next";
 import {
   useClinics,
   useCreateClinic,
@@ -317,7 +464,13 @@ const message = useMessage();
 const searchQuery = ref("");
 const filterRegionId = ref<number | null>(null);
 const filterTop = ref(false);
+const showViewModal = ref(false);
+const viewingClinic = ref(null);
 
+const openViewModal = (row: Clinic) => {
+  viewingClinic.value = row;
+  showViewModal.value = true;
+};
 const query = computed(() => ({
   ...(searchQuery.value ? { search: searchQuery.value } : {}),
   ...(filterRegionId.value ? { region_id: filterRegionId.value } : {}),
@@ -333,7 +486,7 @@ const regionInitialOption = computed<SelectOption | null>(() => {
   const region = regions.value.find((r) => r.id === id);
   return {
     value: id,
-    label: region?.title ?? `{{ $t('clinics.region') }} #${id}`,
+    label: region?.title ?? `{{ $t('common.region') }} #${id}`,
   };
 });
 
@@ -441,7 +594,6 @@ const fetchLangData = async (id: number, lang: string) => {
     modalForm.description[lang as "az" | "en" | "ru"] =
       data.data.description ?? "";
     modalForm.address[lang as "az" | "en" | "ru"] = data.data.address ?? "";
-    // Dil asılı olmayan fieldləri yalnız bir dəfə doldur
     if (!loadedLangs.value.size) {
       modalForm.phone = data.data.phone ?? "";
       modalForm.latitude = data.data.latitude ?? "";
@@ -500,7 +652,7 @@ const handleSubmit = async () => {
 
   const titleData = clean(modalForm.title);
   if (!titleData) {
-    message.warning("{{ $t('clinics.nameRequired') }}");
+    message.warning("t('common.titleRequired')");
     return;
   }
 
@@ -550,7 +702,7 @@ const handleDelete = async () => {
 // ---- Table ----
 const columns: DataTableColumns<Clinic> = [
   {
-    title: t('common.id'),
+    title: t("common.id"),
     key: "id",
     width: 80,
     render: (row) =>
@@ -561,7 +713,7 @@ const columns: DataTableColumns<Clinic> = [
       ),
   },
   {
-    title: t('clinics.name'),
+    title: t("common.name"),
     key: "title",
     sorter: "default",
     render: (row) =>
@@ -583,7 +735,7 @@ const columns: DataTableColumns<Clinic> = [
       ]),
   },
   {
-    title:t('clinics.region') ,
+    title: t("common.region"),
     key: "region_id",
     render: (row) => {
       const region = regions.value.find((r) => r.id === row.region_id);
@@ -595,13 +747,13 @@ const columns: DataTableColumns<Clinic> = [
     },
   },
   {
-    title: t('clinics.phone'),
+    title: t("clinics.phone"),
     key: "phone",
     render: (row) =>
       h("span", { class: "text-slate-600 text-sm" }, row.phone ?? "—"),
   },
   {
-    title: t('clinics.top'),
+    title: t("clinics.top"),
     key: "top",
     render: (row) =>
       h(
@@ -617,7 +769,7 @@ const columns: DataTableColumns<Clinic> = [
       ),
   },
   {
-    title: t('common.actions'),
+    title: t("common.actions"),
     key: "actions",
     align: "right",
     render: (row) =>
@@ -633,7 +785,7 @@ const columns: DataTableColumns<Clinic> = [
                 quaternary: true,
                 circle: true,
                 class:
-                  "hover:bg-indigo-50 hover:text-indigo-600 opacity-0 group-hover:opacity-100 transition-all",
+                  "hover:bg-indigo-50 hover:text-indigo-600 transition-all",
                 onClick: () => openEditModal(row),
               },
               { default: () => h(Edit, { size: 16 }) }
@@ -646,10 +798,22 @@ const columns: DataTableColumns<Clinic> = [
                 circle: true,
                 type: "error",
                 class:
-                  "hover:bg-rose-50 opacity-0 group-hover:opacity-100 transition-all",
+                  "hover:bg-rose-50 transition-all",
                 onClick: () => openDeleteModal(row.id),
               },
               { default: () => h(Trash2, { size: 16 }) }
+            ),
+            h(
+              NButton,
+              {
+                quaternary: true,
+                circle: true,
+                type: "info",
+                class:
+                  "hover:bg-blue-50 hover:text-blue-600 transition-all",
+                onClick: () => openViewModal(row),
+              },
+              { icon: () => h(Eye, { size: 18 }) }
             ),
           ],
         }

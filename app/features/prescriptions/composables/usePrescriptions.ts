@@ -8,7 +8,7 @@ import { useApiFetch } from '~/composables/useApiFetch'
 
 const BASE_URL = '/admin/prescriptions'
 
-// 1. Siyahını gətirmək (GET)
+// 1.  (GET)
 export const usePrescriptions = (query?: Ref<PrescriptionsQuery>) => {
   const langCookie = useCookie('lang')
 
@@ -32,21 +32,18 @@ export const usePrescriptions = (query?: Ref<PrescriptionsQuery>) => {
   }
 }
 
-// 2. Tək bir resepti gətirmək (GET by ID)
 export const useGetPrescription = () => {
   const { $api } = useNuxtApp()
 
-  const getPrescription = async (id: number, lang?: string): Promise<Prescription> => {
-    const res = await $api<{ data: Prescription }>(`${BASE_URL}/${id}/`, {
-      headers: { ...(lang ? { 'Accept-Language': lang } : {}) },
-    })
+  const getPrescription = async (id: number): Promise<Prescription> => {
+    const res = await $api<{ data: Prescription }>(`${BASE_URL}/${id}/`)
     return res.data
   }
 
   return { getPrescription }
 }
 
-// 3. Yeni resept yaratmaq (POST)
+// 3. (POST)
 export const useCreatePrescription = () => {
   const { $api } = useNuxtApp()
   const loading = ref(false)
@@ -71,7 +68,7 @@ export const useCreatePrescription = () => {
   return { createCreatePrescription: createPrescription, loading, error }
 }
 
-// 4. Resepti silmək (DELETE)
+// 4. (DELETE)
 export const useDeletePrescription = () => {
   const { $api } = useNuxtApp()
   const loading = ref(false)
@@ -89,4 +86,29 @@ export const useDeletePrescription = () => {
   }
 
   return { deletePrescription, loading }
+}
+
+// 5. (PATCH)
+export const useUpdatePrescription = () => {
+  const { $api } = useNuxtApp()
+  const loading = ref(false)
+  const error = ref<string | null>(null)
+
+  const updatePrescription = async (id: number, payload: Partial<PrescriptionPayload>) => {
+    loading.value = true
+    error.value = null
+    try {
+      return await $api<{ data: Prescription }>(`${BASE_URL}/${id}/`, {
+        method: 'PATCH',
+        body: payload,
+      })
+    } catch (err: any) {
+      error.value = err?.data?.detail || 'Xəta baş verdi'
+      throw err
+    } finally {
+      loading.value = false
+    }
+  }
+
+  return { updatePrescription, loading, error }
 }

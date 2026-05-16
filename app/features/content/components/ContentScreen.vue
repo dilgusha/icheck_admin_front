@@ -3,11 +3,8 @@
     <div class="flex items-end justify-between border-b border-slate-100 pb-6">
       <div class="space-y-1">
         <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight">
-          Ads
+          {{ t("ads.title") }}
         </h2>
-        <p class="text-slate-500 text-sm font-medium">
-          Manage content ads across placements.
-        </p>
       </div>
 
       <n-button
@@ -19,7 +16,7 @@
         <template #icon>
           <Plus :size="20" :stroke-width="2.5" />
         </template>
-        Create Ad
+        {{ t("ads.create") }}
       </n-button>
     </div>
 
@@ -62,7 +59,9 @@
         />
       </div>
 
-      <n-alert v-else-if="error" type="error">Məlumat yüklənmədi</n-alert>
+      <n-alert v-else-if="error" type="error">{{
+        t("ads.langLoadError")
+      }}</n-alert>
 
       <n-data-table
         v-else
@@ -73,13 +72,14 @@
         :row-class-name="() => 'group h-16'"
         class="modern-table"
         striped
+        :scroll-x="800"
       />
     </n-card>
 
     <n-modal
       v-model:show="showModal"
       preset="card"
-      :title="editingAd ? 'Edit Ad' : 'Create Ad'"
+      :title="editingAd ? t('common.edit') : t('ads.create')"
       class="max-w-2xl rounded-3xl overflow-hidden shadow-2xl"
     >
       <div class="p-2 flex flex-col gap-4 max-h-[70vh] overflow-y-auto">
@@ -91,26 +91,26 @@
         >
           <n-tab-pane name="az" tab="AZ">
             <div class="flex flex-col gap-4 pt-4">
-              <n-form-item label="Başlıq (AZ)">
+              <n-form-item :label="t('ads.title')">
                 <n-input
                   v-model:value="form.title.az"
                   size="large"
-                  placeholder="Başlıq..."
+                  :placeholder="t('ads.titlePlaceholder')"
                 />
               </n-form-item>
-              <n-form-item label="Mətn (AZ)">
+              <n-form-item :label="t('ads.body')">
                 <n-input
                   v-model:value="form.body.az"
                   type="textarea"
                   :rows="3"
-                  placeholder="Mətn..."
+                  :placeholder="t('ads.bodyPlaceholder')"
                 />
               </n-form-item>
-              <n-form-item label="Button text (AZ)">
+              <n-form-item :label="t('ads.buttonText')">
                 <n-input
                   v-model:value="form.button_text.az"
                   size="large"
-                  placeholder="Daha ətraflı..."
+                  :placeholder="t('ads.buttonTextPlaceholder')"
                 />
               </n-form-item>
             </div>
@@ -118,26 +118,26 @@
 
           <n-tab-pane name="en" tab="EN">
             <div class="flex flex-col gap-4 pt-4">
-              <n-form-item label="Title (EN)">
+              <n-form-item :label="t('ads.title')">
                 <n-input
                   v-model:value="form.title.en"
                   size="large"
-                  placeholder="Title..."
+                  :placeholder="t('ads.titlePlaceholder')"
                 />
               </n-form-item>
-              <n-form-item label="Body (EN)">
+              <n-form-item :label="t('ads.body')">
                 <n-input
                   v-model:value="form.body.en"
                   type="textarea"
                   :rows="3"
-                  placeholder="Body..."
+                  :placeholder="t('ads.bodyPlaceholder')"
                 />
               </n-form-item>
-              <n-form-item label="Button text (EN)">
+              <n-form-item :label="t('ads.buttonText')">
                 <n-input
                   v-model:value="form.button_text.en"
                   size="large"
-                  placeholder="Learn more..."
+                  :placeholder="t('ads.buttonTextPlaceholder')"
                 />
               </n-form-item>
             </div>
@@ -145,26 +145,26 @@
 
           <n-tab-pane name="ru" tab="RU">
             <div class="flex flex-col gap-4 pt-4">
-              <n-form-item label="Заголовок (RU)">
+              <n-form-item :label="t('common.title')">
                 <n-input
                   v-model:value="form.title.ru"
                   size="large"
-                  placeholder="Заголовок..."
+                  :placeholder="t('ads.titlePlaceholder')"
                 />
               </n-form-item>
-              <n-form-item label="Текст (RU)">
+              <n-form-item :label="t('ads.body')">
                 <n-input
                   v-model:value="form.body.ru"
                   type="textarea"
                   :rows="3"
-                  placeholder="Текст..."
+                  :placeholder="t('ads.bodyPlaceholder')"
                 />
               </n-form-item>
-              <n-form-item label="Button text (RU)">
+              <n-form-item :label="t('ads.buttonText')">
                 <n-input
                   v-model:value="form.button_text.ru"
                   size="large"
-                  placeholder="Подробнее..."
+                  :placeholder="t('ads.buttonTextPlaceholder')"
                 />
               </n-form-item>
             </div>
@@ -172,7 +172,7 @@
         </n-tabs>
 
         <div class="grid grid-cols-2 gap-4 border-t pt-4">
-          <n-form-item label="Placement">
+          <n-form-item :label="t('ads.placement')">
             <n-select
               v-model:value="form.placement"
               :options="placementOptions"
@@ -180,7 +180,7 @@
             />
           </n-form-item>
 
-          <n-form-item label="Sort order">
+          <n-form-item :label="t('ads.sortOrder')">
             <n-input-number
               v-model:value="form.sort_order"
               :min="0"
@@ -190,16 +190,16 @@
           </n-form-item>
         </div>
 
-        <n-form-item label="Link">
+        <n-form-item :label="t('ads.link')">
           <n-input
             v-model:value="form.link"
-            placeholder="https://..."
+            :placeholder="t('ads.linkPlaceholder')"
             size="large"
           />
         </n-form-item>
 
         <div class="grid grid-cols-2 gap-4">
-          <n-form-item label="Starts at">
+          <n-form-item :label="t('common.startsAt')">
             <n-date-picker
               v-model:value="form.starts_at"
               type="datetime"
@@ -209,7 +209,7 @@
             />
           </n-form-item>
 
-          <n-form-item label="Ends at">
+          <n-form-item :label="t('common.endsAt')">
             <n-date-picker
               v-model:value="form.ends_at"
               type="datetime"
@@ -221,47 +221,207 @@
         </div>
 
         <div class="flex items-center gap-2 border-t pt-4">
-          <span class="text-sm text-slate-500">Aktiv</span>
+          <span class="text-sm text-slate-500">
+            {{ t("common.active") }}
+          </span>
           <n-switch v-model:value="form.is_active" />
         </div>
       </div>
 
       <template #action>
         <div class="flex justify-end gap-3">
-          <n-button ghost class="rounded-xl px-6" @click="showModal = false"
-            >Ləğv et</n-button
-          >
+          <n-button ghost class="rounded-xl px-6" @click="showModal = false">{{
+            t("common.cancel")
+          }}</n-button>
           <n-button
             type="primary"
             class="rounded-xl px-8"
             :loading="createLoading || updateLoading"
             @click="handleSubmit"
           >
-            {{ editingAd ? "Yenilə" : "Yadda saxla" }}
+            {{ editingAd ? t("common.edit") : t("common.save") }}
           </n-button>
         </div>
       </template>
-      
     </n-modal>
     <n-modal
-v-model:show="showDeleteModal"
-preset="dialog"
-type="error"
-title="Delete Ad"
-content="Bu reklamı silmək istədiyinizə əminsiniz?"
-positive-text="Sil"
-negative-text="Ləğv et"
-:loading="deleteLoading"
-@positive-click="handleDelete"
-@negative-click="showDeleteModal = false"
-/>
+      v-model:show="showDeleteModal"
+      preset="dialog"
+      type="error"
+      title="{{ t('common.delete') }}"
+      content="{{ t('ads.deleteConfirmation') }}"
+      positive-text="{{ t('common.delete') }}"
+      negative-text="{{ t('common.cancel') }}"
+      :loading="deleteLoading"
+      @positive-click="handleDelete"
+      @negative-click="showDeleteModal = false"
+    />
+    <n-modal
+      v-model:show="showViewModal"
+      preset="card"
+      title="Ad Details"
+      class="max-w-md rounded-3xl overflow-hidden shadow-2xl"
+    >
+      <div v-if="viewingAd" class="flex flex-col gap-4 py-2">
+        <!-- Başlıq -->
+        <div class="flex items-center justify-between">
+          <div class="space-y-1">
+            <p
+              class="text-[10px] uppercase text-slate-400 font-extrabold tracking-widest"
+            >
+              Reklam
+            </p>
+            <h3 class="text-2xl font-bold text-indigo-900">
+              {{ viewingAd.title || "—" }}
+            </h3>
+          </div>
+          <div class="flex flex-col items-end gap-2">
+            <n-tag type="info" size="small" round class="font-mono"
+              >#{{ viewingAd.id }}</n-tag
+            >
+            <n-tag
+              :type="viewingAd.is_active ? 'success' : 'default'"
+              size="small"
+              round
+              :bordered="false"
+              style="
+                font-weight: 800;
+                font-size: 10px;
+                text-transform: uppercase;
+              "
+            >
+              {{ viewingAd.is_active ? "Aktiv" : "Deaktiv" }}
+            </n-tag>
+          </div>
+        </div>
+
+        <!-- Şəkil -->
+        <div
+          v-if="viewingAd.image_url"
+          class="rounded-2xl overflow-hidden border border-slate-100"
+        >
+          <img
+            :src="viewingAd.image_url"
+            :alt="viewingAd.title"
+            class="w-full object-cover max-h-48"
+          />
+        </div>
+
+        <!-- Məzmun -->
+        <div
+          v-if="viewingAd.body"
+          class="bg-indigo-50/60 border border-indigo-100 p-4 rounded-2xl"
+        >
+          <p class="text-[10px] uppercase text-indigo-500 font-bold mb-2">
+            Məzmun
+          </p>
+          <p class="text-sm text-indigo-900 leading-relaxed">
+            {{ viewingAd.body }}
+          </p>
+        </div>
+
+        <!-- Link + Button text -->
+        <div class="grid grid-cols-2 gap-3">
+          <div class="bg-slate-50 border border-slate-100 p-4 rounded-2xl">
+            <p class="text-[10px] uppercase text-slate-400 font-bold mb-2">
+              Düymə mətni
+            </p>
+            <span class="font-bold text-slate-700 text-sm">{{
+              viewingAd.button_text || "—"
+            }}</span>
+          </div>
+          <div class="bg-slate-50 border border-slate-100 p-4 rounded-2xl">
+            <p class="text-[10px] uppercase text-slate-400 font-bold mb-2">
+              Placement
+            </p>
+            <n-tag
+              type="default"
+              size="small"
+              round
+              :bordered="false"
+              style="
+                font-weight: 800;
+                font-size: 10px;
+                text-transform: uppercase;
+              "
+            >
+              {{ viewingAd.placement || "—" }}
+            </n-tag>
+          </div>
+        </div>
+
+        <!-- Link -->
+        <div
+          v-if="viewingAd.link"
+          class="bg-blue-50/60 border border-blue-100 p-4 rounded-2xl"
+        >
+          <p class="text-[10px] uppercase text-blue-500 font-bold mb-2">Link</p>
+          <a
+            :href="viewingAd.link"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-blue-600 hover:text-blue-800 text-sm font-semibold break-all"
+          >
+            {{ viewingAd.link }}
+          </a>
+        </div>
+
+        <!-- Tarixlər -->
+        <div
+          class="bg-slate-50 rounded-2xl p-4 space-y-3 border border-slate-100"
+        >
+          <div
+            v-if="viewingAd.starts_at"
+            class="flex justify-between items-center text-xs"
+          >
+            <span class="text-slate-400">Başlama:</span>
+            <span class="text-slate-700 font-semibold">
+              {{ new Date(viewingAd.starts_at).toLocaleDateString("az-AZ") }}
+            </span>
+          </div>
+          <div
+            v-if="viewingAd.ends_at"
+            class="flex justify-between items-center text-xs"
+          >
+            <span class="text-slate-400">Bitmə:</span>
+            <span class="text-slate-700 font-semibold">
+              {{ new Date(viewingAd.ends_at).toLocaleDateString("az-AZ") }}
+            </span>
+          </div>
+          <div class="flex justify-between items-center text-xs">
+            <span class="text-slate-400">Sıra:</span>
+            <span class="text-slate-700 font-semibold">{{
+              viewingAd.sort_order ?? "—"
+            }}</span>
+          </div>
+        </div>
+      </div>
+
+      <template #action>
+        <div class="flex justify-end gap-3">
+          <n-button ghost @click="showViewModal = false">Bağla</n-button>
+          <n-button
+            type="primary"
+            @click="() => { showViewModal = false; openEditModal(viewingAd!) }"
+          >
+            Redaktə et
+          </n-button>
+        </div>
+      </template>
+    </n-modal>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, h, reactive, watch } from "vue";
-import { NButton, NTag, useMessage,NSpace, type DataTableColumns } from "naive-ui";
-import { Plus, RefreshCw, Edit, Trash2 } from "lucide-vue-next";
+import {
+  NButton,
+  NTag,
+  useMessage,
+  NSpace,
+  type DataTableColumns,
+} from "naive-ui";
+import { Plus, RefreshCw, Edit, Trash2, Eye } from "lucide-vue-next";
 import {
   useAdActions,
   useAds,
@@ -277,6 +437,7 @@ const isLoadingLang = ref(false);
 const { getAd, updateAd, deleteAd } = useAdActions();
 const updateLoading = ref(false);
 const deleteLoading = ref(false);
+const { t } = useI18n();
 
 const message = useMessage();
 
@@ -304,7 +465,13 @@ watch(
 
 const showModal = ref(false);
 const activeTab = ref("az");
+const showViewModal = ref(false);
+const viewingAd = ref<Ad | null>(null);
 
+const openViewModal = (row: Ad) => {
+  viewingAd.value = row;
+  showViewModal.value = true;
+};
 const form = reactive({
   title: { az: "", en: "", ru: "" },
   body: { az: "", en: "", ru: "" },
@@ -328,12 +495,6 @@ const resetForm = () => {
   form.is_active = true;
   form.sort_order = 0;
 };
-
-// const openCreateModal = () => {
-//   resetForm();
-//   activeTab.value = "az";
-//   showModal.value = true;
-// };
 
 const cleanLangObject = (obj: Record<"az" | "en" | "ru", string>) => {
   const result: Partial<Record<"az" | "en" | "ru", string>> = {};
@@ -374,7 +535,7 @@ const fetchLangData = async (id: number, lang: "az" | "en" | "ru") => {
 
     loadedLangs.value.add(lang);
   } catch {
-    message.error(`${lang.toUpperCase()} dilində məlumat yüklənmədi`);
+    message.error(`${lang.toUpperCase()} {{t('common.langLoadError') }}`);
   } finally {
     isLoadingLang.value = false;
   }
@@ -408,10 +569,9 @@ const openEditModal = async (row: Ad) => {
   ]);
 };
 
-
 const handleSubmit = async () => {
   if (!form.title.az.trim() || !form.title.en.trim() || !form.title.ru.trim()) {
-    message.warning("Başlıq hər 3 dildə daxil edilməlidir");
+    message.warning("t('common.titleRequired')");
     return;
   }
 
@@ -435,16 +595,16 @@ const handleSubmit = async () => {
     if (editingAd.value) {
       updateLoading.value = true;
       await updateAd(editingAd.value.id, payload);
-      message.success("Reklam yeniləndi");
+      message.success(t("ads.updated"));
     } else {
       await createAd(payload);
-      message.success("Reklam yaradıldı");
+      message.success(t("common.created"));
     }
 
     showModal.value = false;
     await refresh();
   } catch (err: any) {
-    message.error(err?.data?.error || "Xəta baş verdi");
+    message.error(err?.data?.error || t("ads.createError"));
   } finally {
     updateLoading.value = false;
   }
@@ -464,7 +624,7 @@ const handleDelete = async () => {
     showDeleteModal.value = false;
     await refresh();
   } catch {
-    message.error("Silinmə zamanı xəta baş verdi");
+    message.error(t("ads.deleteError"));
   } finally {
     deleteLoading.value = false;
   }
@@ -472,7 +632,7 @@ const handleDelete = async () => {
 
 const columns: DataTableColumns<Ad> = [
   {
-    title: "ID",
+    title: t("common.id"),
     key: "id",
     width: 80,
     render: (row) =>
@@ -483,7 +643,7 @@ const columns: DataTableColumns<Ad> = [
       ),
   },
   {
-    title: "Title",
+    title: t("common.title"),
     key: "title",
     render: (row) =>
       h("div", { class: "flex flex-col" }, [
@@ -500,7 +660,7 @@ const columns: DataTableColumns<Ad> = [
       ]),
   },
   {
-    title: "Image",
+    title: t("ads.image"),
     key: "image_url",
     render: (row) =>
       row.image_url
@@ -512,7 +672,7 @@ const columns: DataTableColumns<Ad> = [
         : h("span", { class: "text-slate-400 text-sm" }, "—"),
   },
   {
-    title: "Link",
+    title: t("ads.link"),
     key: "link",
     render: (row) =>
       row.link
@@ -522,14 +682,15 @@ const columns: DataTableColumns<Ad> = [
               href: row.link,
               target: "_blank",
               rel: "noopener noreferrer",
-              class: "text-indigo-600 hover:text-indigo-800 text-sm font-semibold max-w-48 truncate block",
+              class:
+                "text-indigo-600 hover:text-indigo-800 text-sm font-semibold max-w-48 truncate block",
             },
             row.link
           )
         : h("span", { class: "text-slate-400 text-sm" }, "—"),
   },
   {
-    title: "Button Text",
+    title: t("ads.buttonText"),
     key: "button_text",
     render: (row) =>
       h(
@@ -539,7 +700,7 @@ const columns: DataTableColumns<Ad> = [
       ),
   },
   {
-    title: "Actions",
+    title: t("common.actions"),
     key: "actions",
     align: "right",
     render: (row) =>
@@ -555,7 +716,7 @@ const columns: DataTableColumns<Ad> = [
                 quaternary: true,
                 circle: true,
                 class:
-                  "hover:bg-indigo-50 hover:text-indigo-600 opacity-0 group-hover:opacity-100 transition-all",
+                  "hover:bg-indigo-50 hover:text-indigo-600 transition-all",
                 onClick: () => openEditModal(row),
               },
               { default: () => h(Edit, { size: 16 }) }
@@ -567,18 +728,27 @@ const columns: DataTableColumns<Ad> = [
                 quaternary: true,
                 circle: true,
                 type: "error",
-                class:
-                  "hover:bg-rose-50 opacity-0 group-hover:opacity-100 transition-all",
+                class: "hover:bg-rose-50 transition-all",
                 onClick: () => openDeleteModal(row.id),
               },
               { default: () => h(Trash2, { size: 16 }) }
+            ),
+            h(
+              NButton,
+              {
+                size: "small",
+                quaternary: true,
+                circle: true,
+                class: "hover:bg-blue-50 hover:text-blue-600 transition-all",
+                onClick: () => openViewModal(row),
+              },
+              { default: () => h(Eye, { size: 16 }) }
             ),
           ],
         }
       ),
   },
 ];
-
 </script>
 
 <style>

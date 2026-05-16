@@ -1,24 +1,27 @@
-export interface LocalizedTitle {
-  az?: string
-  en?: string
-  ru?: string
+export interface PrescriptionDoctor {
+  id: number
+  fullname: string
+  avatar_url: string | null
+  specializations: { id: number; title: string }[]
+  workplace: string | null
 }
 
 export interface PrescriptionDrug {
-  name: string 
-  details: LocalizedTitle 
+  drug_id: number
+  details: string 
 }
-
-export interface PrescriptionService extends LocalizedTitle {}
 
 export interface Prescription {
   id: number
-  appointment_id: number
-  doctor_id: number
   date: string
-  diagnosis_ids: number[]
-  drugs: PrescriptionDrug[]
-  services: PrescriptionService[]
+  diagnosis: string       
+  drugs_summary: string   
+  doctor: PrescriptionDoctor
+  appointment_id?: number
+  diagnosis_ids?: number[]
+  drugs?: PrescriptionDrug[]
+  services?: Record<string, string>[]
+  created_at?: string
 }
 
 export interface PrescriptionsListResponse {
@@ -32,15 +35,16 @@ export interface PrescriptionsListResponse {
 }
 
 export interface PrescriptionPayload {
-  appointment_id: number
-  doctor_id: number
+  appointment_id?: number | null
+  doctor_id?: number | null
   date: string
   diagnosis_ids: number[]
   drugs: PrescriptionDrug[]
-  services: PrescriptionService[]
+  services: Record<string, string>[]
 }
 
 export interface PrescriptionsQuery {
   page?: number
   per_page?: number
+  search?: string
 }

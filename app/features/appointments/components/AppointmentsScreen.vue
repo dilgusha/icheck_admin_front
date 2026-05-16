@@ -4,9 +4,8 @@
     <div class="flex items-end justify-between border-b border-slate-100 pb-6">
       <div class="space-y-1">
         <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight">
-          {{t('appointments.title')}}
+          {{ t("appointments.title") }}
         </h2>
-       
       </div>
       <div class="flex items-center gap-3">
         <n-button quaternary circle size="medium" @click="refresh()">
@@ -25,7 +24,7 @@
           @click="showCreateModal = true"
         >
           <template #icon><Plus :size="20" :stroke-width="2.5" /></template>
-          {{t('appointments.create')}}
+          {{ t("appointments.create") }}
         </n-button>
       </div>
     </div>
@@ -82,7 +81,9 @@
           class="h-16 bg-slate-50 rounded-lg animate-pulse"
         />
       </div>
-      <n-alert v-else-if="error" type="error">{{t('common.langLoadError')}}</n-alert>
+      <n-alert v-else-if="error" type="error">{{
+        t("common.langLoadError")
+      }}</n-alert>
       <n-data-table
         v-else
         :columns="columns"
@@ -92,6 +93,7 @@
         :row-class-name="() => 'group'"
         class="modern-table"
         striped
+        :scroll-x="800"
       />
     </n-card>
 
@@ -135,7 +137,10 @@
           />
         </n-form-item>
 
-        <n-form-item v-if="!createForm.user_id" :label="t('appointments.patientName')">
+        <n-form-item
+          v-if="!createForm.user_id"
+          :label="t('appointments.patientName')"
+        >
           <n-input
             v-model:value="createForm.fullname"
             :placeholder="t('appointments.patientNamePlaceholder')"
@@ -171,14 +176,14 @@
         </n-form-item>
 
         <div class="grid grid-cols-2 gap-4">
-          <n-form-item :label="t('appointments.startTime')">
+          <n-form-item :label="t('common.startsAt')">
             <n-time-picker
               v-model:value="createForm.start_time"
               size="large"
               class="w-full"
             />
           </n-form-item>
-          <n-form-item :label="t('appointments.endTime')">
+          <n-form-item :label="t('common.endsAt')">
             <n-time-picker
               v-model:value="createForm.end_time"
               size="large"
@@ -198,7 +203,6 @@
 
         <div class="grid grid-cols-2 gap-4">
           <n-form-item :label="t('appointments.paymentMethod')">
-
             <n-select
               v-model:value="createForm.payment_method"
               :options="paymentOptions"
@@ -322,7 +326,6 @@
 
         <div class="grid grid-cols-2 gap-4">
           <n-form-item :label="t('appointments.startTime')">
-
             <n-time-picker
               v-model:value="editForm.start_time"
               size="large"
@@ -378,15 +381,18 @@
 
       <template #action>
         <div class="flex justify-end gap-3">
-          <n-button ghost class="rounded-xl px-6" @click="showEditModal = false"
-            >{{ t('appointments.cancel') }}</n-button
+          <n-button
+            ghost
+            class="rounded-xl px-6"
+            @click="showEditModal = false"
+            >{{ t("appointments.cancel") }}</n-button
           >
           <n-button
             type="primary"
             class="rounded-xl px-8"
             :loading="updateLoading"
             @click="handleUpdate"
-            >{{ t('appointments.update') }}</n-button
+            >{{ t("appointments.update") }}</n-button
           >
         </div>
       </template>
@@ -405,6 +411,179 @@
       @positive-click="handleDelete"
       @negative-click="showDeleteModal = false"
     />
+    <!-- View Modal -->
+<n-modal
+  v-model:show="showViewModal"
+  preset="card"
+  title="Appointment Details"
+  class="max-w-lg rounded-3xl overflow-hidden shadow-2xl"
+>
+  <div v-if="viewingAppointment" class="flex flex-col gap-4 py-2">
+
+    <!-- Başlıq: Status + ID -->
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <n-tag
+          :type="statusConfig[viewingAppointment.status]?.type ?? 'default'"
+          round :bordered="false"
+          style="font-weight:800;font-size:11px;text-transform:uppercase;"
+        >
+          {{ statusConfig[viewingAppointment.status]?.label ?? viewingAppointment.status }}
+        </n-tag>
+        <n-tag
+          :type="viewingAppointment.type === 'online' ? 'info' : 'default'"
+          round :bordered="false"
+          style="font-weight:800;font-size:11px;text-transform:uppercase;"
+        >
+          {{ viewingAppointment.type }}
+        </n-tag>
+      </div>
+      <n-tag type="default" size="small" round class="font-mono">
+        #{{ viewingAppointment.id }}
+      </n-tag>
+    </div>
+
+    <!-- Xəstə + Həkim -->
+    <div class="grid grid-cols-2 gap-3">
+      <div class="bg-emerald-50/60 border border-emerald-100 p-4 rounded-2xl">
+        <p class="text-[10px] uppercase text-emerald-500 font-bold mb-2">Xəstə</p>
+        <div class="flex items-center gap-2">
+          <n-avatar round :size="32" color="#F0FDF4" style="color:#16A34A;font-weight:800;">
+            {{ viewingAppointment.user.fullname[0] }}
+          </n-avatar>
+          <span class="font-bold text-emerald-900 text-sm">
+            {{ viewingAppointment.user.fullname }}
+          </span>
+        </div>
+        <div class="mt-2 space-y-1 text-xs text-emerald-700">
+          <div v-if="viewingAppointment.user.gender">
+            Cins: <span class="font-semibold">{{ viewingAppointment.user.gender }}</span>
+          </div>
+          <div v-if="viewingAppointment.user.birthday">
+            D.t.: <span class="font-semibold">{{ viewingAppointment.user.birthday }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-blue-50/60 border border-blue-100 p-4 rounded-2xl">
+        <p class="text-[10px] uppercase text-blue-500 font-bold mb-2">Həkim</p>
+        <div class="flex items-center gap-2">
+          <n-avatar round :size="32" color="#F0F9FF" style="color:#0369A1;font-weight:800;">
+            {{ viewingAppointment.doctor.fullname[0] }}
+          </n-avatar>
+          <span class="font-bold text-blue-900 text-sm">
+            {{ viewingAppointment.doctor.fullname }}
+          </span>
+        </div>
+        <div class="mt-2 space-y-1 text-xs text-blue-700">
+          <div v-if="viewingAppointment.doctor.workplace">
+            {{ viewingAppointment.doctor.workplace }}
+          </div>
+          <div v-if="viewingAppointment.doctor.specializations?.length" class="flex flex-wrap gap-1 mt-1">
+            <n-tag v-for="s in viewingAppointment.doctor.specializations" :key="s.id"
+              size="small" type="info" round :bordered="false"
+              class="!bg-blue-100/50 !text-blue-800 text-[10px]">
+              {{ s.title }}
+            </n-tag>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tarix və Vaxt -->
+    <div class="bg-slate-50/80 border border-slate-100 p-4 rounded-2xl">
+      <p class="text-[10px] uppercase text-slate-400 font-bold mb-3">Tarix və Vaxt</p>
+      <div class="grid grid-cols-3 gap-3 text-center">
+        <div>
+          <p class="text-[10px] text-slate-400 uppercase font-bold">Tarix</p>
+          <p class="font-bold text-slate-800 text-sm mt-1">{{ viewingAppointment.date }}</p>
+        </div>
+        <div>
+          <p class="text-[10px] text-slate-400 uppercase font-bold">Başlama</p>
+          <p class="font-bold text-slate-800 text-sm mt-1">{{ viewingAppointment.start_time?.slice(0,5) }}</p>
+        </div>
+        <div>
+          <p class="text-[10px] text-slate-400 uppercase font-bold">Bitmə</p>
+          <p class="font-bold text-slate-800 text-sm mt-1">{{ viewingAppointment.end_time?.slice(0,5) }}</p>
+        </div>
+      </div>
+      <div class="mt-2 text-center text-xs text-slate-400">
+        Müddət: <span class="font-semibold text-slate-600">{{ viewingAppointment.duration_minutes }} dəq</span>
+      </div>
+    </div>
+
+    <!-- Ödəniş -->
+    <div class="bg-amber-50/60 border border-amber-100 p-4 rounded-2xl">
+      <p class="text-[10px] uppercase text-amber-500 font-bold mb-3">Ödəniş</p>
+      <div class="grid grid-cols-3 gap-3 text-center">
+        <div>
+          <p class="text-[10px] text-amber-400 uppercase font-bold">Metod</p>
+          <p class="font-bold text-amber-900 text-sm mt-1 capitalize">{{ viewingAppointment.payment.method }}</p>
+        </div>
+        <div>
+          <p class="text-[10px] text-amber-400 uppercase font-bold">Məbləğ</p>
+          <p class="font-bold text-amber-900 text-sm mt-1">{{ viewingAppointment.payment.amount }} ₼</p>
+        </div>
+        <div>
+          <p class="text-[10px] text-amber-400 uppercase font-bold">Ödənildi</p>
+          <p class="font-bold text-amber-900 text-sm mt-1">{{ viewingAppointment.payment.paid_amount }} ₼</p>
+        </div>
+      </div>
+      <div class="mt-2 text-center">
+        <n-tag
+          :type="viewingAppointment.payment.status === 'paid' ? 'success' : 'warning'"
+          size="small" round :bordered="false"
+          style="font-weight:800;font-size:10px;text-transform:uppercase;"
+        >
+          {{ viewingAppointment.payment.status }}
+        </n-tag>
+      </div>
+    </div>
+
+    <!-- Şikayət / Detallar -->
+    <div v-if="viewingAppointment.complaints || viewingAppointment.details"
+      class="bg-slate-50 border border-slate-100 p-4 rounded-2xl space-y-3">
+      <div v-if="viewingAppointment.complaints">
+        <p class="text-[10px] uppercase text-slate-400 font-bold mb-1">Şikayətlər</p>
+        <p class="text-sm text-slate-700">{{ viewingAppointment.complaints }}</p>
+      </div>
+      <div v-if="viewingAppointment.details">
+        <p class="text-[10px] uppercase text-slate-400 font-bold mb-1">Detallar</p>
+        <p class="text-sm text-slate-700">{{ viewingAppointment.details }}</p>
+      </div>
+    </div>
+
+    <!-- Səbəblər -->
+    <div v-if="viewingAppointment.decline_reason || viewingAppointment.postpone_reason"
+      class="bg-rose-50/60 border border-rose-100 p-4 rounded-2xl space-y-3">
+      <div v-if="viewingAppointment.decline_reason">
+        <p class="text-[10px] uppercase text-rose-500 font-bold mb-1">İmtina səbəbi</p>
+        <p class="text-sm text-rose-800">{{ viewingAppointment.decline_reason }}</p>
+      </div>
+      <div v-if="viewingAppointment.postpone_reason">
+        <p class="text-[10px] uppercase text-rose-500 font-bold mb-1">Təxirə salma səbəbi</p>
+        <p class="text-sm text-rose-800">{{ viewingAppointment.postpone_reason }}</p>
+      </div>
+    </div>
+
+    <!-- Yaradılma tarixi -->
+    <div class="flex justify-between items-center text-xs text-slate-400 px-1">
+      <span>Yaradılma: <span class="font-semibold text-slate-600">
+        {{ new Date(viewingAppointment.created_at).toLocaleDateString('az-AZ') }}
+      </span></span>
+    </div>
+  </div>
+
+  <template #action>
+    <div class="flex justify-end gap-3">
+      <n-button ghost @click="showViewModal = false">Bağla</n-button>
+      <n-button type="primary"
+        @click="() => { showViewModal = false; openEditModal(viewingAppointment!) }">
+        Redaktə et
+      </n-button>
+    </div>
+  </template>
+</n-modal>
   </div>
 </template>
 
@@ -418,7 +597,7 @@ import {
   useMessage,
   type DataTableColumns,
 } from "naive-ui";
-import { Search, RefreshCw, Plus, Edit, Trash2 } from "lucide-vue-next";
+import { Search, RefreshCw, Plus, Edit, Trash2, Eye } from "lucide-vue-next";
 import {
   useAppointments,
   useCreateAppointment,
@@ -427,7 +606,7 @@ import {
 } from "../composables/useAppointments";
 import { useRemoteSelect } from "~/composables/useRemoteSelect";
 import type { Appointment } from "@icheck/api-contracts";
-const { $api } = useNuxtApp()
+const { $api } = useNuxtApp();
 const { t } = useI18n();
 
 const message = useMessage();
@@ -437,9 +616,14 @@ const searchQuery = ref("");
 const filterStatus = ref<string | null>(null);
 const filterDateFrom = ref<number | null>(null);
 const filterDateTo = ref<number | null>(null);
+const showViewModal = ref(false);
+const viewingAppointment = ref<Appointment | null>(null);
 
+const openViewModal = (row: Appointment) => {
+  viewingAppointment.value = row;
+  showViewModal.value = true;
+};
 const toDate = (ts: number | null) => formatDate(ts);
-
 
 const query = computed(() => ({
   ...(searchQuery.value ? { search: searchQuery.value } : {}),
@@ -452,26 +636,26 @@ const { appointments, isLoading, error, refresh } = useAppointments(query);
 
 // ---- Options ----
 const statusOptions = [
-  { label: t('appointments.status.pending'), value: "pending" },
-  { label: t('appointments.status.confirmed'), value: "confirmed" },
-  { label: t('appointments.status.declined'), value: "declined" },
-  { label: t('appointments.status.completed'), value: "completed" },
-  { label: t('appointments.status.cancelled'), value: "cancelled" },
+  { label: t("appointments.status.pending"), value: "pending" },
+  { label: t("appointments.status.confirmed"), value: "confirmed" },
+  { label: t("appointments.status.declined"), value: "declined" },
+  { label: t("appointments.status.completed"), value: "completed" },
+  { label: t("appointments.status.cancelled"), value: "cancelled" },
 ];
 
 const typeOptions = [
-  { label: t('appointments.type.online'), value: "online" },
-  { label: t('appointments.type.offline'), value: "offline" },
+  { label: t("appointments.type.online"), value: "online" },
+  { label: t("appointments.type.offline"), value: "offline" },
 ];
 
 const paymentOptions = [
-  { label: t('appointments.payment.card'), value: "card" },
-  { label: t('appointments.payment.insurance'), value: "insurance" },
+  { label: t("appointments.payment.card"), value: "card" },
+  { label: t("appointments.payment.insurance"), value: "insurance" },
 ];
 
 const paymentStatusOptions = [
-  { label: t('appointments.paymentStatus.unpaid'), value: "unpaid" },
-  { label: t('appointments.paymentStatus.paid'), value: "paid" },
+  { label: t("appointments.paymentStatus.unpaid"), value: "unpaid" },
+  { label: t("appointments.paymentStatus.paid"), value: "paid" },
 ];
 
 // ---- Doctor remote select ----
@@ -484,12 +668,22 @@ const {
   handleValueChange: doctorHandleValueChange,
   onDropdownShow: doctorOnDropdownShow,
 } = useRemoteSelect(
-  (params) => $api<any>('/doctors/', {
-    query: { page: params.page, per_page: params.per_page, search: params.search },
-  }),
+  (params) =>
+    $api<any>("/doctors/", {
+      query: {
+        page: params.page,
+        per_page: params.per_page,
+        search: params.search,
+      },
+    }),
   (item: any) => ({ value: item.id, label: item.fullname }),
-  { key: 'appointment-create-doctors', per_page: 10, debounceMs: 300, loadOnOpen: true }
-)
+  {
+    key: "appointment-create-doctors",
+    per_page: 10,
+    debounceMs: 300,
+    loadOnOpen: true,
+  }
+);
 
 const {
   options: patientOptions,
@@ -498,19 +692,29 @@ const {
   handleScroll: patientHandleScroll,
   onDropdownShow: patientOnDropdownShow,
 } = useRemoteSelect(
-  (params) => $api<any>('/users/', {
-    query: { page: params.page, per_page: params.per_page, search: params.search },
-  }),
+  (params) =>
+    $api<any>("/users/", {
+      query: {
+        page: params.page,
+        per_page: params.per_page,
+        search: params.search,
+      },
+    }),
   (item: any) => {
     const fullName =
       item.fullname ||
-      [item.first_name, item.last_name].filter(Boolean).join(' ') ||
+      [item.first_name, item.last_name].filter(Boolean).join(" ") ||
       item.username ||
-      `${t('appointments.patient')} #${item.id}`
-    return { value: item.id, label: fullName }
+      `${t("appointments.patient")} #${item.id}`;
+    return { value: item.id, label: fullName };
   },
-  { key: 'appointment-create-patients', per_page: 10, debounceMs: 300, loadOnOpen: true }
-)
+  {
+    key: "appointment-create-patients",
+    per_page: 10,
+    debounceMs: 300,
+    loadOnOpen: true,
+  }
+);
 
 // ---- Create ----
 const showCreateModal = ref(false);
@@ -559,12 +763,17 @@ const handleCreate = async () => {
     !createForm.start_time ||
     !createForm.end_time
   ) {
-    message.warning(t('appointments.create.validation.requiredFields'));
+    message.warning(t("common.requiredFields"));
     return;
   }
 
   if (!createForm.user_id && !createForm.fullname.trim()) {
-    message.warning(t('appointments.create.validation.patientRequired'));
+    message.warning(t("appointments.patientRequired"));
+    return;
+  }
+
+  if (!createForm.doctor_id) {
+    message.warning(t("appointments.doctorRequired"));
     return;
   }
 
@@ -585,13 +794,13 @@ const handleCreate = async () => {
       amount: createForm.amount,
       paid_amount: createForm.paid_amount,
     });
-    message.success(t('appointments.create.success'));
+    message.success(t("common.created"));
     showCreateModal.value = false;
     clearNuxtData("admin-appointments-list");
     await refresh();
   } catch (err: any) {
     console.log("Create error:", JSON.stringify(err?.data));
-    message.error(err?.data?.error || t('appointments.create.error'));
+    message.error(err?.data?.error || t("common.error"));
   }
 };
 
@@ -660,7 +869,7 @@ const handleUpdate = async () => {
       paid_amount: editForm.paid_amount || undefined,
     });
 
-    message.success(t('appointments.edit.success'));
+    message.success(t("appointments.edit.success"));
     showEditModal.value = false;
     clearNuxtData("admin-appointments-list");
 
@@ -689,7 +898,7 @@ const handleDelete = async () => {
     clearNuxtData("admin-appointments-list");
     await refresh();
   } catch {
-    message.error(t('common.error'));
+    message.error(t("common.error"));
   }
 };
 
@@ -698,17 +907,17 @@ const statusConfig: Record<
   string,
   { type: "success" | "error" | "warning" | "default" | "info"; label: string }
 > = {
-  pending: { type: "warning", label: t('appointments.status.pending') },
-  confirmed: { type: "success", label: t('appointments.status.confirmed') },
-  declined: { type: "error", label: t('appointments.status.declined') },
-  completed: { type: "info", label: t('appointments.status.completed') },
-  cancelled: { type: "default", label: t('appointments.status.cancelled') },
+  pending: { type: "warning", label: t("appointments.status.pending") },
+  confirmed: { type: "success", label: t("appointments.status.confirmed") },
+  declined: { type: "error", label: t("appointments.status.declined") },
+  completed: { type: "info", label: t("appointments.status.completed") },
+  cancelled: { type: "default", label: t("appointments.status.cancelled") },
 };
 
 // ---- Table ----
 const columns: DataTableColumns<Appointment> = [
   {
-    title: t('common.id'),
+    title: t("common.id"),
     key: "id",
     width: 70,
     render: (row) =>
@@ -719,7 +928,7 @@ const columns: DataTableColumns<Appointment> = [
       ),
   },
   {
-    title: t('appointments.patient'),
+    title: t("appointments.patient"),
     key: "user",
     render: (row) =>
       h("div", { class: "flex items-center gap-3" }, [
@@ -741,7 +950,7 @@ const columns: DataTableColumns<Appointment> = [
       ]),
   },
   {
-    title: t('appointments.doctor'),
+    title: t("appointments.doctor"),
     key: "doctor",
     render: (row) =>
       h("div", { class: "flex items-center gap-3" }, [
@@ -770,7 +979,7 @@ const columns: DataTableColumns<Appointment> = [
       ]),
   },
   {
-    title: t('appointments.dateAndTime'),
+    title: t("appointments.dateAndTime"),
     key: "date",
     render: (row) =>
       h("div", { class: "flex flex-col" }, [
@@ -783,7 +992,7 @@ const columns: DataTableColumns<Appointment> = [
       ]),
   },
   {
-    title: t('appointments.type_label'),
+    title: t("appointments.type_label"),
     key: "type",
     render: (row) =>
       h(
@@ -799,7 +1008,7 @@ const columns: DataTableColumns<Appointment> = [
       ),
   },
   {
-    title: t('appointments.status_label'),
+    title: t("appointments.status_label"),
     key: "status",
     render: (row) => {
       const cfg = statusConfig[row.status] ?? {
@@ -820,7 +1029,7 @@ const columns: DataTableColumns<Appointment> = [
     },
   },
   {
-    title: t('appointments.payment_label'),
+    title: t("appointments.payment_label"),
     key: "payment",
     render: (row) =>
       h("div", { class: "flex flex-col" }, [
@@ -837,7 +1046,7 @@ const columns: DataTableColumns<Appointment> = [
       ]),
   },
   {
-    title: t('common.actions'),
+    title: t("common.actions"),
     key: "actions",
     align: "right",
     render: (row) =>
@@ -853,7 +1062,7 @@ const columns: DataTableColumns<Appointment> = [
                 quaternary: true,
                 circle: true,
                 class:
-                  "hover:bg-indigo-50 hover:text-indigo-600 opacity-0 group-hover:opacity-100 transition-all",
+                  "hover:bg-indigo-50 hover:text-indigo-600 transition-all",
                 onClick: () => openEditModal(row),
               },
               { default: () => h(Edit, { size: 16 }) }
@@ -866,10 +1075,22 @@ const columns: DataTableColumns<Appointment> = [
                 circle: true,
                 type: "error",
                 class:
-                  "hover:bg-rose-50 opacity-0 group-hover:opacity-100 transition-all",
+                  "hover:bg-rose-50 transition-all",
                 onClick: () => openDeleteModal(row.id),
               },
               { default: () => h(Trash2, { size: 16 }) }
+            ),
+            h(
+              NButton,
+              {
+                size: "small",
+                quaternary: true,
+                circle: true,
+                class:
+                  "hover:bg-blue-50 hover:text-blue-600 transition-all",
+                onClick: () => openViewModal(row),
+              },
+              { default: () => h(Eye, { size: 16 }) }
             ),
           ],
         }

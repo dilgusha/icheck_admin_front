@@ -6,9 +6,6 @@
         <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight">
           Users
         </h2>
-        <p class="text-slate-500 text-sm font-medium">
-          Manage users in the healthcare network.
-        </p>
       </div>
       <n-button
         type="primary"
@@ -41,14 +38,13 @@
         </n-input>
 
         <n-select
-  v-model:value="filterScope"
-  :options="scopeOptions"
-  placeholder="Scope"
-  size="large"
-  clearable
-  class="w-40"
-/>
-
+          v-model:value="filterScope"
+          :options="scopeOptions"
+          placeholder="Scope"
+          size="large"
+          clearable
+          class="w-40"
+        />
 
         <n-button
           quaternary
@@ -80,6 +76,7 @@
       <n-alert v-else-if="error" type="error">Məlumat yüklənmədi</n-alert>
 
       <!-- Table -->
+
       <n-data-table
         v-else
         :columns="columns"
@@ -89,6 +86,7 @@
         :row-class-name="() => 'group h-16'"
         class="modern-table"
         striped
+        :scroll-x="800"
       />
     </n-card>
 
@@ -339,6 +337,179 @@
         </div>
       </template>
     </n-modal>
+    <n-modal
+      v-model:show="showViewModal"
+      preset="card"
+      title="İstifadəçi Profili"
+      class="max-w-3xl rounded-2xl overflow-hidden shadow-2xl"
+      :segmented="{ content: true, action: true }"
+    >
+      <div v-if="viewingUser" class="py-1">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div
+            class="flex flex-col items-center text-center border-b md:border-b-0 md:border-r border-slate-100 pb-6 md:pb-0 md:pr-6"
+          >
+            <div class="relative mb-3">
+              <n-avatar
+                round
+                :size="96"
+                :src="viewingUser.photo || undefined"
+                fallback-src="https://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=200"
+                class="shadow-md border-2 border-white ring-4 ring-slate-50"
+              />
+              <span
+                class="absolute bottom-1 right-1 w-4 h-4 rounded-full border-2 border-white"
+                :class="
+                  viewingUser.is_active ? 'bg-emerald-500' : 'bg-rose-500'
+                "
+              ></span>
+            </div>
+
+            <h4 class="text-lg font-bold text-slate-800 leading-tight">
+              {{ viewingUser.first_name }} {{ viewingUser.last_name }}
+            </h4>
+            <p class="text-xs text-slate-400 font-mono mt-1">
+              @{{ viewingUser.username }}
+            </p>
+
+            <div class="flex flex-wrap gap-1.5 justify-center mt-3">
+              <n-tag size="small" type="info" round class="font-medium">
+                {{ viewingUser.role }}
+              </n-tag>
+              <n-tag
+                v-if="viewingUser.doctor_boolean"
+                size="small"
+                type="success"
+                round
+                class="font-medium"
+              >
+                👨‍⚕️ Həkim
+              </n-tag>
+            </div>
+          </div>
+
+          <div class="md:col-span-2 flex flex-col gap-5">
+            <div>
+              <h5
+                class="text-xs font-extrabold uppercase tracking-wider text-indigo-600 mb-2.5"
+              >
+                Şəxsi Məlumatlar
+              </h5>
+              <div
+                class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-3 bg-slate-50 border border-slate-100 p-3.5 rounded-xl text-sm"
+              >
+                <div>
+                  <span class="text-slate-400 text-xs block">E-poçt</span>
+                  <span class="text-slate-700 font-medium break-all">{{
+                    viewingUser.email
+                  }}</span>
+                </div>
+                <div>
+                  <span class="text-slate-400 text-xs block">Telefon</span>
+                  <span class="text-slate-700 font-medium">{{
+                    viewingUser.phone_number || "—"
+                  }}</span>
+                </div>
+                <div>
+                  <span class="text-slate-400 text-xs block">Doğum tarixi</span>
+                  <span class="text-slate-700 font-medium">{{
+                    viewingUser.birth_date || "—"
+                  }}</span>
+                </div>
+                <div>
+                  <span class="text-slate-400 text-xs block">Cinsiyyət</span>
+                  <span class="text-slate-700 font-medium">{{
+                    viewingUser.sex || "—"
+                  }}</span>
+                </div>
+                <div class="sm:col-span-2">
+                  <span class="text-slate-400 text-xs block">Ünvan</span>
+                  <span class="text-slate-700 font-medium">{{
+                    viewingUser.address || "—"
+                  }}</span>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <h5
+                class="text-xs font-extrabold uppercase tracking-wider text-indigo-600 mb-2.5"
+              >
+                İş Məlumatları
+              </h5>
+              <div
+                class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-3 bg-slate-50 border border-slate-100 p-3.5 rounded-xl text-sm"
+              >
+                <div>
+                  <span class="text-slate-400 text-xs block">İş E-poçtu</span>
+                  <span class="text-slate-700 font-medium break-all">{{
+                    viewingUser.work_email || "—"
+                  }}</span>
+                </div>
+                <div>
+                  <span class="text-slate-400 text-xs block">İş Telefonu</span>
+                  <span class="text-slate-700 font-medium">{{
+                    viewingUser.work_phone_number || "—"
+                  }}</span>
+                </div>
+                <div class="sm:col-span-2">
+                  <span class="text-slate-400 text-xs block">İş Ünvanı</span>
+                  <span class="text-slate-700 font-medium">{{
+                    viewingUser.work_address || "—"
+                  }}</span>
+                </div>
+                <div v-if="viewingUser.location">
+                  <span class="text-slate-400 text-xs block">Lokasiya ID</span>
+                  <span class="text-slate-700 font-medium font-mono"
+                    >#{{ viewingUser.location }}</span
+                  >
+                </div>
+              </div>
+            </div>
+
+            <div v-if="viewingUser.permissions?.length">
+              <h5
+                class="text-xs font-extrabold uppercase tracking-wider text-indigo-600 mb-2"
+              >
+                Sistem İcazələri ({{ viewingUser.permissions.length }})
+              </h5>
+              <div
+                class="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto border border-slate-100 p-2.5 rounded-xl bg-white shadow-inner"
+              >
+                <n-tag
+                  v-for="perm in viewingUser.permissions"
+                  :key="perm"
+                  size="small"
+                  :bordered="false"
+                  class="!bg-slate-100 !text-slate-600 font-mono text-[11px]"
+                >
+                  {{ perm }}
+                </n-tag>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <template #action>
+        <div class="flex justify-end gap-2.5">
+          <n-button
+            secondary
+            @click="showViewModal = false"
+            class="!rounded-xl px-5"
+          >
+            Bağla
+          </n-button>
+          <n-button
+            type="primary"
+            class="!rounded-xl px-5"
+            @click="() => { showViewModal = false; openEditModal(viewingUser!) }"
+          >
+            Profili Redaktə et
+          </n-button>
+        </div>
+      </template>
+    </n-modal>
   </div>
 </template>
 
@@ -353,9 +524,10 @@ import {
   useMessage,
   type DataTableColumns,
 } from "naive-ui";
-import { Plus, Search, RefreshCw, Edit } from "lucide-vue-next";
+import { Plus, Search, RefreshCw, Edit, Eye } from "lucide-vue-next";
 import { useUsers, useUserActions } from "../composables/useUsers";
 import type { UserListItem } from "@icheck/api-contracts";
+import type { User } from "~~/packages/api-contracts/src/users";
 
 const message = useMessage();
 
@@ -363,6 +535,13 @@ const message = useMessage();
 const searchInput = ref("");
 const searchQuery = ref("");
 const filterScope = ref<string | null>(null);
+const showViewModal = ref(false);
+const viewingUser = ref<User | null>(null);
+
+const openViewModal = (row: User) => {
+  viewingUser.value = row;
+  showViewModal.value = true;
+};
 
 const query = computed(() => ({
   ...(searchQuery.value ? { search: searchQuery.value } : {}),
@@ -403,7 +582,7 @@ const onSearchChange = (value: string) => {
   }, 300);
 };
 onMounted(() => {
-  refresh(); 
+  refresh();
 });
 
 // ---- Create ----
@@ -595,7 +774,7 @@ const handleUpdate = async () => {
   }
 };
 const getFullName = (row: UserListItem) => {
-  const user = row as any
+  const user = row as any;
 
   return (
     user.fullname ||
@@ -605,9 +784,8 @@ const getFullName = (row: UserListItem) => {
     user.username ||
     user.phone_number ||
     `User #${user.id}`
-  )
-}
-
+  );
+};
 
 // ---- Table ----
 const columns: DataTableColumns<UserListItem> = [
@@ -701,10 +879,21 @@ const columns: DataTableColumns<UserListItem> = [
                 quaternary: true,
                 circle: true,
                 class:
-                  "hover:bg-indigo-50 hover:text-indigo-600 opacity-0 group-hover:opacity-100 transition-all",
+                  "hover:bg-indigo-50 hover:text-indigo-600 transition-all",
                 onClick: () => openEditModal(row),
               },
               { default: () => h(Edit, { size: 16 }) }
+            ),
+            h(
+              NButton,
+              {
+                size: "small",
+                quaternary: true,
+                circle: true,
+                class: "hover:bg-blue-50 hover:text-blue-600 transition-all",
+                onClick: () => openViewModal(row),
+              },
+              { default: () => h(Eye, { size: 16 }) }
             ),
           ],
         }

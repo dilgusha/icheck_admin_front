@@ -106,15 +106,15 @@
               multiple
               :options="diagnosisOptions"
               :loading="diagnosisPending"
-              placeholder="Diaqnoz seçin və ya axtarın (məs: A00)..."
+              placeholder="Diaqnoz seçin..."
               filterable
               remote
               clearable
               max-tag-count="responsive"
-              class="rounded-xl"
               @search="diagnosisHandleSearch"
               @scroll="diagnosisHandleScroll"
-              @focus="diagnosisOnDropdownShow"
+              @update:value="diagnosisHandleValueChange"
+              @update:show="(show: boolean) => show && diagnosisOnDropdownShow()"
             />
           </n-form-item>
         </div>
@@ -218,42 +218,164 @@
         </div>
       </template>
     </n-modal>
+    <!-- Delete modal-dan sonra -->
+    <n-modal
+      v-model:show="showViewModal"
+      preset="card"
+      title="Prescription Details"
+      class="max-w-md rounded-3xl overflow-hidden shadow-2xl"
+    >
+      <div v-if="viewingPrescription" class="flex flex-col gap-4 py-2">
+        <div class="flex items-center justify-between">
+          <n-tag type="info" size="small" round class="font-mono"
+            >#{{ viewingPrescription.id }}</n-tag
+          >
+          <span class="text-xs text-slate-400">{{
+            new Date(viewingPrescription.date).toLocaleDateString("az-AZ")
+          }}</span>
+        </div>
+
+        <!-- Həkim -->
+        <div class="bg-blue-50/60 border border-blue-100 p-4 rounded-2xl">
+          <p class="text-[10px] uppercase text-blue-500 font-bold mb-2">
+            Həkim
+          </p>
+          <div class="flex items-center gap-3">
+            <n-avatar
+              round
+              :size="36"
+              color="#F0F9FF"
+              style="color: #0369a1; font-weight: 800"
+            >
+              {{ viewingPrescription.doctor?.fullname?.[0] }}
+            </n-avatar>
+            <div>
+              <p class="font-bold text-blue-900">
+                {{ viewingPrescription.doctor?.fullname }}
+              </p>
+              <p class="text-xs text-blue-600">
+                {{ viewingPrescription.doctor?.workplace }}
+              </p>
+              <div class="flex flex-wrap gap-1 mt-1">
+                <n-tag
+                  v-for="s in viewingPrescription.doctor?.specializations"
+                  :key="s.id"
+                  size="small"
+                  type="info"
+                  round
+                  :bordered="false"
+                  class="!bg-blue-100/50 !text-blue-800 text-[10px]"
+                >
+                  {{ s.title }}
+                </n-tag>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Diaqnoz -->
+        <div class="bg-amber-50/60 border border-amber-100 p-4 rounded-2xl">
+          <p class="text-[10px] uppercase text-amber-500 font-bold mb-2">
+            Diaqnoz
+          </p>
+          <p class="text-sm text-amber-900 font-medium">
+            {{ viewingPrescription.diagnosis || "—" }}
+          </p>
+        </div>
+
+        <!-- Dərmanlar -->
+        <div class="bg-rose-50/60 border border-rose-100 p-4 rounded-2xl">
+          <p class="text-[10px] uppercase text-rose-500 font-bold mb-2">
+            Dərmanlar
+          </p>
+          <p class="text-sm text-rose-900">
+            {{ viewingPrescription.drugs_summary || "—" }}
+          </p>
+        </div>
+      </div>
+
+      <template #action>
+        <div class="flex justify-end gap-3">
+          <n-button ghost @click="showViewModal = false">Bağla</n-button>
+          <n-button
+            type="primary"
+            @click="() => { showViewModal = false; openEditModal(viewingPrescription!) }"
+          >
+            Redaktə et
+          </n-button>
+        </div>
+      </template>
+    </n-modal>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, h } from "vue";
+import { ref, reactive, h, computed, watch } from "vue";
 import {
   NButton,
   NSpace,
   NAvatar,
+  NTag,
   useMessage,
   type DataTableColumns,
+  type SelectOption,
 } from "naive-ui";
 import { Plus, Search, RefreshCw, Edit, Trash2, Eye } from "lucide-vue-next";
 import {
   usePrescriptions,
   useCreatePrescription,
   useDeletePrescription,
+  useUpdatePrescription,
+  useGetPrescription,
 } from "../composables/usePrescriptions";
 import type { Prescription } from "@icheck/api-contracts";
-import { useRemoteSelect } from "~/composables/useRemoteSelect"; // yolunu dəqiqləşdir
+import { useRemoteSelect } from "~/composables/useRemoteSelect";
 
 const { $api } = useNuxtApp();
 const message = useMessage();
+
+// ---- Data ----
 const searchQuery = ref("");
 const { prescriptions, isLoading, refresh } = usePrescriptions();
 const { createCreatePrescription, loading: createLoading } =
   useCreatePrescription();
+const { updatePrescription } = useUpdatePrescription();
 const { deletePrescription } = useDeletePrescription();
+const { getPrescription } = useGetPrescription();
 
+// ---- Modal state ----
 const showModal = ref(false);
+const showViewModal = ref(false);
+const editingId = ref<number | null>(null);
+const viewingPrescription = ref<Prescription | null>(null);
+
+// ---- Form ----
+const modalForm = reactive({
+  appointment_id: null as number | null,
+  doctor_id: null as number | null,
+  date: new Date().toISOString().split("T")[0],
+  diagnosis_ids: [] as number[],
+  drugs: [] as Array<{
+    drug_id: number | null;
+    details: { az: string; en: string; ru: string };
+  }>,
+  services: [] as Record<string, string>[],
+});
+
+// ---- Remote selects ----
+// Diagnosis — initialOption modalForm-dan sonra declare olunur
+const diagnosisInitialOptions = computed<SelectOption[]>(() =>
+  modalForm.diagnosis_ids.map((id) => ({ value: id, label: `Diaqnoz #${id}` }))
+);
+
 const {
   options: diagnosisOptions,
   pending: diagnosisPending,
   handleSearch: diagnosisHandleSearch,
   handleScroll: diagnosisHandleScroll,
+  handleValueChange: diagnosisHandleValueChange,
   onDropdownShow: diagnosisOnDropdownShow,
+  reset: diagnosisReset,
 } = useRemoteSelect(
   (params) =>
     $api<any>("/admin/diagnoses/", {
@@ -263,17 +385,17 @@ const {
         search: params.search,
       },
     }),
-  (item: any) => ({
-    value: item.id,
-    label: `${item.ic_code} - ${item.title}`,
-  }),
+  (item: any) => ({ value: item.id, label: `${item.ic_code} - ${item.title}` }),
   {
-    key: "prescription-create-diagnoses",
+    key: "prescription-diagnoses",
     per_page: 10,
     debounceMs: 300,
     loadOnOpen: true,
+    initialOption: diagnosisInitialOptions,
+    selectedValues: computed(() => modalForm.diagnosis_ids),
   }
 );
+
 const {
   options: doctorOptions,
   pending: doctorPending,
@@ -291,7 +413,7 @@ const {
     }),
   (item: any) => ({ value: item.id, label: item.fullname }),
   {
-    key: "prescription-create-doctors",
+    key: "prescription-doctors",
     per_page: 10,
     debounceMs: 300,
     loadOnOpen: true,
@@ -313,17 +435,10 @@ const {
         search: params.search,
       },
     }),
-  (item: any) => ({
-    value: item.id,
-    label: item.title ?? item.name ?? `Drug #${item.id}`,
-  }), 
-  {
-    key: "prescription-create-drugs-list",
-    per_page: 10,
-    debounceMs: 300,
-    loadOnOpen: true,
-  }
+  (item: any) => ({ value: item.id, label: item.title ?? `Drug #${item.id}` }),
+  { key: "prescription-drugs", per_page: 10, debounceMs: 300, loadOnOpen: true }
 );
+
 const {
   options: appointmentOptions,
   pending: appointmentPending,
@@ -332,7 +447,7 @@ const {
   onDropdownShow: appointmentOnDropdownShow,
 } = useRemoteSelect(
   (params) =>
-    $api<any>("/appointments/", {
+    $api<any>("/admin/appointments/", {
       query: {
         page: params.page,
         per_page: params.per_page,
@@ -342,48 +457,68 @@ const {
   (item: any) => ({
     value: item.id,
     label: `Görüş #${item.id} - ${
-      item.patient?.fullname || "Xəstə adı yoxdur"
+      item.user?.fullname || item.doctor?.fullname || "—"
     }`,
   }),
   {
-    key: "prescription-create-appointments",
+    key: "prescription-appointments",
     per_page: 10,
     debounceMs: 300,
     loadOnOpen: true,
   }
 );
-const modalForm = reactive({
-  appointment_id: null as number | null,
-  doctor_id: null as number | null,
-  date: new Date().toISOString().split("T")[0],
-  diagnosis_ids: [] as number[],
-  drugs: [] as Array<{
-    drug_id: number | null;
-    details: { az: string; en: string; ru: string };
-  }>,
-  services: [],
-});
 
-const openCreateModal = () => {
+// ---- Handlers ----
+const resetForm = () => {
   Object.assign(modalForm, {
     appointment_id: null,
     doctor_id: null,
+    date: new Date().toISOString().split("T")[0],
+    diagnosis_ids: [],
     drugs: [],
     services: [],
   });
+  diagnosisReset();
+};
+
+const openCreateModal = () => {
+  editingId.value = null;
+  resetForm();
   showModal.value = true;
 };
 
-const addDrug = () => {
-  modalForm.drugs.push({
-    drug_id: null,
-    details: { az: "", en: "", ru: "" },
-  });
+const openEditModal = async (row: Prescription) => {
+  editingId.value = row.id;
+  resetForm();
+  showModal.value = true;
+  try {
+    const detail = await getPrescription(row.id);
+    Object.assign(modalForm, {
+      appointment_id: detail.appointment_id ?? null,
+      doctor_id: detail.doctor?.id ?? null,
+      date: detail.date,
+      diagnosis_ids: detail.diagnosis_ids ?? [],
+      drugs:
+        detail.drugs?.map((d: any) => ({
+          drug_id: d.drug_id,
+          details: { az: d.details ?? "", en: "", ru: "" },
+        })) ?? [],
+      services: detail.services ?? [],
+    });
+  } catch {
+    message.error("Məlumat yüklənmədi");
+  }
 };
 
-const removeDrug = (index: number) => {
-  modalForm.drugs.splice(index, 1);
+const openViewModal = (row: Prescription) => {
+  viewingPrescription.value = row;
+  showViewModal.value = true;
 };
+
+const addDrug = () =>
+  modalForm.drugs.push({ drug_id: null, details: { az: "", en: "", ru: "" } });
+
+const removeDrug = (index: number) => modalForm.drugs.splice(index, 1);
 
 const handleSubmit = async () => {
   const payload = {
@@ -391,27 +526,110 @@ const handleSubmit = async () => {
     doctor_id: modalForm.doctor_id,
     date: modalForm.date,
     diagnosis_ids: modalForm.diagnosis_ids,
-    drugs: modalForm.drugs.map((d) => ({
-      drug_id: d.drug_id,
-      details: d.details.az,
-    })),
-    services: modalForm.services.length > 0 ? modalForm.services : [],
+    drugs: modalForm.drugs
+      .filter((d) => d.drug_id)
+      .map((d) => ({
+        drug_id: d.drug_id!,
+        details: d.details.az || d.details.en || d.details.ru || "",
+      })),
+    services: modalForm.services,
   };
 
   try {
-    await createCreatePrescription(payload as any);
-    message.success("Resept yaradıldı");
+    if (editingId.value) {
+      await updatePrescription(editingId.value, payload);
+      message.success("Resept yeniləndi");
+    } else {
+      await createCreatePrescription(payload as any);
+      message.success("Resept yaradıldı");
+    }
     showModal.value = false;
+    editingId.value = null;
     refresh();
   } catch (err: any) {
     message.error(err?.data?.error || "Xəta baş verdi");
   }
 };
 
+const handleDelete = async (id: number) => {
+  if (!confirm("Silmək istəyirsiniz?")) return;
+  try {
+    await deletePrescription(id);
+    message.success("Resept silindi");
+    refresh();
+  } catch {
+    message.error("Xəta baş verdi");
+  }
+};
+
+// ---- Table ----
 const columns: DataTableColumns<Prescription> = [
-  { title: "ID", key: "id", width: 70 },
-  { title: "Doc ID", key: "doctor_id" },
-  { title: "Date", key: "date" },
+  {
+    title: "ID",
+    key: "id",
+    width: 70,
+    render: (row) =>
+      h(
+        "span",
+        { class: "text-slate-400 font-mono text-xs font-bold" },
+        `#${row.id}`
+      ),
+  },
+  {
+    title: "Həkim",
+    key: "doctor",
+    render: (row) =>
+      h("div", { class: "flex items-center gap-3" }, [
+        h(
+          NAvatar,
+          {
+            round: true,
+            size: 32,
+            color: "#F0F9FF",
+            style: "color:#0369A1;font-weight:800;",
+          },
+          { default: () => row.doctor?.fullname?.[0] ?? "H" }
+        ),
+        h("div", { class: "flex flex-col" }, [
+          h(
+            "span",
+            { class: "font-bold text-slate-800 text-sm" },
+            row.doctor?.fullname ?? "—"
+          ),
+          h(
+            "span",
+            { class: "text-xs text-slate-400" },
+            row.doctor?.workplace ?? ""
+          ),
+        ]),
+      ]),
+  },
+  {
+    title: "Diaqnoz",
+    key: "diagnosis",
+    render: (row) =>
+      h("span", { class: "text-slate-600 text-sm" }, row.diagnosis || "—"),
+  },
+  {
+    title: "Dərmanlar",
+    key: "drugs_summary",
+    render: (row) =>
+      h(
+        "span",
+        { class: "text-slate-500 text-xs line-clamp-1 max-w-xs block" },
+        row.drugs_summary || "—"
+      ),
+  },
+  {
+    title: "Tarix",
+    key: "date",
+    render: (row) =>
+      h(
+        "span",
+        { class: "text-slate-500 text-xs" },
+        new Date(row.date).toLocaleDateString("az-AZ")
+      ),
+  },
   {
     title: "Actions",
     key: "actions",
@@ -424,15 +642,37 @@ const columns: DataTableColumns<Prescription> = [
           default: () => [
             h(
               NButton,
-              { quaternary: true, circle: true, onClick: () => {} },
+              {
+                size: "small",
+                quaternary: true,
+                circle: true,
+                class:
+                  "hover:bg-blue-50 hover:text-blue-600 opacity-0 group-hover:opacity-100 transition-all",
+                onClick: () => openViewModal(row),
+              },
               { default: () => h(Eye, { size: 16 }) }
             ),
             h(
               NButton,
               {
+                size: "small",
+                quaternary: true,
+                circle: true,
+                class:
+                  "hover:bg-indigo-50 hover:text-indigo-600 opacity-0 group-hover:opacity-100 transition-all",
+                onClick: () => openEditModal(row),
+              },
+              { default: () => h(Edit, { size: 16 }) }
+            ),
+            h(
+              NButton,
+              {
+                size: "small",
                 quaternary: true,
                 circle: true,
                 type: "error",
+                class:
+                  "hover:bg-rose-50 opacity-0 group-hover:opacity-100 transition-all",
                 onClick: () => handleDelete(row.id),
               },
               { default: () => h(Trash2, { size: 16 }) }
@@ -442,11 +682,4 @@ const columns: DataTableColumns<Prescription> = [
       ),
   },
 ];
-
-const handleDelete = async (id: number) => {
-  if (confirm("Silmək istəyirsiniz?")) {
-    await deletePrescription(id);
-    refresh();
-  }
-};
 </script>

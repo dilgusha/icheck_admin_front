@@ -1,7 +1,9 @@
 export interface Diagnosis {
   id: number
   ic_code: string
-  title: string
+  title: string,
+  created_at: string,
+  updated_at: string
 }
 
 export interface DiagnosesListResponse {

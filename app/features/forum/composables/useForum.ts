@@ -1,13 +1,13 @@
+import { ref, computed, watch, type Ref } from 'vue'
 import type {
   ForumPostsListResponse,
   ForumAnswersListResponse,
   ForumPostsQuery,
-  ForumAnswersQuery,
 } from '@icheck/api-contracts'
 
-const POSTS_BASE_URL = '/forum-posts'
-const ANSWERS_BASE_URL = '/forum-answers'
+const POSTS_BASE_URL = '/admin/forum-posts'
 
+// ── Posts ──────────────────────────────────────────────────────────────────
 export const useForumPosts = (query?: Ref<ForumPostsQuery>) => {
   const { $api } = useNuxtApp()
   const langCookie = useCookie('lang')
@@ -35,23 +35,46 @@ export const useForumPosts = (query?: Ref<ForumPostsQuery>) => {
   }
 }
 
-export const useForumAnswers = (query?: Ref<ForumAnswersQuery>) => {
+// ── Answers ────────────────────────────────────────────────────────────────
+// Answers endpoint: GET /forum-posts/{postId}/answers/
+export const useForumAnswers = (postId: Ref<number | null>) => {
   const { $api } = useNuxtApp()
-  const langCookie = useCookie('lang')
 
-  const { data, status, refresh, error } = useFetch<ForumAnswersListResponse>(
-    `${ANSWERS_BASE_URL}/`,
-    {
-      key: 'forum-answers-list',
-      lazy: true,
-      server: false,
-      watch: false,
-      query: computed(() => query?.value ?? {}),
-      $fetch: $api,
+  const data = ref<ForumAnswersListResponse | null>(null)
+  const status = ref<'idle' | 'pending' | 'success' | 'error'>('idle')
+  const error = ref<Error | null>(null)
+
+  const fetchAnswers = async (id: number) => {
+    status.value = 'pending'
+    error.value = null
+    try {
+      const result = await $api<ForumAnswersListResponse>(
+        `${POSTS_BASE_URL}/${id}/answers/`
+      )
+      data.value = result
+      status.value = 'success'
+    } catch (e) {
+      error.value = e as Error
+      status.value = 'error'
     }
+  }
+
+  watch(
+    postId,
+    (id) => {
+      if (id) {
+        fetchAnswers(id)
+      } else {
+        data.value = null
+        status.value = 'idle'
+      }
+    },
+    { immediate: true }
   )
 
-  watch([langCookie, () => query?.value], () => refresh(), { deep: true })
+  const refresh = () => {
+    if (postId.value) fetchAnswers(postId.value)
+  }
 
   return {
     answers: computed(() => data.value?.data ?? []),
@@ -62,17 +85,15 @@ export const useForumAnswers = (query?: Ref<ForumAnswersQuery>) => {
   }
 }
 
+// ── Delete post ────────────────────────────────────────────────────────────
 export const useDeleteForumPost = () => {
   const { $api } = useNuxtApp()
   const loading = ref(false)
 
   const deletePost = async (id: number) => {
     loading.value = true
-
     try {
-      await $api(`${POSTS_BASE_URL}/${id}/`, {
-        method: 'DELETE',
-      })
+      await $api(`${POSTS_BASE_URL}/${id}/`, { method: 'DELETE' })
     } finally {
       loading.value = false
     }
@@ -81,15 +102,15 @@ export const useDeleteForumPost = () => {
   return { deletePost, loading }
 }
 
+// ── Delete answer ──────────────────────────────────────────────────────────
 export const useDeleteForumAnswer = () => {
   const { $api } = useNuxtApp()
   const loading = ref(false)
 
-  const deleteAnswer = async (id: number) => {
+  const deleteAnswer = async (postId: number, answerId: number) => {
     loading.value = true
-
     try {
-      await $api(`${ANSWERS_BASE_URL}/${id}/`, {
+      await $api(`${POSTS_BASE_URL}/${postId}/answers/${answerId}/`, {
         method: 'DELETE',
       })
     } finally {

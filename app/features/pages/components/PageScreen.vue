@@ -137,6 +137,88 @@
         </div>
       </template>
     </n-modal>
+    <n-modal
+      v-model:show="showViewModal"
+      preset="card"
+      title="Səhifə Detalları"
+      class="max-w-xl rounded-2xl overflow-hidden shadow-2xl"
+      :segmented="{ content: true, action: true }"
+    >
+      <div v-if="viewingPage" class="flex flex-col gap-5 py-1">
+        <div class="border-b border-slate-100 pb-4 space-y-2">
+          <div class="flex items-center gap-2">
+            <span
+              class="text-[10px] uppercase text-slate-400 font-extrabold tracking-widest"
+            >
+              Slug:
+            </span>
+            <code
+              class="bg-slate-100 text-slate-700 text-xs px-2 py-0.5 rounded font-mono font-bold"
+            >
+              {{ viewingPage.slug || "—" }}
+            </code>
+          </div>
+
+          <div class="space-y-0.5">
+            <span
+              class="text-[10px] uppercase text-indigo-500 font-extrabold tracking-widest block"
+            >
+              Başlıq
+            </span>
+            <h3 class="text-xl font-bold text-slate-800 leading-snug">
+              {{ viewingPage.title || "—" }}
+            </h3>
+          </div>
+        </div>
+
+        <div
+          v-if="viewingPage.body"
+          class="bg-slate-50 border border-slate-100 p-4 rounded-xl"
+        >
+          <p
+            class="text-[10px] uppercase text-slate-400 font-bold tracking-wider mb-2"
+          >
+            Məzmun
+          </p>
+          <p class="text-sm text-slate-600 leading-relaxed whitespace-pre-line">
+            {{ viewingPage.body }}
+          </p>
+        </div>
+
+        <div
+          class="flex items-center justify-between text-xs text-slate-400 px-1 pt-1"
+        >
+          <div class="flex justify-between items-center text-xs">
+            <div class="flex items-center gap-2 text-slate-400">
+              <Clock :size="14" />
+              <span>Son yenilənmə: </span>
+            </div>
+            <span class="text-slate-700 font-semibold">
+              {{ new Date(viewingPage.updated_at).toLocaleDateString("az-AZ") }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <template #action>
+        <div class="flex justify-end gap-2.5">
+          <n-button
+            secondary
+            @click="showViewModal = false"
+            class="!rounded-xl px-5"
+          >
+            Bağla
+          </n-button>
+          <n-button
+            type="primary"
+            class="!rounded-xl px-5"
+            @click="() => { showViewModal = false; openEditModal(viewingPage!) }"
+          >
+            Redaktə et
+          </n-button>
+        </div>
+      </template>
+    </n-modal>
   </div>
 </template>
 
@@ -150,7 +232,7 @@ import {
   useMessage,
   type DataTableColumns,
 } from "naive-ui";
-import { Edit, RefreshCw, Search, Trash2 } from "lucide-vue-next";
+import { Edit, RefreshCw, Search, Trash2, Eye } from "lucide-vue-next";
 import {
   usePageActions,
   usePages,
@@ -168,6 +250,13 @@ const showModal = ref(false);
 const submitLoading = ref(false);
 const editingSlug = ref<string | null>(null);
 const slugInput = ref("");
+const showViewModal = ref(false);
+const viewingPage = ref<PageItem | null>(null);
+
+const openViewModal = (row: PageItem) => {
+  viewingPage.value = row;
+  showViewModal.value = true;
+};
 
 let slugSearchTimer: ReturnType<typeof setTimeout> | null = null;
 
@@ -335,6 +424,18 @@ const columns: DataTableColumns<PageItem> = [
               {
                 default: () => h(Trash2, { size: 16 }),
               }
+            ),
+            h(
+              NButton,
+              {
+                size: "small",
+                quaternary: true,
+                circle: true,
+                class:
+                  "hover:bg-blue-50 hover:text-blue-600 transition-all",
+                onClick: () => openViewModal(row),
+              },
+              { default: () => h(Eye, { size: 16 }) }
             ),
           ],
         }

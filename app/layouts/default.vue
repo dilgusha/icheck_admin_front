@@ -6,7 +6,7 @@
       :class="[isCollapsed ? 'w-20' : 'w-72']"
     >
       <!-- Sidebar Header -->
-      <div class="p-3 flex flex-col gap-1 border-b border-white/5 bg-[#0f172a]">
+      <div class="py-3 flex flex-col gap-1 border-b border-white/5 bg-[#0f172a]">
         <div class="flex items-center justify-center gap-3">
           <div class="w-14 h-10">
             <NuxtImg
@@ -336,7 +336,7 @@ const menuItems = [
   // { label: "Prescriptions", path: "/prescriptions", icon: FileText },
   { label: "Appointments", path: "/appointments", icon: Calendar },
   { label: 'Forum', path: '/forum', icon: MessageSquare },
-  { label: 'Content', path: '/content', icon: FileText },
+  { label: 'Ads', path: '/content', icon: FileText },
   { label: 'Faq', path: '/faq', icon: HelpCircle },
   { label: 'Pages', path: '/pages', icon: FileText },
   { label: 'Diagnoses', path: '/diagnoses', icon: ClipboardCheck },
